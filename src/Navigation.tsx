@@ -7,7 +7,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import DiamondIcon from "@mui/icons-material/Diamond";
-import { Routes } from "./constants.ts";
+import { Routes } from "./constants";
 
 type NavigationProps = {
   navigateTo: (route: string) => void;
