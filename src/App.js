@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Grid from "@mui/material/Unstable_Grid2";
+import { AuctionHouse } from "./AuctionHouse.tsx";
+import CssBaseline from "@mui/material/CssBaseline";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Crafting } from "./crafting/Crafting.tsx";
+import { Routes } from "./constants.ts";
+import { Navigation } from "./Navigation.tsx";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
+
+const router = createBrowserRouter([
+  {
+    path: `/${Routes.Auction}`,
+    element: <AuctionHouse />,
+  },
+  {
+    path: `/${Routes.Craft}`,
+    element: <Crafting />,
+  },
+]);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Grid container>
+        <Grid xs={2}>
+          <Navigation navigateTo={(route) => router.navigate(route)} />
+        </Grid>
+        <Grid xs={10}>
+          <RouterProvider router={router} />
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 }
 
