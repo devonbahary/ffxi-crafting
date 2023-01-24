@@ -13,3 +13,14 @@ export enum Craft {
   Smithing = "Smithing",
   Woodworking = "Woodworking",
 }
+
+export enum PriceType {
+  Stack = "stack",
+  Single = "single",
+}
+
+export enum StackSize {
+  One = 1,
+  Twelve = 12,
+  Ninetynine = 99,
+}

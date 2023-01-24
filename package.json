@@ -7,12 +7,22 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.5",
+    "@mui/x-data-grid": "^5.17.20",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "axios": "^1.2.3",
+    "body-parser": "^1.20.1",
+    "date-fns": "^2.29.3",
+    "db-migrate": "^0.11.13",
+    "db-migrate-mysql": "^2.2.0",
+    "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
+    "express": "^4.18.2",
+    "mysql2": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.7.0",
@@ -21,7 +31,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "migrate-up": "db-migrate up",
+    "start": "concurrently \"npm run start-node\" \"npm run start-react\"",
+    "start-node": "nodemon -r esm server/server.js",
+    "start-react": "react-scripts start",
     "build": "react-scripts build",
     "format": "npx prettier --write .",
     "test": "react-scripts test",
@@ -46,6 +59,9 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.20",
     "prettier": "2.8.3"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }

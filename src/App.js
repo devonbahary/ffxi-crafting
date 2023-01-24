@@ -1,12 +1,12 @@
 import * as React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Grid from "@mui/material/Unstable_Grid2";
-import { AuctionHouse } from "./AuctionHouse.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Crafting } from "./crafting/Crafting.tsx";
 import { Routes } from "./constants.ts";
 import { Navigation } from "./Navigation.tsx";
+import { AuctionHouse } from "./AuctionHouse";
 
 const darkTheme = createTheme({
   palette: {
