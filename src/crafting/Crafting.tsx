@@ -14,6 +14,10 @@ import { Box } from "@mui/material";
 import { Item, SynthesisIngredient, SynthesisRecipe } from "../types";
 import { DataGrid, GridActionsCellItem, GridColumns } from "@mui/x-data-grid";
 import { getUnitPrice } from "../utilities";
+import {
+  POSITIVE_NEGATIVE_CLASS_NAMES,
+  POSITIVE_NEGATIVE_STYLING,
+} from "../styles";
 
 const formatIngredient = (ingredient: SynthesisIngredient): string => {
   if (ingredient.quantity > 1)
@@ -140,8 +144,8 @@ export const Crafting = () => {
 
   const getNetCostClassName = (params) => {
     const net = getNet(params.row, getCrystalCost);
-    if (net > 0) return "textPositive";
-    return "textNegative";
+    if (net > 0) return POSITIVE_NEGATIVE_CLASS_NAMES.POS;
+    return POSITIVE_NEGATIVE_CLASS_NAMES.NEG;
   };
 
   const columns: GridColumns = [
@@ -223,12 +227,7 @@ export const Crafting = () => {
         "& .textPrimary": {
           color: "text.primary",
         },
-        "& .textPositive": {
-          color: "success.light",
-        },
-        "& .textNegative": {
-          color: "error.light",
-        },
+        ...POSITIVE_NEGATIVE_STYLING,
       }}
     >
       <Spacer />

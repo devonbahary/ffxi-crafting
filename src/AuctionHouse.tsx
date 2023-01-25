@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { formatDistance } from "date-fns";
+import { formatDistance, isAfter, subHours } from "date-fns";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,6 +26,10 @@ import { PriceType, StackSize } from "./constants";
 import Alert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { getUnitPrice } from "./utilities";
+import {
+  POSITIVE_NEGATIVE_CLASS_NAMES,
+  POSITIVE_NEGATIVE_STYLING,
+} from "./styles";
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -159,7 +163,7 @@ export const AuctionHouse = () => {
   };
 
   const columns: GridColumns = [
-    { field: "name", headerName: "Item", editable: true, flex: 1 },
+    { field: "name", headerName: "Item", editable: true, flex: 2 },
     {
       field: "stack_size",
       headerName: "Stack Size",
@@ -185,8 +189,15 @@ export const AuctionHouse = () => {
       field: "updated_on",
       headerName: "Last Updated",
       type: "string",
-      width: 200,
-      valueGetter: (params) => getTimeAgo(params.row.updated_on),
+      flex: 1,
+      valueGetter: (params) => params.row.updated_on,
+      valueFormatter: (params) => getTimeAgo(params.value),
+      cellClassName: (params) => {
+        const sixHoursAgo = subHours(new Date(), 6);
+        return isAfter(new Date(params.row.updated_on), sixHoursAgo)
+          ? POSITIVE_NEGATIVE_CLASS_NAMES.POS
+          : POSITIVE_NEGATIVE_CLASS_NAMES.NEG;
+      },
     },
     {
       field: "actions",
@@ -248,6 +259,7 @@ export const AuctionHouse = () => {
         "& .textPrimary": {
           color: "text.primary",
         },
+        ...POSITIVE_NEGATIVE_STYLING,
       }}
     >
       <DataGrid
