@@ -6,7 +6,7 @@ import { SynthesisIngredientsRepository } from "./SynthesisIngredientsRepository
 export class SynthesisRepository {
   static tableName = "synthesis";
 
-  static async find(craft) {
+  static async find({ craft, id }) {
     let sql = `
           SELECT synthesis.id as synthesis_id,
           synthesis.craft as synthesis_craft,
@@ -30,12 +30,17 @@ export class SynthesisRepository {
           LEFT JOIN ${SynthesisIngredientsRepository.tableName} as synthesis_ingredient ON synthesis_ingredient.synthesis_id = synthesis.id
           LEFT JOIN ${ItemsRepository.tableName} as ingredient_item ON synthesis_ingredient.item_id = ingredient_item.id
         `;
+    const values = [];
 
     if (craft) {
       sql += ` WHERE craft = ?`;
+      values.push(craft);
+    } else if (id) {
+      sql += ` WHERE synthesis_id = ?`;
+      values.push(id);
     }
 
-    const results = await MySQLService.query(sql, [craft]);
+    const results = await MySQLService.query(sql, values);
     return results;
   }
 

@@ -38,7 +38,10 @@ export const createItem = async (item) => {
   }
 };
 
-export const createSynthesis = async (synthesis, synthesisIngredients) => {
+export const createSynthesis = async (
+  synthesis,
+  synthesisIngredients
+): Promise<SynthesisRecipe> => {
   try {
     const {
       data: { createdSynthesis },

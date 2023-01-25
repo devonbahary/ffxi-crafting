@@ -115,7 +115,10 @@ export const Crafting = () => {
     setIsAddingItem(true);
   };
 
-  const onSynthesisCreated = () => {
+  const onSynthesisCreated = (synthesisRecipe) => {
+    if (synthesisRecipe.synthesis.craft === selectedCraft || !selectedCraft) {
+      setSynthesisRecipes([...synthesisRecipes, synthesisRecipe]);
+    }
     setSnackbar({ children: "Created synthesis", severity: "success" });
   };
 

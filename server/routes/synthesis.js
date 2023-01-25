@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", async (req, res, next) => {
   const { craft } = req.query;
   try {
-    const synthesisResults = await SynthesisRepository.find(craft);
+    const synthesisResults = await SynthesisRepository.find({ craft });
 
     const synthesisToSynthesisIngredientsMap = {};
 
@@ -107,16 +107,92 @@ router.post("/", async (req, res) => {
     const createdSynthesis = await SynthesisRepository.create(synthesis);
 
     for (const synthesisIngredient of synthesisIngredients) {
-      const createdSynthesisIngredient =
-        await SynthesisIngredientsRepository.create(
-          createdSynthesis.id,
-          synthesisIngredient
-        );
+      await SynthesisIngredientsRepository.create(
+        createdSynthesis.id,
+        synthesisIngredient
+      );
     }
 
-    // TODO: return createdSynthesis
+    const synthesisResults = await SynthesisRepository.find({
+      id: createdSynthesis.id,
+    });
+    console.log(synthesisResults);
 
-    res.json({ createdSynthesis });
+    const synthesisToSynthesisIngredientsMap = {};
+
+    for (const synthesisResult of synthesisResults) {
+      const { synthesis_id } = synthesisResult;
+
+      if (!synthesisToSynthesisIngredientsMap[synthesis_id]) {
+        const {
+          synthesis_craft,
+          synthesis_level,
+          synthesis_crystal,
+          synthesis_yield,
+          synthesis_item_id,
+          synthesis_item_name,
+          synthesis_item_price,
+          synthesis_item_price_type,
+          synthesis_item_stack_size,
+        } = synthesisResult;
+
+        synthesisToSynthesisIngredientsMap[synthesis_id] = {
+          synthesis: {
+            id: synthesis_id,
+            craft: synthesis_craft,
+            crystal: synthesis_crystal,
+            yield: synthesis_yield,
+            level: synthesis_level,
+            item: {
+              id: synthesis_item_id,
+              name: synthesis_item_name,
+              price: synthesis_item_price,
+              price_type: synthesis_item_price_type,
+              stack_size: synthesis_item_stack_size,
+            },
+          },
+          ingredients: [],
+        };
+      }
+
+      const {
+        synthesis_ingredient_id,
+        synthesis_ingredient_item_id,
+        synthesis_ingredient_quantity,
+        synthesis_ingredient_item_name,
+        synthesis_ingredient_item_price,
+        synthesis_ingredient_item_price_type,
+        synthesis_ingredient_item_stack_size,
+      } = synthesisResult;
+
+      if (!synthesis_ingredient_id) {
+        continue;
+      }
+
+      const synthesisIngredient = {
+        id: synthesis_ingredient_id,
+        item_id: synthesis_ingredient_item_id,
+        quantity: synthesis_ingredient_quantity,
+        item: {
+          id: synthesis_ingredient_item_id,
+          name: synthesis_ingredient_item_name,
+          price: synthesis_ingredient_item_price,
+          price_type: synthesis_ingredient_item_price_type,
+          stack_size: synthesis_ingredient_item_stack_size,
+        },
+      };
+
+      synthesisToSynthesisIngredientsMap[synthesis_id].ingredients.push(
+        synthesisIngredient
+      );
+    }
+
+    console.log(synthesisToSynthesisIngredientsMap);
+    console.log(synthesisToSynthesisIngredientsMap[createdSynthesis.id]);
+
+    res.json({
+      createdSynthesis: synthesisToSynthesisIngredientsMap[createdSynthesis.id],
+    });
   } catch (err) {
     res.status(500);
     return res.json({ error: err.message });

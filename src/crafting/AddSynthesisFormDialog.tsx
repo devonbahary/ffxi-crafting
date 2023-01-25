@@ -8,7 +8,7 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import { Craft, Crystal } from "../constants";
 import { SelectButtonGroup } from "./SelectButtonGroup";
 import { createSynthesis } from "../api";
-import { Item } from "../types";
+import { Item, SynthesisRecipe } from "../types";
 import Alert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { Box } from "@mui/system";
@@ -21,7 +21,7 @@ import TextField from "@mui/material/TextField";
 
 type AddSynthesisFormDialogProps = Pick<DialogProps, "open"> & {
   handleClose: () => void;
-  onSynthesisCreated: () => void;
+  onSynthesisCreated: (synthesisRecipe: SynthesisRecipe) => void;
 };
 
 let synthesisIngredientIndex = 0;
@@ -76,9 +76,12 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
         crystal: selectedCrystal,
         yield: yieldd,
       };
-      await createSynthesis(synthesis, synthesisIngredients);
+      const createdSynthesis = await createSynthesis(
+        synthesis,
+        synthesisIngredients
+      );
       handleClose();
-      onSynthesisCreated();
+      onSynthesisCreated(createdSynthesis);
     } catch (err) {
       setSnackbar({ children: err.message, severity: "error" });
     }
