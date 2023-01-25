@@ -97,6 +97,8 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
       setSelectedItem(null);
       setSelectedCrystal(Crystal.Fire);
       setSynthesisIngredients([]);
+      setYield(1);
+      setLevel(1);
     }
   }, [open]);
 
