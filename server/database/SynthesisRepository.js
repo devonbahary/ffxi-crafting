@@ -10,6 +10,7 @@ export class SynthesisRepository {
     let sql = `
           SELECT synthesis.id as synthesis_id,
           synthesis.craft as synthesis_craft,
+          synthesis.level as synthesis_level,
           synthesis.crystal as synthesis_crystal,
           synthesis.yield as synthesis_yield,
           synthesis.item_id as synthesis_item_id, 
@@ -41,15 +42,15 @@ export class SynthesisRepository {
   static async create(synthesis) {
     validateSynthesis(synthesis);
 
-    const { item_id, craft, crystal, yield: yieldd } = synthesis;
+    const { item_id, craft, crystal, level, yield: yieldd } = synthesis;
 
     const { insertId } = await MySQLService.query(
       `
               INSERT INTO ${SynthesisRepository.tableName} 
-              (item_id, craft, crystal, yield)
-              VALUES (?, ?, ?, ?)
+              (item_id, craft, crystal, yield, level)
+              VALUES (?, ?, ?, ?, ?)
           `,
-      [item_id, craft, crystal, yieldd]
+      [item_id, craft, crystal, yieldd, level]
     );
 
     const results = await MySQLService.query(

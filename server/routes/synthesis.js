@@ -18,6 +18,7 @@ router.get("/", async (req, res, next) => {
       if (!synthesisToSynthesisIngredientsMap[synthesis_id]) {
         const {
           synthesis_craft,
+          synthesis_level,
           synthesis_crystal,
           synthesis_yield,
           synthesis_item_id,
@@ -33,6 +34,7 @@ router.get("/", async (req, res, next) => {
             craft: synthesis_craft,
             crystal: synthesis_crystal,
             yield: synthesis_yield,
+            level: synthesis_level,
             item: {
               id: synthesis_item_id,
               name: synthesis_item_name,

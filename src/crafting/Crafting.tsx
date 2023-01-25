@@ -162,6 +162,11 @@ export const Crafting = () => {
       flex: 1,
     },
     {
+      field: "level",
+      valueGetter: (params) => params.row.synthesis.level,
+      headerName: "Lv",
+    },
+    {
       field: "synthesis",
       headerName: "Synthesis",
       valueGetter: (params) => params.row.synthesis.item.name,

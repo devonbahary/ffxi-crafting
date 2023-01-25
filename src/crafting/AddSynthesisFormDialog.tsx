@@ -34,6 +34,7 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
   const [selectedCraft, setSelectedCraft] = useState<Craft>(Craft.Alchemy);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedCrystal, setSelectedCrystal] = useState<Crystal>(Crystal.Fire);
+  const [level, setLevel] = useState(1);
   const [yieldd, setYield] = useState(1);
   const [isCreateInProgress, setIsCreateInProgress] = useState<boolean>(false);
   const [synthesisIngredients, setSynthesisIngredients] = useState<
@@ -46,7 +47,7 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
   > | null>(null);
 
   const selectedMainSynthesisInformation =
-    selectedCraft && selectedItem && selectedCrystal && yieldd;
+    selectedCraft && selectedItem && selectedCrystal && yieldd && level;
   const areIngredientsFulfilled = synthesisIngredients.every(
     (ingredient) => ingredient.item_id && ingredient.quantity
   );
@@ -70,6 +71,7 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
       const { id } = selectedItem;
       const synthesis = {
         item_id: id,
+        level: level,
         craft: selectedCraft,
         crystal: selectedCrystal,
         yield: yieldd,
@@ -103,6 +105,14 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
     }
   };
 
+  const onLevelChange = (event) => {
+    const level = parseInt(event.target.value);
+
+    if (level) {
+      setLevel(level);
+    }
+  };
+
   return (
     <Dialog open={open} onClose={() => handleClose()} maxWidth="xl">
       <DialogTitle>Add Synthesis</DialogTitle>
@@ -121,7 +131,20 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
         />
         <Spacer />
         <Grid2 container>
-          <Grid2 xs={10}>
+          <Grid2
+            xs={2}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <TextField
+              type="number"
+              label="Lv"
+              onChange={onLevelChange}
+              value={level}
+            />
+          </Grid2>
+          <Grid2 xs={8}>
             <ItemSearchInput
               label="Item"
               onChange={(item) => setSelectedItem(item)}

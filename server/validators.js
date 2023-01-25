@@ -29,12 +29,16 @@ export const validateItem = (item) => {
 };
 
 export const validateSynthesis = (synthesis) => {
-  const { item_id, crystal, craft, yield: yieldd } = synthesis;
+  const { item_id, crystal, craft, level, yield: yieldd } = synthesis;
 
   if (!item_id) throw new Error(`must select item for synthesis`);
 
   if (!yieldd || yieldd < 1 || yieldd > 99) {
     throw new Error(`synthesis.yield must be 1-99`);
+  }
+
+  if (!level || level < 1 || level > 110) {
+    throw new Error(`synthesis.level must be 1-110`);
   }
 
   if (!isInEnum(CRAFT, craft)) {

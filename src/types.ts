@@ -20,6 +20,7 @@ export type SynthesisRecipe = {
   synthesis: {
     id: number;
     craft: Craft;
+    level: number;
     crystal: Crystal;
     yield: number;
     item: Item;
