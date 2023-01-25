@@ -25,15 +25,7 @@ import { getItems, createItem, updateItem } from "./api";
 import { PriceType, StackSize } from "./constants";
 import Alert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-
-type Item = {
-  id: number;
-  name: string;
-  price: number;
-  price_type: string;
-  stack_size: number;
-  updated_on: string;
-};
+import { getUnitPrice } from "./utilities";
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -66,26 +58,20 @@ function EditToolbar(props: EditToolbarProps) {
 
   return (
     <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+      <Button
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={handleClick}
+        variant="contained"
+      >
         Add Item
       </Button>
     </GridToolbarContainer>
   );
 }
 
-const getUnitPrice = (item: Item): number => {
-  if (item.price_type === PriceType.Single) {
-    return item.price;
-  }
-
-  if (item.price_type === PriceType.Stack) {
-    return Math.round(item.price / item.stack_size);
-  }
-
-  throw new Error(`do not recognize item.price_type ${item.price_type}`);
-};
-
 const getTimeAgo = (date: string) => {
+  if (!date) return null;
   return formatDistance(new Date(date), new Date(), { addSuffix: true });
 };
 
@@ -101,9 +87,12 @@ export const AuctionHouse = () => {
   const handleCloseSnackbar = () => setSnackbar(null);
 
   const loadRows = async () => {
-    const items = await getItems();
-    console.log(items);
-    setRows(items);
+    try {
+      const items = await getItems();
+      setRows(items);
+    } catch (error) {
+      setSnackbar({ children: error.message, severity: "error" });
+    }
   };
 
   const handleRowEditStart = (
@@ -129,6 +118,7 @@ export const AuctionHouse = () => {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
+    // TODO: implement?
     setRows(rows.filter((row) => row.id !== id));
   };
 
@@ -250,7 +240,7 @@ export const AuctionHouse = () => {
   return (
     <Box
       sx={{
-        height: 500,
+        height: "100vh",
         width: "100%",
         "& .actions": {
           color: "text.secondary",

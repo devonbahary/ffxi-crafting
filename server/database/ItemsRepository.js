@@ -1,11 +1,31 @@
+import { CRYSTAL } from "../constants";
 import { validateItem } from "../validators";
 import { MySQLService } from "./MySQLService";
+
+const crystalItemNames = Object.values(CRYSTAL).map(
+  (crystal) => `'${crystal} Crystal'`
+);
 
 export class ItemsRepository {
   static tableName = "items";
 
-  static async find() {
-    return MySQLService.query(`SELECT * FROM ${ItemsRepository.tableName}`);
+  static async find(name) {
+    let sql = `SELECT * FROM ${ItemsRepository.tableName}`;
+
+    if (name) {
+      sql += ` WHERE name LIKE ?`;
+    }
+
+    return MySQLService.query(sql, [name ? `%${name}%` : null]);
+  }
+
+  static async findCrystals() {
+    let sql = `
+      SELECT * FROM ${ItemsRepository.tableName}
+      WHERE name IN (${crystalItemNames.join(",")})
+    `;
+
+    return MySQLService.query(sql);
   }
 
   static async create(item) {
@@ -21,8 +41,6 @@ export class ItemsRepository {
       `,
       [name, price_type, price, stack_size]
     );
-
-    console.log("insertId", insertId);
 
     const results = await MySQLService.query(
       `SELECT * FROM ${ItemsRepository.tableName} WHERE id = ?`,
@@ -66,8 +84,8 @@ export class ItemsRepository {
     return results[0];
   }
 
-  static async delete(id) {
-    await MySQLService.query(
+  static delete(id) {
+    return MySQLService.query(
       `
         DELETE FROM ${ItemsRepository.tableName} WHERE id = ?
       `,

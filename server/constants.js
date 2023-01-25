@@ -9,6 +9,17 @@ export const CRAFT = {
   WOODWORKING: "Woodworking",
 };
 
+export const CRYSTAL = {
+  FIRE: "Fire",
+  ICE: "Ice",
+  WIND: "Wind",
+  EARTH: "Earth",
+  LIGHTNING: "Lightning",
+  WATER: "Water",
+  LIGHT: "Light",
+  DARK: "Dark",
+};
+
 export const PRICE_TYPE = {
   STACK: "stack",
   SINGLE: "single",

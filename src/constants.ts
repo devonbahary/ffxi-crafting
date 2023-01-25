@@ -14,6 +14,17 @@ export enum Craft {
   Woodworking = "Woodworking",
 }
 
+export enum Crystal {
+  Fire = "Fire",
+  Ice = "Ice",
+  Wind = "Wind",
+  Earth = "Earth",
+  Lightning = "Lightning",
+  Water = "Water",
+  Light = "Light",
+  Dark = "Dark",
+}
+
 export enum PriceType {
   Stack = "stack",
   Single = "single",

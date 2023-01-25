@@ -1,12 +1,26 @@
 import { Router } from "express";
-import { ItemsRepository } from "./database/ItemsRepository";
-import { validateItem } from "./validators";
+import { ItemsRepository } from "../database/ItemsRepository";
+import { validateItem } from "../validators";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
-  const items = await ItemsRepository.find();
-  res.json({ items });
+router.get("/", async (req, res, next) => {
+  const { name } = req.query;
+  try {
+    const items = await ItemsRepository.find(name);
+    res.json({ items });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/crystals", async (req, res, next) => {
+  try {
+    const crystals = await ItemsRepository.findCrystals();
+    res.json({ crystals });
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post("/", async (req, res) => {
