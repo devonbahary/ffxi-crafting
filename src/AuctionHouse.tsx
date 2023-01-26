@@ -41,10 +41,9 @@ interface EditToolbarProps {
 function EditToolbar(props: EditToolbarProps) {
   const { setRows, setRowModesModel } = props;
 
-  const handleClick = () => {
+  const onAddItem = () => {
     const id = "randomId";
     setRows((oldRows) => [
-      ...oldRows,
       {
         id,
         name: "",
@@ -53,6 +52,7 @@ function EditToolbar(props: EditToolbarProps) {
         stack_size: StackSize.One,
         isNew: true,
       },
+      ...oldRows,
     ]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
@@ -65,7 +65,7 @@ function EditToolbar(props: EditToolbarProps) {
       <Button
         color="primary"
         startIcon={<AddIcon />}
-        onClick={handleClick}
+        onClick={onAddItem}
         variant="contained"
       >
         Add Item

@@ -79,7 +79,9 @@ export const Crafting = () => {
     const crystals = await getCrystals();
 
     const crystalMap = Object.values(Crystal).reduce((acc, crystal) => {
-      const crystalItem = crystals.find((item) => item.name.split(' ')[0] === crystal);
+      const crystalItem = crystals.find(
+        (item) => item.name.split(" ")[0] === crystal
+      );
       if (!crystalItem) {
         setSnackbar({
           children: `no item found for ${crystal} Crystal`,
