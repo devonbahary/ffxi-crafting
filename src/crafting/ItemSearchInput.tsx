@@ -29,6 +29,7 @@ export const ItemSearchInput: FC<ItemSearchInputProps> = ({
   };
 
   const debouncedEventHandler = useMemo(() => debounce(eventHandler, 300), []);
+
   return (
     <Autocomplete
       getOptionLabel={(option) => option.name}

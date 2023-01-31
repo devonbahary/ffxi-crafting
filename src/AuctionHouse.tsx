@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import debounce from "lodash.debounce";
 import { formatDistance, isAfter, subHours } from "date-fns";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,6 +8,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
+import ClearIcon from "@mui/icons-material/Clear";
 import {
   GridRowsProp,
   GridRowModesModel,
@@ -30,16 +32,30 @@ import {
   POSITIVE_NEGATIVE_CLASS_NAMES,
   POSITIVE_NEGATIVE_STYLING,
 } from "./styles";
+import TextField from "@mui/material/TextField";
+import { IconButton, InputAdornment } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
   setRowModesModel: (
     newModel: (oldModel: GridRowModesModel) => GridRowModesModel
   ) => void;
+  onSearchTextChange: (search: string) => void;
 }
 
 function EditToolbar(props: EditToolbarProps) {
-  const { setRows, setRowModesModel } = props;
+  const { setRows, setRowModesModel, onSearchTextChange } = props;
+
+  const [searchText, setSearchText] = useState("");
+
+  const onSearchChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const onClearSearchText = () => {
+    onSearchTextChange("");
+  };
 
   const onAddItem = () => {
     const id = "randomId";
@@ -60,16 +76,49 @@ function EditToolbar(props: EditToolbarProps) {
     }));
   };
 
+  const debouncedOnSearchTextChange = useMemo(
+    () => debounce(onSearchTextChange, 300),
+    []
+  );
+
+  useEffect(() => {
+    debouncedOnSearchTextChange(searchText);
+  }, [searchText]);
+
   return (
     <GridToolbarContainer>
-      <Button
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={onAddItem}
-        variant="contained"
-      >
-        Add Item
-      </Button>
+      <Grid2 container width="100%">
+        <Grid2 xs={6}>
+          <TextField
+            label="Search for an item"
+            onChange={onSearchChange}
+            value={searchText}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={onClearSearchText}
+                    disabled={!searchText}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            fullWidth
+          />
+        </Grid2>
+        <Grid2 xs={6} display="flex" justifyContent="right" alignItems="center">
+          <Button
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={onAddItem}
+            variant="contained"
+          >
+            Add Item
+          </Button>
+        </Grid2>
+      </Grid2>
     </GridToolbarContainer>
   );
 }
@@ -93,6 +142,15 @@ export const AuctionHouse = () => {
   const loadRows = async () => {
     try {
       const items = await getItems();
+      setRows(items);
+    } catch (error) {
+      setSnackbar({ children: error.message, severity: "error" });
+    }
+  };
+
+  const onSearchTextChange = async (search: string) => {
+    try {
+      const items = await getItems(search);
       setRows(items);
     } catch (error) {
       setSnackbar({ children: error.message, severity: "error" });
@@ -276,7 +334,7 @@ export const AuctionHouse = () => {
           Toolbar: EditToolbar,
         }}
         componentsProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { setRows, setRowModesModel, onSearchTextChange },
         }}
         experimentalFeatures={{ newEditingApi: true }}
       />
