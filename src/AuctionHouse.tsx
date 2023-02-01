@@ -54,7 +54,7 @@ function EditToolbar(props: EditToolbarProps) {
   };
 
   const onClearSearchText = () => {
-    onSearchTextChange("");
+    setSearchText("");
   };
 
   const onAddItem = () => {
