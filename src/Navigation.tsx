@@ -8,32 +8,50 @@ import ListItemText from "@mui/material/ListItemText";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import DiamondIcon from "@mui/icons-material/Diamond";
 import { Routes } from "./constants";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router";
 
-type NavigationProps = {
-  navigateTo: (route: string) => void;
+type RouteData = {
+  pathname: Routes;
+  label: string;
 };
 
-export const Navigation: React.FC<NavigationProps> = ({ navigateTo }) => {
+const routeData: RouteData[] = [
+  {
+    pathname: Routes.Auction,
+    label: "Auction House",
+  },
+  {
+    pathname: Routes.Craft,
+    label: "Crafting",
+  },
+];
+
+export const Navigation = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       <nav aria-label="main mailbox folders">
         <List>
-          <ListItem disablePadding>
-            <ListItemButton onClick={(e) => navigateTo(Routes.Auction)}>
-              <ListItemIcon>
-                <AttachMoneyIcon />
-              </ListItemIcon>
-              <ListItemText primary="Auction House" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton onClick={(e) => navigateTo(Routes.Craft)}>
-              <ListItemIcon>
-                <DiamondIcon />
-              </ListItemIcon>
-              <ListItemText primary="Crafting" />
-            </ListItemButton>
-          </ListItem>
+          {routeData.map((routeData) => {
+            const { pathname, label } = routeData;
+
+            return (
+              <ListItem key={pathname} disablePadding>
+                <ListItemButton
+                  onClick={(e) => navigate(`/${pathname}`)}
+                  selected={location.pathname === `/${pathname}`}
+                >
+                  <ListItemIcon>
+                    <AttachMoneyIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={label} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
         </List>
       </nav>
     </Box>

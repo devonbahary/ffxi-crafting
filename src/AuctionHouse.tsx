@@ -35,6 +35,7 @@ import {
 import TextField from "@mui/material/TextField";
 import { IconButton, InputAdornment } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { AppContainer } from "./AppContainer";
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -319,47 +320,49 @@ export const AuctionHouse = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-        ...POSITIVE_NEGATIVE_STYLING,
-      }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={(newModel) => setRowModesModel(newModel)}
-        onRowEditStart={handleRowEditStart}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        onProcessRowUpdateError={onProcessRowUpdateError}
-        components={{
-          Toolbar: EditToolbar,
+    <AppContainer>
+      <Box
+        sx={{
+          height: "100vh",
+          width: "100%",
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
+          ...POSITIVE_NEGATIVE_STYLING,
         }}
-        componentsProps={{
-          toolbar: { setRows, setRowModesModel, onSearchTextChange },
-        }}
-        experimentalFeatures={{ newEditingApi: true }}
-      />
-      {!!snackbar && (
-        <Snackbar
-          open
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          onClose={handleCloseSnackbar}
-          autoHideDuration={6000}
-        >
-          <Alert {...snackbar} onClose={handleCloseSnackbar} />
-        </Snackbar>
-      )}
-    </Box>
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={(newModel) => setRowModesModel(newModel)}
+          onRowEditStart={handleRowEditStart}
+          onRowEditStop={handleRowEditStop}
+          processRowUpdate={processRowUpdate}
+          onProcessRowUpdateError={onProcessRowUpdateError}
+          components={{
+            Toolbar: EditToolbar,
+          }}
+          componentsProps={{
+            toolbar: { setRows, setRowModesModel, onSearchTextChange },
+          }}
+          experimentalFeatures={{ newEditingApi: true }}
+        />
+        {!!snackbar && (
+          <Snackbar
+            open
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            onClose={handleCloseSnackbar}
+            autoHideDuration={6000}
+          >
+            <Alert {...snackbar} onClose={handleCloseSnackbar} />
+          </Snackbar>
+        )}
+      </Box>
+    </AppContainer>
   );
 };

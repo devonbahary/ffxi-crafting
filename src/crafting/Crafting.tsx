@@ -18,6 +18,7 @@ import {
   POSITIVE_NEGATIVE_CLASS_NAMES,
   POSITIVE_NEGATIVE_STYLING,
 } from "../styles";
+import { AppContainer } from "../AppContainer";
 
 const formatIngredient = (ingredient: SynthesisIngredient): string => {
   if (ingredient.quantity > 1)
@@ -232,54 +233,56 @@ export const Crafting = () => {
   ];
 
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-        ...POSITIVE_NEGATIVE_STYLING,
-      }}
-    >
-      <Spacer />
-      <Button
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={onAddItem}
-        variant="contained"
+    <AppContainer>
+      <Box
+        sx={{
+          height: "100vh",
+          width: "100%",
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
+          ...POSITIVE_NEGATIVE_STYLING,
+        }}
       >
-        Add Synthesis
-      </Button>
-      <Spacer />
-      <AddSynthesisFormDialog
-        open={isAddingItem}
-        handleClose={() => setIsAddingItem(false)}
-        onSynthesisCreated={onSynthesisCreated}
-      />
-      <SelectButtonGroup
-        selectedOption={selectedCraft}
-        onChange={(craft) => onCraftChange(craft as Craft)}
-        options={Craft}
-      />
-      <DataGrid
-        columns={columns}
-        getRowId={(synthesisRecipe) => synthesisRecipe.synthesis.id}
-        rows={synthesisRecipes}
-      />
-      {!!snackbar && (
-        <Snackbar
-          open
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          onClose={handleCloseSnackbar}
-          autoHideDuration={6000}
+        <Spacer />
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={onAddItem}
+          variant="contained"
         >
-          <Alert {...snackbar} onClose={handleCloseSnackbar} />
-        </Snackbar>
-      )}
-    </Box>
+          Add Synthesis
+        </Button>
+        <Spacer />
+        <AddSynthesisFormDialog
+          open={isAddingItem}
+          handleClose={() => setIsAddingItem(false)}
+          onSynthesisCreated={onSynthesisCreated}
+        />
+        <SelectButtonGroup
+          selectedOption={selectedCraft}
+          onChange={(craft) => onCraftChange(craft as Craft)}
+          options={Craft}
+        />
+        <DataGrid
+          columns={columns}
+          getRowId={(synthesisRecipe) => synthesisRecipe.synthesis.id}
+          rows={synthesisRecipes}
+        />
+        {!!snackbar && (
+          <Snackbar
+            open
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            onClose={handleCloseSnackbar}
+            autoHideDuration={6000}
+          >
+            <Alert {...snackbar} onClose={handleCloseSnackbar} />
+          </Snackbar>
+        )}
+      </Box>
+    </AppContainer>
   );
 };
