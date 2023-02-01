@@ -170,6 +170,7 @@ export const Crafting = () => {
       field: "level",
       valueGetter: (params) => params.row.synthesis.level,
       headerName: "Lv",
+      flex: 0.3,
     },
     {
       field: "synthesis",
@@ -182,7 +183,7 @@ export const Crafting = () => {
       field: "synthesis.yield",
       headerName: "Yield",
       valueGetter: (params) => params.row.synthesis.yield,
-      flex: 1,
+      flex: 0.3,
     },
     {
       field: "ingredients",
@@ -194,18 +195,20 @@ export const Crafting = () => {
       field: "cost",
       headerName: "Cost",
       valueGetter: (params) => getCost(params.row, getCrystalCost),
-      flex: 1,
+      flex: 0.5,
     },
     {
       field: "price",
       headerName: "Price",
       valueGetter: (params) => getPrice(params.row),
+      flex: 0.5,
     },
     {
       field: "net",
       headerName: "Net",
       valueGetter: (params) => getNet(params.row, getCrystalCost),
       cellClassName: getNetCostClassName,
+      flex: 0.5,
     },
     {
       field: "actions",
