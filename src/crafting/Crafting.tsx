@@ -130,6 +130,7 @@ export const Crafting = () => {
     if (isDeletingItem) return;
 
     setIsDeletingItem(true);
+
     try {
       await deleteSynthesis(id);
       setSynthesisRecipes(
@@ -139,6 +140,7 @@ export const Crafting = () => {
     } catch (err) {
       setSnackbar({ children: err.message, severity: "error" });
     }
+
     setIsDeletingItem(false);
   };
 

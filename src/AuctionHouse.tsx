@@ -23,7 +23,7 @@ import {
   GridRowId,
   GridRowModel,
 } from "@mui/x-data-grid";
-import { getItems, createItem, updateItem } from "./api";
+import { getItems, createItem, updateItem, deleteItem } from "./api";
 import { PriceType, StackSize } from "./constants";
 import Alert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
@@ -131,6 +131,7 @@ const getTimeAgo = (date: string) => {
 export const AuctionHouse = () => {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+  const [isDeletingItem, setIsDeletingItem] = useState(false);
 
   const [snackbar, setSnackbar] = useState<Pick<
     AlertProps,
@@ -179,9 +180,20 @@ export const AuctionHouse = () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
-  const handleDeleteClick = (id: GridRowId) => () => {
-    // TODO: implement?
-    setRows(rows.filter((row) => row.id !== id));
+  const handleDeleteClick = (id: GridRowId) => async () => {
+    if (isDeletingItem) return;
+
+    setIsDeletingItem(true);
+
+    try {
+      await deleteItem(id);
+      setRows(rows.filter((row) => row.id !== id));
+      setSnackbar({ children: "Deleted item", severity: "success" });
+    } catch (err) {
+      setSnackbar({ children: err.message, severity: "error" });
+    }
+
+    setIsDeletingItem(false);
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
