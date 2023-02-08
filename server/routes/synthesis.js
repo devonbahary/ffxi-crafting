@@ -116,7 +116,6 @@ router.post("/", async (req, res) => {
     const synthesisResults = await SynthesisRepository.find({
       id: createdSynthesis.id,
     });
-    console.log(synthesisResults);
 
     const synthesisToSynthesisIngredientsMap = {};
 
@@ -186,9 +185,6 @@ router.post("/", async (req, res) => {
         synthesisIngredient
       );
     }
-
-    console.log(synthesisToSynthesisIngredientsMap);
-    console.log(synthesisToSynthesisIngredientsMap[createdSynthesis.id]);
 
     res.json({
       createdSynthesis: synthesisToSynthesisIngredientsMap[createdSynthesis.id],
