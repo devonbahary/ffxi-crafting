@@ -24,7 +24,7 @@ export const ItemSearchInput: FC<ItemSearchInputProps> = ({
     false
   >["onInputChange"] = async (event, value, reason) => {
     // the event uses `prop` and `value`
-    const items = await getItems(value);
+    const items = await getItems({ name: value });
     setOptions(items);
   };
 

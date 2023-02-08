@@ -77,24 +77,28 @@ export const Crafting = () => {
   };
 
   const loadCrystals = async () => {
-    const crystals = await getCrystals();
+    try {
+      const crystals = await getCrystals();
 
-    const crystalMap = Object.values(Crystal).reduce((acc, crystal) => {
-      const crystalItem = crystals.find(
-        (item) => item.name.split(" ")[0] === crystal
-      );
-      if (!crystalItem) {
-        setSnackbar({
-          children: `no item found for ${crystal} Crystal`,
-          severity: "error",
-        });
-      } else {
-        acc[crystal] = crystalItem;
-      }
-      return acc;
-    }, {});
+      const crystalMap = Object.values(Crystal).reduce((acc, crystal) => {
+        const crystalItem = crystals.find(
+          (item) => item.name.split(" ")[0] === crystal
+        );
+        if (!crystalItem) {
+          setSnackbar({
+            children: `no item found for ${crystal} Crystal`,
+            severity: "error",
+          });
+        } else {
+          acc[crystal] = crystalItem;
+        }
+        return acc;
+      }, {});
 
-    setCrystalItemMap(crystalMap);
+      setCrystalItemMap(crystalMap);
+    } catch (error) {
+      setSnackbar({ children: error.message, severity: "error" });
+    }
   };
 
   const loadSynthesis = async () => {

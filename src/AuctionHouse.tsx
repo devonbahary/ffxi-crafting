@@ -24,7 +24,7 @@ import {
   GridRowModel,
 } from "@mui/x-data-grid";
 import { getItems, createItem, updateItem, deleteItem } from "./api";
-import { PriceType, StackSize } from "./constants";
+import { Category, PriceType, StackSize } from "./constants";
 import Alert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { getUnitPrice } from "./utilities";
@@ -33,7 +33,7 @@ import {
   POSITIVE_NEGATIVE_STYLING,
 } from "./styles";
 import TextField from "@mui/material/TextField";
-import { IconButton, InputAdornment } from "@mui/material";
+import { Autocomplete, IconButton, InputAdornment } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { AppContainer } from "./AppContainer";
 
@@ -43,10 +43,12 @@ interface EditToolbarProps {
     newModel: (oldModel: GridRowModesModel) => GridRowModesModel
   ) => void;
   onSearchTextChange: (search: string) => void;
+  onCategoryChange: (category: Category | null) => void;
 }
 
 function EditToolbar(props: EditToolbarProps) {
-  const { setRows, setRowModesModel, onSearchTextChange } = props;
+  const { setRows, setRowModesModel, onSearchTextChange, onCategoryChange } =
+    props;
 
   const [searchText, setSearchText] = useState("");
 
@@ -89,27 +91,47 @@ function EditToolbar(props: EditToolbarProps) {
   return (
     <GridToolbarContainer>
       <Grid2 container width="100%">
-        <Grid2 xs={6}>
-          <TextField
-            label="Search for an item"
-            onChange={onSearchChange}
-            value={searchText}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={onClearSearchText}
-                    disabled={!searchText}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            fullWidth
-          />
+        <Grid2 container xs={8} spacing={2}>
+          <Grid2 xs={9}>
+            <TextField
+              label="Search for an item"
+              onChange={onSearchChange}
+              value={searchText}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={onClearSearchText}
+                      disabled={!searchText}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              fullWidth
+            />
+          </Grid2>
+          <Grid2 xs={3}>
+            <Autocomplete
+              options={Object.values(Category)}
+              onInputChange={(event, category) =>
+                onCategoryChange(category ? (category as Category) : null)
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Category"
+                  InputProps={{
+                    ...params.InputProps,
+                    type: "search",
+                  }}
+                />
+              )}
+            />
+          </Grid2>
         </Grid2>
-        <Grid2 xs={6} display="flex" justifyContent="right" alignItems="center">
+        <Grid2 xs={4} display="flex" justifyContent="right" alignItems="center">
           <Button
             color="primary"
             startIcon={<AddIcon />}
@@ -133,6 +155,8 @@ export const AuctionHouse = () => {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [isDeletingItem, setIsDeletingItem] = useState(false);
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState<Category | null>(null);
 
   const [snackbar, setSnackbar] = useState<Pick<
     AlertProps,
@@ -143,16 +167,7 @@ export const AuctionHouse = () => {
 
   const loadRows = async () => {
     try {
-      const items = await getItems();
-      setRows(items);
-    } catch (error) {
-      setSnackbar({ children: error.message, severity: "error" });
-    }
-  };
-
-  const onSearchTextChange = async (search: string) => {
-    try {
-      const items = await getItems(search);
+      const items = await getItems({ name, category });
       setRows(items);
     } catch (error) {
       setSnackbar({ children: error.message, severity: "error" });
@@ -234,7 +249,15 @@ export const AuctionHouse = () => {
   };
 
   const columns: GridColumns = [
-    { field: "name", headerName: "Item", editable: true, flex: 2 },
+    {
+      field: "category",
+      headerName: "Category",
+      type: "singleSelect",
+      editable: true,
+      flex: 1,
+      valueOptions: Object.values(Category).sort(),
+    },
+    { field: "name", headerName: "Item", editable: true, flex: 1 },
     {
       field: "stack_size",
       headerName: "Stack Size",
@@ -317,7 +340,7 @@ export const AuctionHouse = () => {
 
   useEffect(() => {
     loadRows();
-  }, []);
+  }, [name, category]);
 
   return (
     <AppContainer>
@@ -348,7 +371,12 @@ export const AuctionHouse = () => {
             Toolbar: EditToolbar,
           }}
           componentsProps={{
-            toolbar: { setRows, setRowModesModel, onSearchTextChange },
+            toolbar: {
+              setRows,
+              setRowModesModel,
+              onSearchTextChange: (search) => setName(search),
+              onCategoryChange: (category) => setCategory(category),
+            },
           }}
           experimentalFeatures={{ newEditingApi: true }}
         />

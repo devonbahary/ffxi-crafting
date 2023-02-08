@@ -5,9 +5,9 @@ import { validateItem } from "../validators";
 const router = Router();
 
 router.get("/", async (req, res, next) => {
-  const { name } = req.query;
+  const { name, category } = req.query;
   try {
-    const items = await ItemsRepository.find(name);
+    const items = await ItemsRepository.find({ name, category });
     res.json({ items });
   } catch (err) {
     next(err);

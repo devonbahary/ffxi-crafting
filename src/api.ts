@@ -1,10 +1,13 @@
 import axios from "axios";
 import { SynthesisRecipe } from "./types";
 
-export const getItems = async (name?: string) => {
+export const getItems = async ({
+  name,
+  category,
+}: { name?: string; category?: string } = {}) => {
   const {
     data: { items },
-  } = await axios.get("/items", { params: { name } });
+  } = await axios.get("/items", { params: { name, category } });
   return items;
 };
 
