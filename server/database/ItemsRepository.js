@@ -41,8 +41,6 @@ export class ItemsRepository {
       AND category = '${CATEGORY.Crystals}'
     `;
 
-    console.log(sql);
-
     return MySQLService.query(sql);
   }
 
