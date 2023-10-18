@@ -9,6 +9,4 @@ app.use(express.json());
 app.use("/items", items);
 app.use("/synthesis", synthesis);
 
-app.listen(3000, () =>
-  console.log(`Server is listening on port 3000`)
-);
+app.listen(3000, () => console.log(`Server is listening on port 3000`));

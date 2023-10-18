@@ -16,12 +16,12 @@ export class SynthesisIngredientsRepository {
               (synthesis_id, item_id, quantity)
               VALUES (?, ?, ?)
           `,
-      [synthesis_id, item_id, quantity]
+      [synthesis_id, item_id, quantity],
     );
 
     const results = await MySQLService.query(
       `SELECT * FROM ${SynthesisIngredientsRepository.tableName} WHERE id = ?`,
-      [insertId]
+      [insertId],
     );
 
     if (!results.length) {
@@ -38,7 +38,7 @@ export class SynthesisIngredientsRepository {
           JOIN ${ItemsRepository.tableName} ON ${SynthesisIngredientsRepository.tableName}.item_id = ${ItemsRepository.tableName}.id
           WHERE synthesis_id = ?;
         `,
-      [synthesis_id]
+      [synthesis_id],
     );
   }
 
@@ -47,7 +47,7 @@ export class SynthesisIngredientsRepository {
       `
         DELETE FROM ${SynthesisIngredientsRepository.tableName} WHERE synthesis_id = ?
       `,
-      [synthesis_id]
+      [synthesis_id],
     );
   }
 }

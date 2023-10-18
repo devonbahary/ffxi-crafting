@@ -32,7 +32,7 @@ const formatIngredients = (synthesisRecipe: SynthesisRecipe) => {
 
 const getCost = (
   synthesisRecipe: SynthesisRecipe,
-  getCrystalCost: (crystal: Crystal) => number
+  getCrystalCost: (crystal: Crystal) => number,
 ) => {
   const crystalCost = getCrystalCost(synthesisRecipe.synthesis.crystal);
   return synthesisRecipe.ingredients.reduce((acc, ing) => {
@@ -49,7 +49,7 @@ const getPrice = (synthesisRecipe: SynthesisRecipe) => {
 
 const getNet = (
   synthesisRecipe: SynthesisRecipe,
-  getCrystalCost: (crystal: Crystal) => number
+  getCrystalCost: (crystal: Crystal) => number,
 ) => {
   const price = getPrice(synthesisRecipe);
   const cost = getCost(synthesisRecipe, getCrystalCost);
@@ -63,7 +63,7 @@ export const Crafting = () => {
     Partial<Record<Crystal, Item>>
   >({});
   const [synthesisRecipes, setSynthesisRecipes] = useState<SynthesisRecipe[]>(
-    []
+    [],
   );
   const [isDeletingItem, setIsDeletingItem] = useState(false);
 
@@ -82,7 +82,7 @@ export const Crafting = () => {
 
       const crystalMap = Object.values(Crystal).reduce((acc, crystal) => {
         const crystalItem = crystals.find(
-          (item) => item.name.split(" ")[0] === crystal
+          (item) => item.name.split(" ")[0] === crystal,
         );
         if (!crystalItem) {
           setSnackbar({
@@ -139,7 +139,7 @@ export const Crafting = () => {
     try {
       await deleteSynthesis(id);
       setSynthesisRecipes(
-        synthesisRecipes.filter((recipe) => recipe.synthesis.id !== id)
+        synthesisRecipes.filter((recipe) => recipe.synthesis.id !== id),
       );
       setSnackbar({ children: "Deleted synthesis", severity: "success" });
     } catch (err) {

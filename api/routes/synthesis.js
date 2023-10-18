@@ -75,7 +75,7 @@ router.get("/", async (req, res, next) => {
       };
 
       synthesisToSynthesisIngredientsMap[synthesis_id].ingredients.push(
-        synthesisIngredient
+        synthesisIngredient,
       );
     }
 
@@ -109,7 +109,7 @@ router.post("/", async (req, res) => {
     for (const synthesisIngredient of synthesisIngredients) {
       await SynthesisIngredientsRepository.create(
         createdSynthesis.id,
-        synthesisIngredient
+        synthesisIngredient,
       );
     }
 
@@ -182,7 +182,7 @@ router.post("/", async (req, res) => {
       };
 
       synthesisToSynthesisIngredientsMap[synthesis_id].ingredients.push(
-        synthesisIngredient
+        synthesisIngredient,
       );
     }
 

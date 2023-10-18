@@ -40,7 +40,7 @@ import { AppContainer } from "./AppContainer";
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
   setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel
+    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
   ) => void;
   onSearchTextChange: (search: string) => void;
   onCategoryChange: (category: Category | null) => void;
@@ -81,7 +81,7 @@ function EditToolbar(props: EditToolbarProps) {
 
   const debouncedOnSearchTextChange = useMemo(
     () => debounce(onSearchTextChange, 300),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -176,14 +176,14 @@ export const AuctionHouse = () => {
 
   const handleRowEditStart = (
     params: GridRowParams,
-    event: MuiEvent<React.SyntheticEvent>
+    event: MuiEvent<React.SyntheticEvent>,
   ) => {
     event.defaultMuiPrevented = true;
   };
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
-    event
+    event,
   ) => {
     event.defaultMuiPrevented = true;
   };

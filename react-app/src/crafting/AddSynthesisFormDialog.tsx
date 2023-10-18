@@ -49,7 +49,7 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
   const selectedMainSynthesisInformation =
     selectedCraft && selectedItem && selectedCrystal && yieldd && level;
   const areIngredientsFulfilled = synthesisIngredients.every(
-    (ingredient) => ingredient.item_id && ingredient.quantity
+    (ingredient) => ingredient.item_id && ingredient.quantity,
   );
   const canAddSynthesis =
     selectedMainSynthesisInformation &&
@@ -78,7 +78,7 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
       };
       const createdSynthesis = await createSynthesis(
         synthesis,
-        synthesisIngredients
+        synthesisIngredients,
       );
       handleClose();
       onSynthesisCreated(createdSynthesis);
@@ -180,15 +180,15 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
                       return { ...ing, ...ingredient };
                     }
                     return ing;
-                  })
+                  }),
                 );
               };
 
               const onDelete = () => {
                 setSynthesisIngredients(
                   synthesisIngredients.filter(
-                    (ing) => ing.id !== synthesisIngredient.id
-                  )
+                    (ing) => ing.id !== synthesisIngredient.id,
+                  ),
                 );
               };
 

@@ -55,12 +55,12 @@ export class SynthesisRepository {
               (item_id, craft, crystal, yield, level)
               VALUES (?, ?, ?, ?, ?)
           `,
-      [item_id, craft, crystal, yieldd, level]
+      [item_id, craft, crystal, yieldd, level],
     );
 
     const results = await MySQLService.query(
       `SELECT * FROM ${SynthesisRepository.tableName} WHERE id = ?`,
-      [insertId]
+      [insertId],
     );
 
     if (!results.length) {
@@ -75,7 +75,7 @@ export class SynthesisRepository {
       `
         DELETE FROM ${SynthesisRepository.tableName} WHERE id = ?
       `,
-      [id]
+      [id],
     );
   }
 }

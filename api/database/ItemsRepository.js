@@ -3,7 +3,7 @@ import { validateItem } from "../validators";
 import { MySQLService } from "./MySQLService";
 
 const crystalItemNames = Object.values(CRYSTAL).map(
-  (crystal) => `'${crystal} Crystal'`
+  (crystal) => `'${crystal} Crystal'`,
 );
 
 export class ItemsRepository {
@@ -55,12 +55,12 @@ export class ItemsRepository {
           (name, price_type, price, stack_size, updated_on, category)
           VALUES (?, ?, ?, ?, NOW(), ?)
       `,
-      [name, price_type, price, stack_size, category]
+      [name, price_type, price, stack_size, category],
     );
 
     const results = await MySQLService.query(
       `SELECT * FROM ${ItemsRepository.tableName} WHERE id = ?`,
-      [insertId]
+      [insertId],
     );
 
     if (!results.length) {
@@ -85,12 +85,12 @@ export class ItemsRepository {
           SET name = ?, price_type = ?, price = ?, stack_size = ?, updated_on = NOW(), category = ?
           WHERE id = ?
       `,
-      [name, price_type, price, stack_size, category, id]
+      [name, price_type, price, stack_size, category, id],
     );
 
     const results = await MySQLService.query(
       `SELECT * FROM ${ItemsRepository.tableName} WHERE id = ?`,
-      [id]
+      [id],
     );
 
     if (!results.length) {
@@ -105,7 +105,7 @@ export class ItemsRepository {
       `
         DELETE FROM ${ItemsRepository.tableName} WHERE id = ?
       `,
-      [id]
+      [id],
     );
   }
 }

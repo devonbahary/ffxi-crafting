@@ -43,7 +43,7 @@ export const createItem = async (item) => {
 
 export const createSynthesis = async (
   synthesis,
-  synthesisIngredients
+  synthesisIngredients,
 ): Promise<SynthesisRecipe> => {
   try {
     const {
