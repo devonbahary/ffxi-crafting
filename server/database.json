@@ -5,7 +5,7 @@
       "ENV": "MYSQL_USER"
     },
     "password": {
-      "ENV": "MYSQL_PASS"
+      "ENV": "MYSQL_ROOT_PASSWORD"
     },
     "database": {
       "ENV": "MYSQL_DATABASE"
