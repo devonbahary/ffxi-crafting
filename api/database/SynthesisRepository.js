@@ -1,13 +1,13 @@
-import { MySQLService } from "./MySQLService";
-import { ItemsRepository } from "./ItemsRepository";
-import { validateSynthesis } from "../validators";
-import { SynthesisIngredientsRepository } from "./SynthesisIngredientsRepository";
+import { MySQLService } from './MySQLService'
+import { ItemsRepository } from './ItemsRepository'
+import { validateSynthesis } from '../validators'
+import { SynthesisIngredientsRepository } from './SynthesisIngredientsRepository'
 
 export class SynthesisRepository {
-  static tableName = "synthesis";
+    static tableName = 'synthesis'
 
-  static async find({ craft, id }) {
-    let sql = `
+    static async find({ craft, id }) {
+        let sql = `
           SELECT synthesis.id as synthesis_id,
           synthesis.craft as synthesis_craft,
           synthesis.level as synthesis_level,
@@ -29,53 +29,53 @@ export class SynthesisRepository {
           JOIN ${ItemsRepository.tableName} as synthesis_item ON ${SynthesisRepository.tableName}.item_id = synthesis_item.id
           LEFT JOIN ${SynthesisIngredientsRepository.tableName} as synthesis_ingredient ON synthesis_ingredient.synthesis_id = synthesis.id
           LEFT JOIN ${ItemsRepository.tableName} as ingredient_item ON synthesis_ingredient.item_id = ingredient_item.id
-        `;
-    const values = [];
+        `
+        const values = []
 
-    if (craft) {
-      sql += ` WHERE craft = ?`;
-      values.push(craft);
-    } else if (id) {
-      sql += ` WHERE synthesis_id = ?`;
-      values.push(id);
+        if (craft) {
+            sql += ` WHERE craft = ?`
+            values.push(craft)
+        } else if (id) {
+            sql += ` WHERE synthesis_id = ?`
+            values.push(id)
+        }
+
+        const results = await MySQLService.query(sql, values)
+        return results
     }
 
-    const results = await MySQLService.query(sql, values);
-    return results;
-  }
+    static async create(synthesis) {
+        validateSynthesis(synthesis)
 
-  static async create(synthesis) {
-    validateSynthesis(synthesis);
+        const { item_id, craft, crystal, level, yield: yieldd } = synthesis
 
-    const { item_id, craft, crystal, level, yield: yieldd } = synthesis;
-
-    const { insertId } = await MySQLService.query(
-      `
+        const { insertId } = await MySQLService.query(
+            `
               INSERT INTO ${SynthesisRepository.tableName} 
               (item_id, craft, crystal, yield, level)
               VALUES (?, ?, ?, ?, ?)
           `,
-      [item_id, craft, crystal, yieldd, level],
-    );
+            [item_id, craft, crystal, yieldd, level]
+        )
 
-    const results = await MySQLService.query(
-      `SELECT * FROM ${SynthesisRepository.tableName} WHERE id = ?`,
-      [insertId],
-    );
+        const results = await MySQLService.query(
+            `SELECT * FROM ${SynthesisRepository.tableName} WHERE id = ?`,
+            [insertId]
+        )
 
-    if (!results.length) {
-      throw new Error(`failed to create synthesis`);
+        if (!results.length) {
+            throw new Error(`failed to create synthesis`)
+        }
+
+        return results[0]
     }
 
-    return results[0];
-  }
-
-  static delete(id) {
-    return MySQLService.query(
-      `
+    static delete(id) {
+        return MySQLService.query(
+            `
         DELETE FROM ${SynthesisRepository.tableName} WHERE id = ?
       `,
-      [id],
-    );
-  }
+            [id]
+        )
+    }
 }

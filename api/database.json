@@ -1,16 +1,16 @@
 {
-  "dev": {
-    "host": "localhost",
-    "user": {
-      "ENV": "MYSQL_USER"
-    },
-    "password": {
-      "ENV": "MYSQL_ROOT_PASSWORD"
-    },
-    "database": {
-      "ENV": "MYSQL_DATABASE"
-    },
-    "driver": "mysql",
-    "multipleStatements": true
-  }
+    "dev": {
+        "host": "localhost",
+        "user": {
+            "ENV": "MYSQL_USER"
+        },
+        "password": {
+            "ENV": "MYSQL_ROOT_PASSWORD"
+        },
+        "database": {
+            "ENV": "MYSQL_DATABASE"
+        },
+        "driver": "mysql",
+        "multipleStatements": true
+    }
 }
