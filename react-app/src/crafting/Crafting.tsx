@@ -1,167 +1,167 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react'
-import AddIcon from '@mui/icons-material/Add'
-import Button from '@mui/material/Button'
-import { Craft, Crystal } from '../constants'
-import DeleteIcon from '@mui/icons-material/DeleteOutlined'
-import { deleteSynthesis, getCrystals, getSynthesis } from '../api'
-import { AddSynthesisFormDialog } from './AddSynthesisFormDialog'
-import { SelectButtonGroup } from './SelectButtonGroup'
-import Alert, { AlertProps } from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar'
-import { Spacer } from '../Spacer'
-import { Box } from '@mui/material'
-import { Item, SynthesisIngredient, SynthesisRecipe } from '../types'
-import { DataGrid, GridActionsCellItem, GridColumns } from '@mui/x-data-grid'
-import { getUnitPrice } from '../utilities'
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import Button from '@mui/material/Button';
+import { Craft, Crystal } from '../constants';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import { deleteSynthesis, getCrystals, getSynthesis } from '../api';
+import { AddSynthesisFormDialog } from './AddSynthesisFormDialog';
+import { SelectButtonGroup } from './SelectButtonGroup';
+import Alert, { AlertProps } from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import { Spacer } from '../Spacer';
+import { Box } from '@mui/material';
+import { Item, SynthesisIngredient, SynthesisRecipe } from '../types';
+import { DataGrid, GridActionsCellItem, GridColumns } from '@mui/x-data-grid';
+import { getUnitPrice } from '../utilities';
 import {
     POSITIVE_NEGATIVE_CLASS_NAMES,
     POSITIVE_NEGATIVE_STYLING,
-} from '../styles'
-import { AppContainer } from '../AppContainer'
+} from '../styles';
+import { AppContainer } from '../AppContainer';
 
 const formatIngredient = (ingredient: SynthesisIngredient): string => {
     if (ingredient.quantity > 1)
-        return `${ingredient.item.name} (x${ingredient.quantity})`
-    return ingredient.item.name
-}
+        return `${ingredient.item.name} (x${ingredient.quantity})`;
+    return ingredient.item.name;
+};
 
 const formatIngredients = (synthesisRecipe: SynthesisRecipe) => {
-    return synthesisRecipe.ingredients.map(formatIngredient).join(', ')
-}
+    return synthesisRecipe.ingredients.map(formatIngredient).join(', ');
+};
 
 const getCost = (
     synthesisRecipe: SynthesisRecipe,
     getCrystalCost: (crystal: Crystal) => number
 ) => {
-    const crystalCost = getCrystalCost(synthesisRecipe.synthesis.crystal)
+    const crystalCost = getCrystalCost(synthesisRecipe.synthesis.crystal);
     return synthesisRecipe.ingredients.reduce((acc, ing) => {
-        return acc + getUnitPrice(ing.item) * ing.quantity
-    }, crystalCost)
-}
+        return acc + getUnitPrice(ing.item) * ing.quantity;
+    }, crystalCost);
+};
 
 const getPrice = (synthesisRecipe: SynthesisRecipe) => {
     return (
         getUnitPrice(synthesisRecipe.synthesis.item) *
         synthesisRecipe.synthesis.yield
-    )
-}
+    );
+};
 
 const getNet = (
     synthesisRecipe: SynthesisRecipe,
     getCrystalCost: (crystal: Crystal) => number
 ) => {
-    const price = getPrice(synthesisRecipe)
-    const cost = getCost(synthesisRecipe, getCrystalCost)
-    return price - cost
-}
+    const price = getPrice(synthesisRecipe);
+    const cost = getCost(synthesisRecipe, getCrystalCost);
+    return price - cost;
+};
 
 export const Crafting = () => {
-    const [selectedCraft, setSelectedCraft] = useState<Craft | null>(null)
-    const [isAddingItem, setIsAddingItem] = useState(false)
+    const [selectedCraft, setSelectedCraft] = useState<Craft | null>(null);
+    const [isAddingItem, setIsAddingItem] = useState(false);
     const [crystalItemMap, setCrystalItemMap] = useState<
         Partial<Record<Crystal, Item>>
-    >({})
+    >({});
     const [synthesisRecipes, setSynthesisRecipes] = useState<SynthesisRecipe[]>(
         []
-    )
-    const [isDeletingItem, setIsDeletingItem] = useState(false)
+    );
+    const [isDeletingItem, setIsDeletingItem] = useState(false);
 
     const [snackbar, setSnackbar] = useState<Pick<
         AlertProps,
         'children' | 'severity'
-    > | null>(null)
+    > | null>(null);
 
     const onCraftChange = (craft: Craft) => {
-        setSelectedCraft(selectedCraft === craft ? null : craft)
-    }
+        setSelectedCraft(selectedCraft === craft ? null : craft);
+    };
 
     const loadCrystals = async () => {
         try {
-            const crystals = await getCrystals()
+            const crystals = await getCrystals();
 
             const crystalMap = Object.values(Crystal).reduce((acc, crystal) => {
                 const crystalItem = crystals.find(
                     (item) => item.name.split(' ')[0] === crystal
-                )
+                );
                 if (!crystalItem) {
                     setSnackbar({
                         children: `no item found for ${crystal} Crystal`,
                         severity: 'error',
-                    })
+                    });
                 } else {
-                    acc[crystal] = crystalItem
+                    acc[crystal] = crystalItem;
                 }
-                return acc
-            }, {})
+                return acc;
+            }, {});
 
-            setCrystalItemMap(crystalMap)
+            setCrystalItemMap(crystalMap);
         } catch (error) {
-            setSnackbar({ children: error.message, severity: 'error' })
+            setSnackbar({ children: error.message, severity: 'error' });
         }
-    }
+    };
 
     const loadSynthesis = async () => {
         try {
-            const synthesisRecipes = await getSynthesis(selectedCraft)
-            setSynthesisRecipes(synthesisRecipes)
+            const synthesisRecipes = await getSynthesis(selectedCraft);
+            setSynthesisRecipes(synthesisRecipes);
         } catch (error) {
-            setSnackbar({ children: error.message, severity: 'error' })
+            setSnackbar({ children: error.message, severity: 'error' });
         }
-    }
+    };
 
     useEffect(() => {
-        loadSynthesis()
-    }, [selectedCraft])
+        loadSynthesis();
+    }, [selectedCraft]);
 
     useEffect(() => {
-        loadCrystals()
-    }, [])
+        loadCrystals();
+    }, []);
 
     const onAddItem = () => {
-        setIsAddingItem(true)
-    }
+        setIsAddingItem(true);
+    };
 
     const onSynthesisCreated = (synthesisRecipe) => {
         if (
             synthesisRecipe.synthesis.craft === selectedCraft ||
             !selectedCraft
         ) {
-            setSynthesisRecipes([...synthesisRecipes, synthesisRecipe])
+            setSynthesisRecipes([...synthesisRecipes, synthesisRecipe]);
         }
-        setSnackbar({ children: 'Created synthesis', severity: 'success' })
-    }
+        setSnackbar({ children: 'Created synthesis', severity: 'success' });
+    };
 
-    const handleCloseSnackbar = () => setSnackbar(null)
+    const handleCloseSnackbar = () => setSnackbar(null);
 
     const handleDeleteClick = (id) => async () => {
-        if (isDeletingItem) return
+        if (isDeletingItem) return;
 
-        setIsDeletingItem(true)
+        setIsDeletingItem(true);
 
         try {
-            await deleteSynthesis(id)
+            await deleteSynthesis(id);
             setSynthesisRecipes(
                 synthesisRecipes.filter((recipe) => recipe.synthesis.id !== id)
-            )
-            setSnackbar({ children: 'Deleted synthesis', severity: 'success' })
+            );
+            setSnackbar({ children: 'Deleted synthesis', severity: 'success' });
         } catch (err) {
-            setSnackbar({ children: err.message, severity: 'error' })
+            setSnackbar({ children: err.message, severity: 'error' });
         }
 
-        setIsDeletingItem(false)
-    }
+        setIsDeletingItem(false);
+    };
 
     const getCrystalCost = (crystal: Crystal): number => {
-        const crystalItem = crystalItemMap[crystal]
-        return crystalItem ? getUnitPrice(crystalItem) : 0
-    }
+        const crystalItem = crystalItemMap[crystal];
+        return crystalItem ? getUnitPrice(crystalItem) : 0;
+    };
 
     const getNetCostClassName = (params) => {
-        const net = getNet(params.row, getCrystalCost)
-        if (net > 0) return POSITIVE_NEGATIVE_CLASS_NAMES.POS
-        return POSITIVE_NEGATIVE_CLASS_NAMES.NEG
-    }
+        const net = getNet(params.row, getCrystalCost);
+        if (net > 0) return POSITIVE_NEGATIVE_CLASS_NAMES.POS;
+        return POSITIVE_NEGATIVE_CLASS_NAMES.NEG;
+    };
 
     const columns: GridColumns = [
         {
@@ -234,10 +234,10 @@ export const Crafting = () => {
                         onClick={handleDeleteClick(id)}
                         color="inherit"
                     />,
-                ]
+                ];
             },
         },
-    ]
+    ];
 
     return (
         <AppContainer>
@@ -294,5 +294,5 @@ export const Crafting = () => {
                 )}
             </Box>
         </AppContainer>
-    )
-}
+    );
+};

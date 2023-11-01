@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import debounce from 'lodash.debounce'
-import { formatDistance, isAfter, subHours } from 'date-fns'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/DeleteOutlined'
-import SaveIcon from '@mui/icons-material/Save'
-import CancelIcon from '@mui/icons-material/Close'
-import ClearIcon from '@mui/icons-material/Clear'
+import React, { useEffect, useMemo, useState } from 'react';
+import debounce from 'lodash.debounce';
+import { formatDistance, isAfter, subHours } from 'date-fns';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Close';
+import ClearIcon from '@mui/icons-material/Clear';
 import {
     GridRowsProp,
     GridRowModesModel,
@@ -22,46 +22,46 @@ import {
     GridEventListener,
     GridRowId,
     GridRowModel,
-} from '@mui/x-data-grid'
-import { getItems, createItem, updateItem, deleteItem } from './api'
-import { Category, PriceType, StackSize } from './constants'
-import Alert, { AlertProps } from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar'
-import { getUnitPrice } from './utilities'
+} from '@mui/x-data-grid';
+import { getItems, createItem, updateItem, deleteItem } from './api';
+import { Category, PriceType, StackSize } from './constants';
+import Alert, { AlertProps } from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import { getUnitPrice } from './utilities';
 import {
     POSITIVE_NEGATIVE_CLASS_NAMES,
     POSITIVE_NEGATIVE_STYLING,
-} from './styles'
-import TextField from '@mui/material/TextField'
-import { Autocomplete, IconButton, InputAdornment } from '@mui/material'
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
-import { AppContainer } from './AppContainer'
+} from './styles';
+import TextField from '@mui/material/TextField';
+import { Autocomplete, IconButton, InputAdornment } from '@mui/material';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import { AppContainer } from './AppContainer';
 
 interface EditToolbarProps {
-    setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
+    setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
     setRowModesModel: (
         newModel: (oldModel: GridRowModesModel) => GridRowModesModel
-    ) => void
-    onSearchTextChange: (search: string) => void
-    onCategoryChange: (category: Category | null) => void
+    ) => void;
+    onSearchTextChange: (search: string) => void;
+    onCategoryChange: (category: Category | null) => void;
 }
 
 function EditToolbar(props: EditToolbarProps) {
     const { setRows, setRowModesModel, onSearchTextChange, onCategoryChange } =
-        props
+        props;
 
-    const [searchText, setSearchText] = useState('')
+    const [searchText, setSearchText] = useState('');
 
     const onSearchChange = (e) => {
-        setSearchText(e.target.value)
-    }
+        setSearchText(e.target.value);
+    };
 
     const onClearSearchText = () => {
-        setSearchText('')
-    }
+        setSearchText('');
+    };
 
     const onAddItem = () => {
-        const id = 'randomId'
+        const id = 'randomId';
         setRows((oldRows) => [
             {
                 id,
@@ -72,21 +72,21 @@ function EditToolbar(props: EditToolbarProps) {
                 isNew: true,
             },
             ...oldRows,
-        ])
+        ]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-        }))
-    }
+        }));
+    };
 
     const debouncedOnSearchTextChange = useMemo(
         () => debounce(onSearchTextChange, 300),
         []
-    )
+    );
 
     useEffect(() => {
-        debouncedOnSearchTextChange(searchText)
-    }, [searchText])
+        debouncedOnSearchTextChange(searchText);
+    }, [searchText]);
 
     return (
         <GridToolbarContainer>
@@ -150,122 +150,122 @@ function EditToolbar(props: EditToolbarProps) {
                 </Grid2>
             </Grid2>
         </GridToolbarContainer>
-    )
+    );
 }
 
 const getTimeAgo = (date: string) => {
-    if (!date) return null
-    return formatDistance(new Date(date), new Date(), { addSuffix: true })
-}
+    if (!date) return null;
+    return formatDistance(new Date(date), new Date(), { addSuffix: true });
+};
 
 export const AuctionHouse = () => {
-    const [rows, setRows] = useState([])
-    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
-    const [isDeletingItem, setIsDeletingItem] = useState(false)
-    const [name, setName] = useState('')
-    const [category, setCategory] = useState<Category | null>(null)
+    const [rows, setRows] = useState([]);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [isDeletingItem, setIsDeletingItem] = useState(false);
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState<Category | null>(null);
 
     const [snackbar, setSnackbar] = useState<Pick<
         AlertProps,
         'children' | 'severity'
-    > | null>(null)
+    > | null>(null);
 
-    const handleCloseSnackbar = () => setSnackbar(null)
+    const handleCloseSnackbar = () => setSnackbar(null);
 
     const loadRows = async () => {
         try {
-            const items = await getItems({ name, category })
-            setRows(items)
+            const items = await getItems({ name, category });
+            setRows(items);
         } catch (error) {
-            setSnackbar({ children: error.message, severity: 'error' })
+            setSnackbar({ children: error.message, severity: 'error' });
         }
-    }
+    };
 
     const handleRowEditStart = (
         params: GridRowParams,
         event: MuiEvent<React.SyntheticEvent>
     ) => {
-        event.defaultMuiPrevented = true
-    }
+        event.defaultMuiPrevented = true;
+    };
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (
         params,
         event
     ) => {
-        event.defaultMuiPrevented = true
-    }
+        event.defaultMuiPrevented = true;
+    };
 
     const handleEditClick = (id: GridRowId) => () => {
         setRowModesModel({
             ...rowModesModel,
             [id]: { mode: GridRowModes.Edit },
-        })
-    }
+        });
+    };
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({
             ...rowModesModel,
             [id]: { mode: GridRowModes.View },
-        })
-    }
+        });
+    };
 
     const handleDeleteClick = (id: GridRowId) => async () => {
-        if (isDeletingItem) return
+        if (isDeletingItem) return;
 
-        setIsDeletingItem(true)
+        setIsDeletingItem(true);
 
         try {
-            await deleteItem(id)
-            setRows(rows.filter((row) => row.id !== id))
-            setSnackbar({ children: 'Deleted item', severity: 'success' })
+            await deleteItem(id);
+            setRows(rows.filter((row) => row.id !== id));
+            setSnackbar({ children: 'Deleted item', severity: 'success' });
         } catch (err) {
-            setSnackbar({ children: err.message, severity: 'error' })
+            setSnackbar({ children: err.message, severity: 'error' });
         }
 
-        setIsDeletingItem(false)
-    }
+        setIsDeletingItem(false);
+    };
 
     const handleCancelClick = (id: GridRowId) => () => {
         setRowModesModel({
             ...rowModesModel,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        })
+        });
 
-        const editedRow = rows.find((row) => row.id === id)
+        const editedRow = rows.find((row) => row.id === id);
         if (editedRow!.isNew) {
-            setRows(rows.filter((row) => row.id !== id))
+            setRows(rows.filter((row) => row.id !== id));
         }
-    }
+    };
 
     const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
         return new Promise(async (res, rej) => {
             try {
-                const { id, isNew, ...item } = newRow
+                const { id, isNew, ...item } = newRow;
                 if (isNew) {
-                    const createdItem = await createItem(item)
+                    const createdItem = await createItem(item);
                     setSnackbar({
                         children: 'Created item',
                         severity: 'success',
-                    })
-                    setRows([...rows.filter((r) => r.id !== id), createdItem])
-                    res(createdItem)
+                    });
+                    setRows([...rows.filter((r) => r.id !== id), createdItem]);
+                    res(createdItem);
                 } else {
-                    const updatedItem = await updateItem(newRow)
+                    const updatedItem = await updateItem(newRow);
                     setSnackbar({
                         children: 'Updated item',
                         severity: 'success',
-                    })
-                    res(updatedItem)
+                    });
+                    res(updatedItem);
                 }
             } catch (err) {
-                rej(err)
+                rej(err);
             }
-        })
-    }
+        });
+    };
 
     const onProcessRowUpdateError = (error) => {
-        setSnackbar({ children: error.message, severity: 'error' })
-    }
+        setSnackbar({ children: error.message, severity: 'error' });
+    };
 
     const columns: GridColumns = [
         {
@@ -308,10 +308,10 @@ export const AuctionHouse = () => {
             valueGetter: (params) => params.row.updated_on,
             valueFormatter: (params) => getTimeAgo(params.value),
             cellClassName: (params) => {
-                const sixHoursAgo = subHours(new Date(), 6)
+                const sixHoursAgo = subHours(new Date(), 6);
                 return isAfter(new Date(params.row.updated_on), sixHoursAgo)
                     ? POSITIVE_NEGATIVE_CLASS_NAMES.POS
-                    : POSITIVE_NEGATIVE_CLASS_NAMES.NEG
+                    : POSITIVE_NEGATIVE_CLASS_NAMES.NEG;
             },
         },
         {
@@ -322,7 +322,7 @@ export const AuctionHouse = () => {
             cellClassName: 'actions',
             getActions: ({ id }) => {
                 const isInEditMode =
-                    rowModesModel[id]?.mode === GridRowModes.Edit
+                    rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
                     return [
@@ -338,7 +338,7 @@ export const AuctionHouse = () => {
                             onClick={handleCancelClick(id)}
                             color="inherit"
                         />,
-                    ]
+                    ];
                 }
 
                 return [
@@ -355,14 +355,14 @@ export const AuctionHouse = () => {
                         onClick={handleDeleteClick(id)}
                         color="inherit"
                     />,
-                ]
+                ];
             },
         },
-    ]
+    ];
 
     useEffect(() => {
-        loadRows()
-    }, [name, category])
+        loadRows();
+    }, [name, category]);
 
     return (
         <AppContainer>
@@ -420,5 +420,5 @@ export const AuctionHouse = () => {
                 )}
             </Box>
         </AppContainer>
-    )
-}
+    );
+};

@@ -1,10 +1,10 @@
-import React, { FC } from 'react'
-import Grid2 from '@mui/material/Unstable_Grid2'
-import { Navigation } from './Navigation'
+import React, { FC } from 'react';
+import Grid2 from '@mui/material/Unstable_Grid2';
+import { Navigation } from './Navigation';
 
 type AppContainerProps = {
-    children: React.ReactNode
-}
+    children: React.ReactNode;
+};
 
 export const AppContainer: FC<AppContainerProps> = ({ children }) => {
     return (
@@ -14,5 +14,5 @@ export const AppContainer: FC<AppContainerProps> = ({ children }) => {
             </Grid2>
             <Grid2 xs={10}>{children}</Grid2>
         </Grid2>
-    )
-}
+    );
+};

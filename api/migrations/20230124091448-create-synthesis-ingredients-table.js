@@ -1,18 +1,18 @@
-'use strict'
+'use strict';
 
-var dbm
-var type
-var seed
+var dbm;
+var type;
+var seed;
 
 /**
  * We receive the dbmigrate dependency from dbmigrate initially.
  * This enables us to not have to rely on NODE_PATH.
  */
 exports.setup = function (options, seedLink) {
-    dbm = options.dbmigrate
-    type = dbm.dataType
-    seed = seedLink
-}
+    dbm = options.dbmigrate;
+    type = dbm.dataType;
+    seed = seedLink;
+};
 
 exports.up = function (db) {
     return db.createTable('synthesis_ingredients', {
@@ -44,13 +44,13 @@ exports.up = function (db) {
             },
             quantity: { type: 'int', defaultValue: 1, notNull: true },
         },
-    })
-}
+    });
+};
 
 exports.down = function (db) {
-    return db.dropTable('synthesis_ingredients')
-}
+    return db.dropTable('synthesis_ingredients');
+};
 
 exports._meta = {
     version: 1,
-}
+};

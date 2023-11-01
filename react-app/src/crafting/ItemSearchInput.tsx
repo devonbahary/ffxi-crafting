@@ -1,21 +1,21 @@
-import debounce from 'lodash.debounce'
-import React, { FC, useMemo, useState } from 'react'
-import Autocomplete from '@mui/material/Autocomplete'
-import { UseAutocompleteProps } from '@mui/material/useAutocomplete'
-import { getItems } from '../api'
-import { Item } from '../types'
-import TextField from '@mui/material/TextField'
+import debounce from 'lodash.debounce';
+import React, { FC, useMemo, useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import { UseAutocompleteProps } from '@mui/material/useAutocomplete';
+import { getItems } from '../api';
+import { Item } from '../types';
+import TextField from '@mui/material/TextField';
 
 type ItemSearchInputProps = {
-    onChange: (item: Item | null) => void
-    label: string
-}
+    onChange: (item: Item | null) => void;
+    label: string;
+};
 
 export const ItemSearchInput: FC<ItemSearchInputProps> = ({
     label,
     onChange,
 }) => {
-    const [options, setOptions] = useState([])
+    const [options, setOptions] = useState([]);
 
     const eventHandler: UseAutocompleteProps<
         any,
@@ -24,11 +24,14 @@ export const ItemSearchInput: FC<ItemSearchInputProps> = ({
         false
     >['onInputChange'] = async (event, value, reason) => {
         // the event uses `prop` and `value`
-        const items = await getItems({ name: value })
-        setOptions(items)
-    }
+        const items = await getItems({ name: value });
+        setOptions(items);
+    };
 
-    const debouncedEventHandler = useMemo(() => debounce(eventHandler, 300), [])
+    const debouncedEventHandler = useMemo(
+        () => debounce(eventHandler, 300),
+        []
+    );
 
     return (
         <Autocomplete
@@ -48,5 +51,5 @@ export const ItemSearchInput: FC<ItemSearchInputProps> = ({
                 />
             )}
         />
-    )
-}
+    );
+};

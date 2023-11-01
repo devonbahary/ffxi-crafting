@@ -7,7 +7,7 @@ export const CRAFT = {
     LEATHERCRAFT: 'Leathercraft',
     SMITHING: 'Smithing',
     WOODWORKING: 'Woodworking',
-}
+};
 
 export const CRYSTAL = {
     FIRE: 'Fire',
@@ -18,18 +18,18 @@ export const CRYSTAL = {
     WATER: 'Water',
     LIGHT: 'Light',
     DARK: 'Dark',
-}
+};
 
 export const PRICE_TYPE = {
     STACK: 'stack',
     SINGLE: 'single',
-}
+};
 
 export const STACK_SIZE = {
     ONE: 1,
     TWELVE: 12,
     NINETYNINE: 99,
-}
+};
 
 export const CATEGORY = {
     HandToHand: 'Hand-to-Hand',
@@ -95,4 +95,4 @@ export const CATEGORY = {
     NinjaTools: 'Ninja Tools',
     CursedItems: 'Cursed Items',
     Automaton: 'Automaton',
-}
+};

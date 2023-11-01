@@ -1,124 +1,125 @@
-import AddIcon from '@mui/icons-material/Add'
-import Button from '@mui/material/Button'
-import Dialog, { DialogProps } from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { Craft, Crystal } from '../constants'
-import { SelectButtonGroup } from './SelectButtonGroup'
-import { createSynthesis } from '../api'
-import { Item, SynthesisRecipe } from '../types'
-import Alert, { AlertProps } from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar'
-import { Box } from '@mui/system'
-import { ItemSearchInput } from './ItemSearchInput'
-import { AddSynthesisIngredientForm } from './AddSynthesisIngredientForm'
-import { Spacer } from '../Spacer'
-import { AddSynthesisIngredient } from './crafting.types'
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
-import TextField from '@mui/material/TextField'
+import AddIcon from '@mui/icons-material/Add';
+import Button from '@mui/material/Button';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { Craft, Crystal } from '../constants';
+import { SelectButtonGroup } from './SelectButtonGroup';
+import { createSynthesis } from '../api';
+import { Item, SynthesisRecipe } from '../types';
+import Alert, { AlertProps } from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import { Box } from '@mui/system';
+import { ItemSearchInput } from './ItemSearchInput';
+import { AddSynthesisIngredientForm } from './AddSynthesisIngredientForm';
+import { Spacer } from '../Spacer';
+import { AddSynthesisIngredient } from './crafting.types';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import TextField from '@mui/material/TextField';
 
 type AddSynthesisFormDialogProps = Pick<DialogProps, 'open'> & {
-    handleClose: () => void
-    onSynthesisCreated: (synthesisRecipe: SynthesisRecipe) => void
-}
+    handleClose: () => void;
+    onSynthesisCreated: (synthesisRecipe: SynthesisRecipe) => void;
+};
 
-let synthesisIngredientIndex = 0
+let synthesisIngredientIndex = 0;
 
 export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
     open,
     handleClose,
     onSynthesisCreated,
 }) => {
-    const [selectedCraft, setSelectedCraft] = useState<Craft>(Craft.Alchemy)
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null)
+    const [selectedCraft, setSelectedCraft] = useState<Craft>(Craft.Alchemy);
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [selectedCrystal, setSelectedCrystal] = useState<Crystal>(
         Crystal.Fire
-    )
-    const [level, setLevel] = useState(1)
-    const [yieldd, setYield] = useState(1)
-    const [isCreateInProgress, setIsCreateInProgress] = useState<boolean>(false)
+    );
+    const [level, setLevel] = useState(1);
+    const [yieldd, setYield] = useState(1);
+    const [isCreateInProgress, setIsCreateInProgress] =
+        useState<boolean>(false);
     const [synthesisIngredients, setSynthesisIngredients] = useState<
         AddSynthesisIngredient[]
-    >([])
+    >([]);
 
     const [snackbar, setSnackbar] = useState<Pick<
         AlertProps,
         'children' | 'severity'
-    > | null>(null)
+    > | null>(null);
 
     const selectedMainSynthesisInformation =
-        selectedCraft && selectedItem && selectedCrystal && yieldd && level
+        selectedCraft && selectedItem && selectedCrystal && yieldd && level;
     const areIngredientsFulfilled = synthesisIngredients.every(
         (ingredient) => ingredient.item_id && ingredient.quantity
-    )
+    );
     const canAddSynthesis =
         selectedMainSynthesisInformation &&
         synthesisIngredients.length > 0 &&
         areIngredientsFulfilled &&
-        !isCreateInProgress
+        !isCreateInProgress;
 
     const onClickAddSynthesisIngredient = () => {
         setSynthesisIngredients([
             ...synthesisIngredients,
             { id: synthesisIngredientIndex++ },
-        ])
-    }
+        ]);
+    };
 
     const onAddSynthesis = async () => {
-        setIsCreateInProgress(true)
+        setIsCreateInProgress(true);
 
         try {
-            const { id } = selectedItem
+            const { id } = selectedItem;
             const synthesis = {
                 item_id: id,
                 level: level,
                 craft: selectedCraft,
                 crystal: selectedCrystal,
                 yield: yieldd,
-            }
+            };
             const createdSynthesis = await createSynthesis(
                 synthesis,
                 synthesisIngredients
-            )
-            handleClose()
-            onSynthesisCreated(createdSynthesis)
+            );
+            handleClose();
+            onSynthesisCreated(createdSynthesis);
         } catch (err) {
-            setSnackbar({ children: err.message, severity: 'error' })
+            setSnackbar({ children: err.message, severity: 'error' });
         }
 
-        setIsCreateInProgress(false)
-    }
+        setIsCreateInProgress(false);
+    };
 
-    const handleCloseSnackbar = () => setSnackbar(null)
+    const handleCloseSnackbar = () => setSnackbar(null);
 
     useEffect(() => {
         if (!open) {
-            setSelectedCraft(Craft.Alchemy)
-            setSelectedItem(null)
-            setSelectedCrystal(Crystal.Fire)
-            setSynthesisIngredients([])
-            setYield(1)
-            setLevel(1)
+            setSelectedCraft(Craft.Alchemy);
+            setSelectedItem(null);
+            setSelectedCrystal(Crystal.Fire);
+            setSynthesisIngredients([]);
+            setYield(1);
+            setLevel(1);
         }
-    }, [open])
+    }, [open]);
 
     const onYieldChange = (event) => {
-        const yieldd = parseInt(event.target.value)
+        const yieldd = parseInt(event.target.value);
 
         if (yieldd) {
-            setYield(yieldd)
+            setYield(yieldd);
         }
-    }
+    };
 
     const onLevelChange = (event) => {
-        const level = parseInt(event.target.value)
+        const level = parseInt(event.target.value);
 
         if (level) {
-            setLevel(level)
+            setLevel(level);
         }
-    }
+    };
 
     return (
         <Dialog open={open} onClose={() => handleClose()} maxWidth="xl">
@@ -181,12 +182,12 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
                                 setSynthesisIngredients(
                                     synthesisIngredients.map((ing) => {
                                         if (ing.id === synthesisIngredient.id) {
-                                            return { ...ing, ...ingredient }
+                                            return { ...ing, ...ingredient };
                                         }
-                                        return ing
+                                        return ing;
                                     })
-                                )
-                            }
+                                );
+                            };
 
                             const onDelete = () => {
                                 setSynthesisIngredients(
@@ -194,8 +195,8 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
                                         (ing) =>
                                             ing.id !== synthesisIngredient.id
                                     )
-                                )
-                            }
+                                );
+                            };
 
                             return (
                                 <AddSynthesisIngredientForm
@@ -203,7 +204,7 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
                                     onChange={onChange}
                                     onDelete={onDelete}
                                 />
-                            )
+                            );
                         })}
                         <Spacer />
                         <Button
@@ -237,5 +238,5 @@ export const AddSynthesisFormDialog: FC<AddSynthesisFormDialogProps> = ({
                 </Snackbar>
             )}
         </Dialog>
-    )
-}
+    );
+};
