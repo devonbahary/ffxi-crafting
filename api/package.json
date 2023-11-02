@@ -1,21 +1,33 @@
 {
-    "name": "ffxi-crafting-server",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "db-migrate": "^0.11.13",
-        "db-migrate-mysql": "^2.2.0",
-        "dotenv": "^16.0.3",
-        "esm": "^3.2.25",
-        "express": "^4.18.2",
-        "mysql2": "^3.0.0"
-    },
+    "name": "ffxi-crafting-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
     "scripts": {
-        "migrate-up": "db-migrate up",
-        "start": "node -r esm server.js",
-        "watch": "nodemon -r esm server.js"
+        "start": "nodemon src/server.ts",
+        "build": "tsc",
+        "serve": "node dist/server.js",
+        "migrate-up": "sequelize-cli db:migrate",
+        "migrate-down": "sequelize-cli db:migrate:undo"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/express-validator": "^3.0.0",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "express-validator": "^7.0.1",
+        "mysql2": "^3.6.2",
+        "sequelize": "^6.33.0",
+        "sequelize-cli": "^6.6.1"
     },
     "devDependencies": {
-        "nodemon": "^2.0.20"
+        "@types/dotenv": "^8.2.0",
+        "@types/express": "^4.17.20",
+        "@types/node": "^20.8.9",
+        "@types/sequelize": "^4.28.17",
+        "nodemon": "^3.0.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
     }
 }

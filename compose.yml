@@ -3,11 +3,11 @@ version: '3.7'
 services:
     api:
         build:
-            context: ./ts-api
+            context: ./api
             dockerfile: Dockerfile
             target: base
         volumes:
-            - ./ts-api/src:/api/src
+            - ./api/src:/api/src
         container_name: ffxi_crafting_api
         expose:
             - '$PORT'

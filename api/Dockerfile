@@ -1,13 +1,15 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
-WORKDIR /app
+WORKDIR /api
 
 COPY package.json .
 
-RUN npm install
+RUN npm i
 
 COPY . .
 
-EXPOSE 3000
+FROM base as prod
 
-CMD ["npm", "start"]
+ENV NODE_PATH=./dist
+
+RUN npm run build

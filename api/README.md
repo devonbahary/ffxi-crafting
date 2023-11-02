@@ -1,11 +1,15 @@
 # ffxi-crafting-api
 
-## MySQL
+## Docker
 
-Run `docker compose up -d` from repository root to start MySQL.
+In order for this application to communicate with MySQL in Docker for development, make sure the following ENV variable is set before running `make compose-up`:
 
-Run `npm run migrate-up` from `/api` to run database migrations.
+`MYSQL_HOST=host.docker.internal`
 
-## Development
+## Migrations
 
-`npm run watch`
+Migrations are managed by [Sequelize](https://sequelize.org/docs/v6/other-topics/migrations/).
+
+`MYSQL_HOST=localhost`
+
+`npm run migrate-up|migrate-down`
