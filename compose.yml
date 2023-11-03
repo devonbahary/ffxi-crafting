@@ -10,9 +10,24 @@ services:
             - ./api/src:/api/src
         container_name: ffxi_crafting_api
         expose:
-            - '$PORT'
+            - '$API_PORT'
         ports:
-            - '$PORT:$PORT'
+            - '$API_PORT:$API_PORT'
+        command: npm start
+    ffxi_crafting_app:
+        build:
+            context: ./ffxi-crafting-app
+            dockerfile: Dockerfile
+            target: base
+        container_name: ffxi_crafting_app
+        expose:
+            - '$APP_PORT'
+        ports:
+            - '$APP_PORT:$APP_PORT'
+        volumes:
+            - ./ffxi-crafting-app/src:/app/src
+        stdin_open: true
+        tty: true
         command: npm start
     db:
         image: mysql

@@ -1,12 +1,12 @@
-FROM node:20-alpine AS base
+FROM node:20-alpine as base
 
-WORKDIR /api
+WORKDIR /app
 
 COPY package.json .
 
 RUN npm i
 
-COPY . .
+COPY . . 
 
 FROM base as prod
 
@@ -14,4 +14,4 @@ ENV NODE_PATH=./dist
 
 RUN npm run build
 
-RUN npm install -g serve
+RUN npm i -g serve
