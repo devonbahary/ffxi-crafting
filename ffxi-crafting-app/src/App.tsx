@@ -167,15 +167,12 @@ const App = () => {
                     <Divider />
                     <List>
                         {menuItems.map(({ text, icon }) => (
-                            <Fragment key={text}>
-                                <ListItem>
-                                    <ListItemButton>
-                                        <ListItemIcon>{icon}</ListItemIcon>
-                                        <ListItemText>{text}</ListItemText>
-                                    </ListItemButton>
-                                </ListItem>
-                                <Divider />
-                            </Fragment>
+                            <ListItem key={text} disablePadding>
+                                <ListItemButton>
+                                    <ListItemIcon>{icon}</ListItemIcon>
+                                    <ListItemText>{text}</ListItemText>
+                                </ListItemButton>
+                            </ListItem>
                         ))}
                     </List>
                 </Drawer>
