@@ -92,7 +92,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export const Navigation: FC<{ children: ReactNode }> = ({ children }) => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const toggleDrawer = () => setOpen(!open);
 
