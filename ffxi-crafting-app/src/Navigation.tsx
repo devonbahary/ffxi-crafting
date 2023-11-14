@@ -1,5 +1,5 @@
 import React, { useState, ReactNode, FC } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -99,7 +99,6 @@ export const Navigation: FC<{ children: ReactNode }> = ({ children }) => {
     const theme = useTheme();
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     return (
         <Box sx={{ display: 'flex' }}>

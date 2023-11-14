@@ -1,12 +1,17 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import {
+    type NextFunction,
+    type Request,
+    type Response,
+    Router,
+} from 'express';
 import { validationResult } from 'express-validator';
-import { ItemsRepository } from '../repositories/ItemsRepository';
 import { getLimitAndOffset, withErrorHandling } from './utilities';
 import {
     createItemCategoryValidator,
     createItemNameValidator,
     createItemStackSizeValidator,
 } from '../validators';
+import { Item } from '../models/Item';
 
 const createValidationRules = [
     createItemNameValidator(),
@@ -22,10 +27,14 @@ const updateValidationRules = [
 
 const router = Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/', (req, res, next): void => {
+    // eslint-disable-next-line
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
-        const items = await ItemsRepository.findAll(limit, offset);
+        const items = await Item.findAll({
+            limit,
+            offset,
+        });
         res.json(items);
     });
 });
@@ -33,15 +42,16 @@ router.get('/', async (req, res, next) => {
 router.post(
     '/',
     createValidationRules,
-    async (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
+        // eslint-disable-next-line
         withErrorHandling(next, async () => {
-            const item = await ItemsRepository.createOne(req.body);
+            const item = await Item.create(req.body);
             res.send(item.toJSON());
         });
     }
@@ -50,7 +60,7 @@ router.post(
 router.put(
     '/:id',
     updateValidationRules,
-    async (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
@@ -59,34 +69,47 @@ router.put(
 
         const id = parseInt(req.params.id);
 
+        // eslint-disable-next-line
         withErrorHandling(next, async () => {
-            const item = await ItemsRepository.findById(id);
-            if (!item) {
+            const item = await Item.findOne({
+                where: { id },
+            });
+
+            if (item === null) {
                 res.sendStatus(404);
                 return;
             }
 
-            const updatedItem = await ItemsRepository.updateOne({
-                id,
-                ...req.body,
-            });
+            const updatedItem = await Item.update(
+                {
+                    id,
+                    ...req.body,
+                },
+                {
+                    where: { id },
+                }
+            );
 
             res.send(updatedItem);
         });
     }
 );
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
     const { id } = req.params;
 
+    // eslint-disable-next-line
     withErrorHandling(next, async () => {
-        const item = await ItemsRepository.findById(id);
-        if (!item) {
+        const item = await Item.findOne({
+            where: { id },
+        });
+
+        if (item === null) {
             res.sendStatus(404);
             return;
         }
 
-        await ItemsRepository.deleteOne(id);
+        await Item.destroy({ where: { id } });
 
         res.sendStatus(200);
     });
