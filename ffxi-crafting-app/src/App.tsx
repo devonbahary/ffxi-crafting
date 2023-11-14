@@ -14,14 +14,7 @@ const darkTheme = createTheme({
     },
 });
 
-const router = createBrowserRouter([
-    ...navigationItems,
-    // catch-all redirect route, not to be rendered in navigation menu
-    {
-        path: '*',
-        element: <Navigate to="/home" replace />,
-    },
-]);
+const router = createBrowserRouter(navigationItems);
 
 const App = () => (
     <ThemeProvider theme={darkTheme}>
