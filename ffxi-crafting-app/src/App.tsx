@@ -1,7 +1,13 @@
 import React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import {
+    BrowserRouter,
+    Navigate,
+    Outlet,
+    Route,
+    Routes,
+} from 'react-router-dom';
 import { navigationItems } from './routes';
 import { Navigation } from './Navigation';
 
@@ -31,6 +37,8 @@ const App = () => (
                             element={navItem.element}
                         />
                     ))}
+                    {/* redirect to "/" path if no route matched */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
                 </Route>
             </Routes>
         </BrowserRouter>
