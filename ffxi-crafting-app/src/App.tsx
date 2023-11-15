@@ -1,8 +1,9 @@
 import React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { navigationItems } from './routes';
+import { Navigation } from './Navigation';
 
 const darkTheme = createTheme({
     palette: {
@@ -10,12 +11,29 @@ const darkTheme = createTheme({
     },
 });
 
-const router = createBrowserRouter(navigationItems);
-
 const App = () => (
     <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <RouterProvider router={router} />
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    element={
+                        <Navigation>
+                            {' '}
+                            <Outlet />{' '}
+                        </Navigation>
+                    }
+                >
+                    {navigationItems.map((navItem) => (
+                        <Route
+                            key={navItem.path}
+                            path={navItem.path}
+                            element={navItem.element}
+                        />
+                    ))}
+                </Route>
+            </Routes>
+        </BrowserRouter>
     </ThemeProvider>
 );
 
