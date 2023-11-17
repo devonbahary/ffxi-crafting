@@ -1,15 +1,28 @@
 import express from 'express';
 import { config } from 'dotenv';
+import items from './routes/items';
 
 config();
 
-import items from './routes/items';
-
-const { PORT } = process.env;
+const { PORT, ACCESS_CONTROL_ALLOW_ORIGIN } = process.env;
 
 const app = express();
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', ACCESS_CONTROL_ALLOW_ORIGIN);
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    res.header(
+        'Access-Control-Allow-Methods',
+        'PUT, POST, GET, DELETE, OPTIONS'
+    );
+    next();
+});
+
 app.use('/items', items);
 
 app.listen(PORT, () => {

@@ -80,7 +80,7 @@ router.put(
                 return;
             }
 
-            const updatedItem = await Item.update(
+            await Item.update(
                 {
                     id,
                     ...req.body,
@@ -89,6 +89,10 @@ router.put(
                     where: { id },
                 }
             );
+
+            const updatedItem = await Item.findOne({
+                where: { id },
+            });
 
             res.send(updatedItem);
         });

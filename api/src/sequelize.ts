@@ -1,4 +1,7 @@
 import { Sequelize } from 'sequelize';
+import { config } from 'dotenv';
+
+config();
 
 const { MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_USER, MYSQL_HOST } = process.env;
 
