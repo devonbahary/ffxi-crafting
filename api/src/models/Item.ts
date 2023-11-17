@@ -116,7 +116,7 @@ Item.init(
             type: DataTypes.INTEGER.UNSIGNED,
             defaultValue: 1,
             validate: {
-                isStackSize,
+                isStackSize: (val: any) => isStackSize(val),
             },
         },
         createdAt: DataTypes.DATE,
