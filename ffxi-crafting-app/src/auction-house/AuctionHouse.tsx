@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     DataGrid,
     DataGridProps,
@@ -35,15 +35,19 @@ export const AuctionHouse = () => {
         string | number | null
     >(null);
 
-    const { alertMessages, pushAlertMessage, shiftAlertMessages } =
-        useAlertMessages();
+    const {
+        alertMessages,
+        pushSuccessMessage,
+        pushErrorMessage,
+        shiftAlertMessages,
+    } = useAlertMessages();
 
     const { getItems, createItem, updateItem, deleteItem } = useItems();
 
     const handleAddItem = () => {
         const id = randomId();
 
-        setItems((prevItems) => [{ id }, ...prevItems]);
+        setItems((prevItems) => [{ id, category: '' }, ...prevItems]);
 
         setRowModesModel((prevModel) => ({
             ...prevModel,
@@ -63,16 +67,10 @@ export const AuctionHouse = () => {
             const data = error.response.data as any;
             if (data.errors) {
                 for (const error of data.errors) {
-                    pushAlertMessage({
-                        msg: `Failure: ${error.msg}`,
-                        severity: 'error',
-                    });
+                    pushErrorMessage(`Failure: ${error.msg}`);
                 }
             } else if (error.message) {
-                pushAlertMessage({
-                    msg: `Failure: ${error.message}`,
-                    severity: 'error',
-                });
+                pushErrorMessage(`Failure: ${error.message}`);
             }
         }
     };
@@ -86,52 +84,51 @@ export const AuctionHouse = () => {
             const { id, ...newItem } = updatedRow;
             const createdItem = await createItem(newItem);
 
-            pushAlertMessage({
-                msg: 'Successfully created item',
-                severity: 'success',
-            });
+            pushSuccessMessage('Successfully created item');
 
+            // replace with database-given ID
             updatedRow.id = createdItem.id;
 
             setItems((prevItems) =>
                 prevItems.filter((item) => item.id !== oldId)
             );
+
             return createdItem;
         } else {
             const updatedItem = await updateItem(updatedRow);
 
-            pushAlertMessage({
-                msg: 'Successfully updated item',
-                severity: 'success',
-            });
+            pushSuccessMessage('Successfully updated item');
 
             return updatedItem;
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = (params: GridRowParams) => {
+        if (isNewRow(params.row)) {
+            setItems((prevItems) =>
+                prevItems.filter((item) => item.id !== params.id)
+            );
+        }
+        setPendingDeleteId(params.id);
+    };
+
+    const deleteRow = async () => {
         if (pendingDeleteId === null) return;
 
         try {
             await deleteItem(pendingDeleteId);
-            pushAlertMessage({
-                msg: `Successfully deleted item`,
-                severity: 'success',
-            });
+
+            pushSuccessMessage(`Successfully deleted item`);
+
             setItems((prevItems) =>
                 prevItems.filter((item) => item.id !== pendingDeleteId)
             );
         } catch (err: any) {
-            pushAlertMessage({
-                msg: `Failure: ${err.message}`,
-                severity: 'error',
-            });
+            pushErrorMessage(`Failure: ${err.message}`);
         }
     };
 
-    const handleSnackbarClose = () => {
-        shiftAlertMessages();
-    };
+    const handleSnackbarClose = () => shiftAlertMessages();
 
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Name', ...large, ...editable },
@@ -166,6 +163,7 @@ export const AuctionHouse = () => {
             headerName: 'Last Updated',
             ...large,
             valueGetter: ({ value }) => {
+                if (!value) return '';
                 const date = new Date(value);
                 return `${formatDistanceToNow(date)} ago`;
             },
@@ -176,12 +174,17 @@ export const AuctionHouse = () => {
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
                     icon={<DeleteIcon />}
-                    onClick={() => setPendingDeleteId(params.id)}
+                    onClick={() => handleDelete(params)}
                     label="Delete"
                 />,
             ],
         },
     ];
+
+    const pendingDeleteItem = useMemo(() => {
+        return items.find((i) => i.id === pendingDeleteId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pendingDeleteId]);
 
     useEffect(() => {
         (async () => {
@@ -215,9 +218,9 @@ export const AuctionHouse = () => {
                 }}
             />
             <DeleteConfirmationModal
-                pendingDeleteItem={items.find((i) => i.id === pendingDeleteId)}
+                pendingDeleteItem={pendingDeleteItem}
                 onClose={() => setPendingDeleteId(null)}
-                onConfirm={() => handleDelete()}
+                onConfirm={() => deleteRow()}
             />
             <Snackbar
                 open={alertMessages.length > 0}

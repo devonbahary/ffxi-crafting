@@ -8,7 +8,8 @@ interface AlertMessage {
 
 interface UseAlertMessages {
     alertMessages: AlertMessage[];
-    pushAlertMessage: (alertMessage: AlertMessage) => void;
+    pushSuccessMessage: (message: string) => void;
+    pushErrorMessage: (message: string) => void;
     shiftAlertMessages: () => void;
 }
 
@@ -19,13 +20,28 @@ export const useAlertMessages = (): UseAlertMessages => {
         setAlertMessages((prevState) => [...prevState, alertMessage]);
     };
 
+    const pushSuccessMessage = (msg: string) => {
+        pushAlertMessage({
+            msg,
+            severity: 'success',
+        });
+    };
+
+    const pushErrorMessage = (msg: string) => {
+        pushAlertMessage({
+            msg,
+            severity: 'error',
+        });
+    };
+
     const shiftAlertMessages = () => {
         setAlertMessages((prevState) => prevState.slice(1));
     };
 
     return {
         alertMessages,
-        pushAlertMessage,
+        pushSuccessMessage,
+        pushErrorMessage,
         shiftAlertMessages,
     };
 };
