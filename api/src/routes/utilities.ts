@@ -27,6 +27,7 @@ export const withErrorHandling = async (
     try {
         await callback();
     } catch (err) {
+        console.error(err);
         next(err);
     }
 };
