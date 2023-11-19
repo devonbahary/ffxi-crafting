@@ -18,8 +18,8 @@ import { Alert, Button, Snackbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useAlertMessages } from './use-alert-messages';
-import { CATEGORY_OPTIONS } from './categories';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
+import { CATEGORY_OPTIONS } from './input-options';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
