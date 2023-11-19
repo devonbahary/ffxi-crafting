@@ -1,4 +1,4 @@
-enum Category {
+export enum Category {
     HandToHand = 'Weapons.Hand-to-Hand',
     Daggers = 'Weapons.Daggers',
     Swords = 'Weapons.Swords',
@@ -72,3 +72,16 @@ export const CATEGORY_OPTIONS = Object.entries(Category)
         };
     })
     .sort((a, b) => (a.label > b.label ? 1 : -1));
+
+export enum StackSize {
+    One = '1',
+    Twelve = '12',
+    NinetyNine = '99',
+}
+
+export const STACK_SIZE_OPTIONS = Object.values(StackSize).map((val) => {
+    return {
+        value: parseInt(val),
+        label: val,
+    };
+});

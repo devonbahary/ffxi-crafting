@@ -47,7 +47,13 @@ export const AuctionHouse = () => {
     const handleAddItem = () => {
         const id = randomId();
 
-        setItems((prevItems) => [{ id, category: '' }, ...prevItems]);
+        const newItem = {
+            id,
+            category: '',
+            stackSize: '',
+        };
+
+        setItems((prevItems) => [newItem as Item, ...prevItems]);
 
         setRowModesModel((prevModel) => ({
             ...prevModel,
