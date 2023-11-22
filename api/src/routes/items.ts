@@ -51,7 +51,16 @@ router.post(
 
         // eslint-disable-next-line
         withErrorHandling(next, async () => {
-            const item = await Item.create(req.body);
+            const { name, category, unitPrice, stackPrice, stackSize } =
+                req.body;
+
+            const item = await Item.create({
+                name,
+                category,
+                unitPrice,
+                stackPrice,
+                stackSize,
+            });
             res.send(item.toJSON());
         });
     }
@@ -80,10 +89,17 @@ router.put(
                 return;
             }
 
+            const { name, category, unitPrice, stackPrice, stackSize } =
+                req.body;
+
             await Item.update(
                 {
                     id,
-                    ...req.body,
+                    name,
+                    category,
+                    unitPrice,
+                    stackPrice,
+                    stackSize,
                 },
                 {
                     where: { id },
