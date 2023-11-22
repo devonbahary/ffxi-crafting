@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response, Request, NextFunction } from 'express';
 import { config } from 'dotenv';
 import items from './routes/items';
 
@@ -24,6 +24,12 @@ app.use((req, res, next) => {
 });
 
 app.use('/items', items);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    res.status(500).send({
+        error: err.message,
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);

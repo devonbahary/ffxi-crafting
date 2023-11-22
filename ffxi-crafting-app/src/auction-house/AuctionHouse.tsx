@@ -19,7 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useAlertMessages } from './use-alert-messages';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
-import { CATEGORY_OPTIONS } from './input-options';
+import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from './input-options';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -75,6 +75,8 @@ export const AuctionHouse = () => {
                 for (const error of data.errors) {
                     pushErrorMessage(`Failure: ${error.msg}`);
                 }
+            } else if (data.error) {
+                pushErrorMessage(`Failure: ${data.error}`);
             } else if (error.message) {
                 pushErrorMessage(`Failure: ${error.message}`);
             }
@@ -87,16 +89,20 @@ export const AuctionHouse = () => {
         if (isNewRow(updatedRow)) {
             const oldId = updatedRow.id;
 
-            const { id, ...newItem } = updatedRow;
-            const createdItem = await createItem(newItem);
+            // don't send client-given ID to server
+            // const { id, ...newItem } = updatedRow;
+            const createdItem = await createItem(updatedRow);
 
             pushSuccessMessage('Successfully created item');
 
-            // replace with database-given ID
-            updatedRow.id = createdItem.id;
-
             setItems((prevItems) =>
-                prevItems.filter((item) => item.id !== oldId)
+                prevItems.map((item) => {
+                    if (item.id === oldId) {
+                        // replace with database-given record
+                        return createdItem;
+                    }
+                    return item;
+                })
             );
 
             return createdItem;
@@ -161,6 +167,8 @@ export const AuctionHouse = () => {
         {
             field: 'stackSize',
             headerName: 'Stack Size',
+            type: 'singleSelect',
+            valueOptions: STACK_SIZE_OPTIONS,
             ...small,
             ...editable,
         },
