@@ -1,5 +1,6 @@
 import { type ValidationChain, body } from 'express-validator';
 import { Category } from './models/Item';
+import { Craft } from './enums';
 
 const STACK_SIZES = [1, 12, 99];
 
@@ -14,6 +15,14 @@ export const isStackSize = (val: string | number): boolean => {
 export const isCategory = (val: string): boolean => {
     if (!Object.values(Category).includes(val as Category)) {
         throw new Error(`${val} is not in enum Category`);
+    }
+
+    return true;
+};
+
+export const isCraft = (val: string): boolean => {
+    if (!Object.values(Craft).includes(val as Craft)) {
+        throw new Error(`${val} is not in enum Craft`);
     }
 
     return true;

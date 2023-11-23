@@ -47,6 +47,9 @@ SynthesisIngredient.init(
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             defaultValue: 1,
+            validate: {
+                min: 1,
+            },
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,

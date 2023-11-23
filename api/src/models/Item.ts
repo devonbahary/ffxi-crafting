@@ -6,7 +6,7 @@ import {
     Model,
 } from 'sequelize';
 import { sequelize } from '../sequelize';
-import { isStackSize } from '../validators';
+import { isCategory, isStackSize } from '../validators';
 
 export enum Category {
     HandToHand = 'Weapons.Hand-to-Hand',
@@ -103,14 +103,23 @@ Item.init(
         category: {
             type: DataTypes.STRING(128),
             allowNull: false,
+            validate: {
+                isCategory: (val: any) => isCategory(val),
+            },
         },
         unitPrice: {
             type: DataTypes.INTEGER.UNSIGNED,
             defaultValue: 0,
+            validate: {
+                min: 0,
+            },
         },
         stackPrice: {
             type: DataTypes.INTEGER.UNSIGNED,
             defaultValue: 0,
+            validate: {
+                min: 0,
+            },
         },
         stackSize: {
             type: DataTypes.INTEGER.UNSIGNED,

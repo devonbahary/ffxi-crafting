@@ -8,6 +8,7 @@ import {
 import { sequelize } from '../sequelize';
 import { Item } from './Item';
 import { type Craft } from '../enums';
+import { isCraft } from '../validators';
 
 export class Synthesis extends Model<
     InferAttributes<Synthesis>,
@@ -41,6 +42,9 @@ Synthesis.init(
         craft: {
             type: DataTypes.STRING(128),
             allowNull: false,
+            validate: {
+                isCraft: (val: any) => isCraft(val),
+            },
         },
         craft_level: {
             type: DataTypes.INTEGER.UNSIGNED,
