@@ -1,9 +1,36 @@
 'use strict';
 
+const SYNTHESIS = 'synthesis';
+const SYNTHESIS_SUB_CRAFTS = 'synthesis_sub_crafts';
+const SYNTHESIS_INGREDIENTS = 'synthesis_ingredients';
+const ITEMS = 'items';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('synthesis', {
+        const crafting = {
+            craft: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            craft_level: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+            },
+        };
+
+        const timestamps = {
+            created_at: {
+                allowNull: false,
+                type: Sequelize.DATE,
+            },
+            updated_at: {
+                allowNull: false,
+                type: Sequelize.DATE,
+            },
+        };
+
+        await queryInterface.createTable(SYNTHESIS, {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -15,7 +42,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 references: {
                     model: {
-                        tableName: 'items',
+                        tableName: ITEMS,
                     },
                     key: 'id',
                 },
@@ -26,23 +53,19 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 references: {
                     model: {
-                        tableName: 'items',
+                        tableName: ITEMS,
                     },
                     key: 'id',
                 },
                 onDelete: 'CASCADE',
             },
-            created_at: {
-                allowNull: false,
-                type: Sequelize.DATE,
-            },
-            updated_at: {
-                allowNull: false,
-                type: Sequelize.DATE,
-            },
+            ...crafting,
+            ...timestamps,
         });
 
-        await queryInterface.createTable('synthesis_ingredients', {
+        await queryInterface.addIndex(SYNTHESIS, ['craft']);
+
+        await queryInterface.createTable(SYNTHESIS_SUB_CRAFTS, {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -54,7 +77,29 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 references: {
                     model: {
-                        tableName: 'synthesis',
+                        tableName: SYNTHESIS,
+                    },
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
+            },
+            ...crafting,
+            ...timestamps,
+        });
+
+        await queryInterface.createTable(SYNTHESIS_INGREDIENTS, {
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: Sequelize.INTEGER,
+            },
+            synthesis_id: {
+                allowNull: false,
+                type: Sequelize.INTEGER,
+                references: {
+                    model: {
+                        tableName: SYNTHESIS,
                     },
                     key: 'id',
                 },
@@ -65,7 +110,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 references: {
                     model: {
-                        tableName: 'items',
+                        tableName: ITEMS,
                     },
                     key: 'id',
                 },
@@ -75,14 +120,7 @@ module.exports = {
                 allowNull: false,
                 defaultValue: 1,
             },
-            created_at: {
-                allowNull: false,
-                type: Sequelize.DATE,
-            },
-            updated_at: {
-                allowNull: false,
-                type: Sequelize.DATE,
-            },
+            ...timestamps,
         });
 
         // had to use triggers to get the desired deletion behavior across 3 tables
@@ -94,9 +132,9 @@ module.exports = {
         await queryInterface.sequelize.query(
             `
             CREATE TRIGGER delete_synthesis_after_synthesis_ingredients_delete
-            AFTER DELETE ON synthesis_ingredients
+            AFTER DELETE ON ${SYNTHESIS_INGREDIENTS}
             FOR EACH ROW
-            DELETE FROM synthesis
+            DELETE FROM ${SYNTHESIS}
             WHERE id = old.synthesis_id
             `
         );
@@ -105,9 +143,9 @@ module.exports = {
         await queryInterface.sequelize.query(
             `
             CREATE TRIGGER delete_synthesis_ingredient_after_item_delete
-            BEFORE DELETE ON items
+            BEFORE DELETE ON ${ITEMS}
             FOR EACH ROW
-            DELETE FROM synthesis_ingredients
+            DELETE FROM ${SYNTHESIS_INGREDIENTS}
             WHERE item_id = old.id
             `
         );
@@ -121,7 +159,8 @@ module.exports = {
             'DROP TRIGGER delete_synthesis_ingredient_after_item_delete'
         );
 
-        await queryInterface.dropTable('synthesis_ingredients');
-        await queryInterface.dropTable('synthesis');
+        await queryInterface.dropTable(SYNTHESIS_INGREDIENTS);
+        await queryInterface.dropTable(SYNTHESIS_SUB_CRAFTS);
+        await queryInterface.dropTable(SYNTHESIS);
     },
 };
