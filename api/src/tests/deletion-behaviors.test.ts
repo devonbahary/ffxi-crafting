@@ -29,16 +29,17 @@ const createSynthesisAndSubCraft = async (
     itemId: number
 ): Promise<[number, number]> => {
     const synthesis = await Synthesis.create({
-        item_id: itemId,
-        crystal_item_id: fireCrystal.id,
+        itemId,
+        yield: 1,
+        crystalItemId: fireCrystal.id,
         craft: Craft.Goldsmithing,
-        craft_level: 40,
+        craftLevel: 40,
     });
 
     const subCraft = await SynthesisSubCraft.create({
-        synthesis_id: synthesis.id,
+        synthesisId: synthesis.id,
         craft: Craft.Smithing,
-        craft_level: 20,
+        craftLevel: 20,
     });
 
     return [synthesis.id, subCraft.id];
@@ -112,8 +113,8 @@ test('deleting a synthesis ingredient should delete the synthesis and related su
     );
 
     const ingredient = await SynthesisIngredient.create({
-        synthesis_id: synthesisId,
-        item_id: mythrilOre.id,
+        synthesisId,
+        itemId: mythrilOre.id,
     });
 
     await SynthesisIngredient.destroy(whereId(ingredient.id));
@@ -127,8 +128,8 @@ test('deleting an item should delete the synthesis_ingredient that uses it, the 
     );
 
     const ingredient = await SynthesisIngredient.create({
-        synthesis_id: synthesisId,
-        item_id: mythrilOre.id,
+        synthesisId,
+        itemId: mythrilOre.id,
     });
 
     await Item.destroy(whereId(mythrilOre.id));

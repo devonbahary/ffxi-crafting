@@ -16,6 +16,7 @@ export class Synthesis extends Model<
 > {
     declare id: CreationOptional<number>;
     declare itemId: number;
+    declare yield: number;
     declare craft: Craft;
     declare craftLevel: number;
     declare crystalItemId: number;
@@ -38,6 +39,14 @@ Synthesis.init(
             },
             allowNull: false,
             onDelete: 'CASCADE',
+        },
+        yield: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false,
+            defaultValue: 1,
+            validate: {
+                min: 1,
+            },
         },
         craft: {
             type: DataTypes.STRING(128),
