@@ -15,9 +15,9 @@ export class SynthesisSubCraft extends Model<
     InferCreationAttributes<SynthesisSubCraft>
 > {
     declare id: CreationOptional<number>;
-    declare synthesis_id: number;
+    declare synthesisId: number;
     declare craft: Craft;
-    declare craft_level: number;
+    declare craftLevel: number;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
@@ -29,7 +29,7 @@ SynthesisSubCraft.init(
             autoIncrement: true,
             primaryKey: true,
         },
-        synthesis_id: {
+        synthesisId: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
                 model: Synthesis,
@@ -45,7 +45,7 @@ SynthesisSubCraft.init(
                 isCraft: (val: any) => isCraft(val),
             },
         },
-        craft_level: {
+        craftLevel: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
         },
