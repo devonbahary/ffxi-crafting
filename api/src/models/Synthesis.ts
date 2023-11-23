@@ -15,9 +15,9 @@ export class Synthesis extends Model<
 > {
     declare id: CreationOptional<number>;
     declare item_id: number;
-    declare crystal_item_id: number;
     declare craft: Craft;
     declare craft_level: number;
+    declare crystal_item_id: number;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
@@ -38,6 +38,14 @@ Synthesis.init(
             allowNull: false,
             onDelete: 'CASCADE',
         },
+        craft: {
+            type: DataTypes.STRING(128),
+            allowNull: false,
+        },
+        craft_level: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false,
+        },
         crystal_item_id: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
@@ -46,14 +54,6 @@ Synthesis.init(
             },
             allowNull: false,
             onDelete: 'CASCADE',
-        },
-        craft: {
-            type: DataTypes.STRING(128),
-            allowNull: false,
-        },
-        craft_level: {
-            type: DataTypes.INTEGER.UNSIGNED,
-            allowNull: false,
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
