@@ -15,10 +15,10 @@ export class Synthesis extends Model<
     InferCreationAttributes<Synthesis>
 > {
     declare id: CreationOptional<number>;
-    declare item_id: number;
+    declare itemId: number;
     declare craft: Craft;
-    declare craft_level: number;
-    declare crystal_item_id: number;
+    declare craftLevel: number;
+    declare crystalItemId: number;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
@@ -30,7 +30,7 @@ Synthesis.init(
             autoIncrement: true,
             primaryKey: true,
         },
-        item_id: {
+        itemId: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
                 model: Item,
@@ -46,11 +46,11 @@ Synthesis.init(
                 isCraft: (val: any) => isCraft(val),
             },
         },
-        craft_level: {
+        craftLevel: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
         },
-        crystal_item_id: {
+        crystalItemId: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
                 model: Item,

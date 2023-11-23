@@ -14,8 +14,8 @@ export class SynthesisIngredient extends Model<
     InferCreationAttributes<SynthesisIngredient>
 > {
     declare id: CreationOptional<number>;
-    declare synthesis_id: number;
-    declare item_id: number;
+    declare synthesisId: number;
+    declare itemId: number;
     declare quantity: CreationOptional<number>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -28,7 +28,7 @@ SynthesisIngredient.init(
             autoIncrement: true,
             primaryKey: true,
         },
-        synthesis_id: {
+        synthesisId: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
                 model: Synthesis,
@@ -36,7 +36,7 @@ SynthesisIngredient.init(
             },
             onDelete: 'CASCADE',
         },
-        item_id: {
+        itemId: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
                 model: Item,
