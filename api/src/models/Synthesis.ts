@@ -9,6 +9,8 @@ import { sequelize } from '../sequelize';
 import { Item } from './Item';
 import { type Craft } from '../enums';
 import { isCraft } from '../validators';
+import { SynthesisIngredient } from './SynthesisIngredient';
+import { SynthesisSubCraft } from './SynthesisSubCraft';
 
 export class Synthesis extends Model<
     InferAttributes<Synthesis>,
@@ -77,3 +79,9 @@ Synthesis.init(
         sequelize,
     }
 );
+
+Synthesis.hasMany(SynthesisIngredient, { as: 'ingredients' });
+Synthesis.hasMany(SynthesisSubCraft, { as: 'subCrafts' });
+Synthesis.belongsTo(Item, { foreignKey: 'itemId', as: 'product' });
+Synthesis.belongsTo(Item, { foreignKey: 'crystalItemId', as: 'crystal' });
+SynthesisIngredient.belongsTo(Item, { as: 'item' });

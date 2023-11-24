@@ -6,11 +6,12 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Dashboard } from './dashboard/Dashboard';
 import { AuctionHouse } from './auction-house/AuctionHouse';
 import { Crafting } from './crafting/Crafting';
+import { CraftingCreateForm } from './crafting/CraftingCreateForm';
 
 type Navigation = RouteObject &
     Required<Pick<RouteObject, 'path'>> & {
-        navIcon: ReactNode;
-        navText: string;
+        navIcon?: ReactNode;
+        navText?: string;
     };
 
 export const navigationItems: Navigation[] = [
@@ -31,5 +32,9 @@ export const navigationItems: Navigation[] = [
         element: <Crafting />,
         navText: 'Crafting',
         navIcon: <CarpenterIcon />,
+    },
+    {
+        path: '/crafting/create',
+        element: <CraftingCreateForm />,
     },
 ];

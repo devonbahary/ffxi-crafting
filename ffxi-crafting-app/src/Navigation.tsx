@@ -136,7 +136,9 @@ export const Navigation: FC<{ children: ReactNode }> = ({ children }) => {
                 <Divider />
                 <List>
                     {navigationItems.map(({ path, navText, navIcon }) => {
-                        const isNavigatedTo = location.pathname === path;
+                        if (!navText || !navIcon) return null;
+
+                        const isNavigatedTo = location.pathname.includes(path);
 
                         const color = isNavigatedTo
                             ? theme.palette.primary.dark

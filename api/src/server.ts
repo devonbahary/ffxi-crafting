@@ -1,6 +1,11 @@
-import express, { Response, Request, NextFunction } from 'express';
+import express, {
+    type Response,
+    type Request,
+    type NextFunction,
+} from 'express';
 import { config } from 'dotenv';
 import items from './routes/items';
+import synthesis from './routes/synthesis';
 
 config();
 
@@ -24,6 +29,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/items', items);
+app.use('/synthesis', synthesis);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).send({
