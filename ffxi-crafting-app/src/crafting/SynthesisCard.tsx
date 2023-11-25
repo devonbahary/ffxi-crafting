@@ -149,9 +149,7 @@ const SynthesisMonetaryBreakdown: FC<{
                         {/* Crystal */}
                         <ItemAndQuantityTypography
                             item={crystal}
-                            quantity={
-                                sellAsStack ? parseInt(crystal.stackSize) : 1
-                            }
+                            quantity={sellAsStack ? repeatsToGetToStack : 1}
                             secondary
                         />
                         {/* Ingredients */}
