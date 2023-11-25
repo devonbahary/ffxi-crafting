@@ -19,7 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useAlertMessages } from './use-alert-messages';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
-import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from './input-options';
+import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -202,7 +202,7 @@ export const AuctionHouse = () => {
 
     useEffect(() => {
         (async () => {
-            const items = await getItems();
+            const items = await getItems({});
             setItems(items);
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps

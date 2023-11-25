@@ -12,6 +12,7 @@ import {
     createItemStackSizeValidator,
 } from '../validators';
 import { Item } from '../models/Item';
+import { Op, type WhereOptions } from 'sequelize';
 
 const createValidationRules = [
     createItemNameValidator(),
@@ -31,10 +32,37 @@ router.get('/', (req, res, next): void => {
     // eslint-disable-next-line
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
+        const { name, categories, excludeCategory } = req.query;
+
+        const where: WhereOptions = {
+            category: {
+                [Op.and]: [
+                    typeof excludeCategory === 'string'
+                        ? {
+                              [Op.not]: excludeCategory,
+                          }
+                        : undefined,
+                    categories !== undefined
+                        ? {
+                              [Op.in]: categories,
+                          }
+                        : undefined,
+                ].filter((x) => x),
+            },
+        };
+
+        if (typeof name === 'string') {
+            where.name = {
+                [Op.like]: `%${name}%`,
+            };
+        }
+
         const items = await Item.findAll({
             limit,
             offset,
+            where,
         });
+
         res.json(items);
     });
 });

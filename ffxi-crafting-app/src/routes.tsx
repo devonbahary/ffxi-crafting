@@ -6,7 +6,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Dashboard } from './dashboard/Dashboard';
 import { AuctionHouse } from './auction-house/AuctionHouse';
 import { Crafting } from './crafting/Crafting';
-import { CraftingCreateForm } from './crafting/CraftingCreateForm';
+import { CraftingCreate } from './crafting/CraftingCreate';
 
 type Navigation = RouteObject &
     Required<Pick<RouteObject, 'path'>> & {
@@ -35,6 +35,6 @@ export const navigationItems: Navigation[] = [
     },
     {
         path: '/crafting/create',
-        element: <CraftingCreateForm />,
+        element: <CraftingCreate />,
     },
 ];

@@ -39,3 +39,40 @@ export const createItemCategoryValidator = (): ValidationChain =>
 
 export const createItemStackSizeValidator = (): ValidationChain =>
     body('stackSize').optional().custom(isStackSize);
+
+export const createSynthesisYieldValidator = (): ValidationChain =>
+    body('synthesis.yield').notEmpty().isInt({
+        min: 1,
+    });
+
+export const createSynthesisItemValidator = (): ValidationChain =>
+    body('synthesis.itemId').notEmpty().isInt();
+
+export const createSynthesisCrystalValidator = (): ValidationChain =>
+    body('synthesis.crystalItemId').notEmpty().isInt();
+
+export const createSynthesisCraftValidator = (): ValidationChain =>
+    body('synthesis.craft').notEmpty().custom(isCraft);
+
+export const createSynthesisCraftLevelValidator = (): ValidationChain =>
+    body('synthesis.craftLevel').notEmpty().isInt({
+        min: 1,
+    });
+
+export const createSynthesisSubCraftsValidators = (): ValidationChain[] => [
+    body('subCrafts').isArray(),
+    body('subCrafts.*').isObject(),
+    body('subCrafts.*.craft').notEmpty().custom(isCraft),
+    body('subCrafts.*.craftLevel').notEmpty().isInt({ min: 1 }),
+];
+
+export const createSynthesisIngredientsValidators = (): ValidationChain[] => [
+    body('ingredients').isArray({
+        min: 1,
+    }),
+    body('ingredients.*').isObject(),
+    body('ingredients.*.itemId').notEmpty().isInt(),
+    body('ingredients.*.quantity').notEmpty().isInt({
+        min: 1,
+    }),
+];
