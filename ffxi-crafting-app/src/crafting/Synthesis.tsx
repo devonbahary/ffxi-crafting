@@ -6,6 +6,7 @@ import React, {
     useState,
 } from 'react';
 import { v4 as uuid } from 'uuid';
+import { useNavigate, useParams } from 'react-router';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import { NavigateButton } from './NavigateButton';
@@ -28,6 +29,7 @@ import { NumberInput } from '../inputs/NumberInput';
 import { ChipSelect } from '../inputs/ChipSelect';
 import { useSynthesis } from './use-synthesis';
 import { debounce } from '@mui/material/utils';
+import { type Synthesis as SynthesisI } from '../interfaces';
 
 type Nullable<T> = T | null;
 
@@ -49,12 +51,14 @@ type ItemSearchInputProps = {
         GetItemsSearchParams,
         'categories' | 'excludeCategory'
     >;
+    value: Item | null;
 };
 
 const ItemSearchInput: FC<ItemSearchInputProps> = ({
     getItemSearchParams = {},
     label,
     onChange,
+    value,
 }) => {
     const [items, setItems] = useState<Item[]>([]);
     const [searchText, setSearchText] = useState('');
@@ -108,6 +112,7 @@ const ItemSearchInput: FC<ItemSearchInputProps> = ({
             loading={loadingGetItems}
             loadingText="Loading items..."
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            value={value}
         />
     );
 };
@@ -154,6 +159,7 @@ const CraftAndCraftLevelInputs: FC<CraftAndCraftLevelInputsProps> = ({
                         }
                     }}
                     options={CRAFT_OPTIONS}
+                    value={value.craft}
                 />
             </Box>
         </Stack>
@@ -197,6 +203,7 @@ const SynthesisIngredientInputs: FC<SynthesisIngredientInputsProps> = ({
                     getItemSearchParams={{
                         excludeCategory: Category.Crystals,
                     }}
+                    value={value.item}
                 />
             </Box>
         </Stack>
@@ -217,18 +224,35 @@ const areAllIngredientsComplete = (
     );
 };
 
-const CraftingForm = () => {
-    const [synthYield, setYield] = useState<number | null>(null);
-    const [productItem, setProductItem] = useState<Item | null>(null);
-    const [crystal, setCrystal] = useState<Item | null>(null);
-    const [craft, setCraft] = useState<Craft | null>(null);
-    const [craftLevel, setCraftLevel] = useState<number | null>(null);
-    const [subCrafts, setSubCrafts] = useState<Crafting[]>([]);
+type SynthesisFormProps = {
+    synthesis?: SynthesisI;
+};
+
+const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
+    const [synthYield, setYield] = useState<number | null>(
+        synthesis?.yield || null
+    );
+    const [productItem, setProductItem] = useState<Item | null>(
+        synthesis?.product || null
+    );
+    const [crystal, setCrystal] = useState<Item | null>(
+        synthesis?.crystal || null
+    );
+    const [craft, setCraft] = useState<Craft | null>(synthesis?.craft || null);
+    const [craftLevel, setCraftLevel] = useState<number | null>(
+        synthesis?.craftLevel || null
+    );
+    const [subCrafts, setSubCrafts] = useState<Crafting[]>(
+        synthesis?.subCrafts || []
+    );
     const [ingredients, setIngredients] = useState<FormSynthesisIngredient[]>(
-        []
+        synthesis?.ingredients || []
     );
 
-    const { createSynthesis, loadingCreateSynthesis } = useSynthesis();
+    const { createSynthesis, loadingCreateSynthesis, updateSynthesis } =
+        useSynthesis();
+
+    const navigate = useNavigate();
 
     const onSubmit = async () => {
         if (
@@ -241,7 +265,7 @@ const CraftingForm = () => {
             areAllIngredientsComplete(ingredients) &&
             !loadingCreateSynthesis
         ) {
-            const synthesis = await createSynthesis({
+            const input = {
                 synthesis: {
                     yield: synthYield,
                     itemId: productItem.id,
@@ -254,8 +278,15 @@ const CraftingForm = () => {
                     itemId: ingredient.item.id,
                     quantity: ingredient.quantity,
                 })),
-            });
-            console.log(synthesis);
+            };
+
+            if (synthesis) {
+                await updateSynthesis(synthesis.id, input);
+            } else {
+                await createSynthesis(input);
+            }
+
+            navigate(-1);
         }
     };
 
@@ -340,6 +371,7 @@ const CraftingForm = () => {
                         getItemSearchParams={{
                             excludeCategory: Category.Crystals,
                         }}
+                        value={productItem}
                     />
                 </Box>
             </Stack>
@@ -350,6 +382,7 @@ const CraftingForm = () => {
                     getItemSearchParams={{
                         categories: [Category.Crystals, Category.Alchemy],
                     }}
+                    value={crystal}
                 />
             )}
             {crystal && (
@@ -465,13 +498,38 @@ const CraftingForm = () => {
     );
 };
 
-export const CraftingCreate = () => {
+export const Synthesis = () => {
+    const [synthesis, setSynthesis] = useState<SynthesisI | null>(null);
+
+    const { getSynthesis } = useSynthesis();
+
+    const { id } = useParams();
+
+    useEffect(() => {
+        (async () => {
+            if (id) {
+                const synthesis = await getSynthesis(id);
+                setSynthesis(synthesis);
+            }
+        })();
+    }, [id, getSynthesis]);
+
     return (
         <>
             <NavigateButton startIcon={<ArrowBackIcon />} navigateTo={-1}>
                 Back
             </NavigateButton>
-            <CraftingForm />
+            {id ? (
+                synthesis ? (
+                    <SynthesisForm synthesis={synthesis} />
+                ) : (
+                    <Box>
+                        <CircularProgress />
+                    </Box>
+                )
+            ) : (
+                <SynthesisForm />
+            )}
         </>
     );
 };

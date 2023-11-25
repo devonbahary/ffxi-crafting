@@ -1,3 +1,4 @@
+import { type FindOptions, type InferAttributes } from 'sequelize';
 import { type Craft } from '../enums';
 import { Category, Item } from '../models/Item';
 import { Synthesis } from '../models/Synthesis';
@@ -8,6 +9,10 @@ import { sequelize } from '../sequelize';
 interface Crafting {
     craft: Craft;
     craftLevel: number;
+}
+
+interface SubCraft extends Crafting {
+    id?: string;
 }
 
 interface SynthesisIngredientInput {
@@ -21,41 +26,49 @@ interface SynthesisInput {
         itemId: number;
         crystalItemId: number;
     };
-    subCrafts: Crafting[];
+    subCrafts: SubCraft[];
     ingredients: SynthesisIngredientInput[];
 }
 
-export const getSynthesis = async (
+const SYNTHESIS_INCLUDE: FindOptions<InferAttributes<Synthesis>>['include'] = [
+    {
+        model: SynthesisSubCraft,
+        as: 'subCrafts',
+    },
+    {
+        model: Item,
+        as: 'crystal',
+    },
+    {
+        model: Item,
+        as: 'product',
+    },
+    {
+        model: SynthesisIngredient,
+        as: 'ingredients',
+        include: [
+            {
+                model: Item,
+                as: 'item',
+            },
+        ],
+    },
+];
+
+export const getSyntheses = async (
     limit?: number,
     offset?: number
 ): Promise<Synthesis[]> => {
     return await Synthesis.findAll({
         limit,
         offset,
-        include: [
-            {
-                model: SynthesisSubCraft,
-                as: 'subCrafts',
-            },
-            {
-                model: Item,
-                as: 'crystal',
-            },
-            {
-                model: Item,
-                as: 'product',
-            },
-            {
-                model: SynthesisIngredient,
-                as: 'ingredients',
-                include: [
-                    {
-                        model: Item,
-                        as: 'item',
-                    },
-                ],
-            },
-        ],
+        include: SYNTHESIS_INCLUDE,
+    });
+};
+
+export const getSynthesis = async (id: string): Promise<Synthesis | null> => {
+    return await Synthesis.findByPk(id, {
+        include: SYNTHESIS_INCLUDE,
     });
 };
 
@@ -199,6 +212,100 @@ export const createSynthesis = async (
         await transaction.commit();
 
         return synthesis;
+    } catch (err) {
+        await transaction.rollback();
+        throw err;
+    }
+};
+
+export const updateSynthesis = async (
+    id: string,
+    input: SynthesisInput
+): Promise<Synthesis | null> => {
+    const {
+        synthesis: {
+            yield: synthYield,
+            itemId,
+            crystalItemId,
+            craft,
+            craftLevel,
+        },
+        subCrafts,
+        ingredients,
+    } = input;
+
+    await validateInput(input);
+
+    const transaction = await sequelize.transaction();
+
+    try {
+        await Synthesis.update(
+            {
+                yield: synthYield,
+                itemId,
+                crystalItemId,
+                craft,
+                craftLevel,
+            },
+            {
+                where: {
+                    id,
+                },
+                transaction,
+            }
+        );
+
+        // easier to recreate sub crafts than to identify which ones to delete and which to update
+        await SynthesisSubCraft.destroy({
+            where: {
+                synthesisId: id,
+            },
+            transaction,
+        });
+
+        await Promise.all(
+            subCrafts.map(
+                async (subCraft) =>
+                    await SynthesisSubCraft.create(
+                        {
+                            synthesisId: parseInt(id),
+                            craft: subCraft.craft,
+                            craftLevel: subCraft.craftLevel,
+                        },
+                        {
+                            transaction,
+                        }
+                    )
+            )
+        );
+
+        // easier to recreate ingredients than to identify which ones to delete and which to update
+        await SynthesisIngredient.destroy({
+            where: {
+                synthesisId: id,
+            },
+            transaction,
+        });
+
+        await Promise.all(
+            ingredients.map(
+                async (ingredient) =>
+                    await SynthesisIngredient.create(
+                        {
+                            synthesisId: parseInt(id),
+                            itemId: ingredient.itemId,
+                            quantity: ingredient.quantity,
+                        },
+                        {
+                            transaction,
+                        }
+                    )
+            )
+        );
+
+        await transaction.commit();
+
+        return await Synthesis.findByPk(id);
     } catch (err) {
         await transaction.rollback();
         throw err;

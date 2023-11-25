@@ -7,14 +7,14 @@ import { SynthesisCard } from './SynthesisCard';
 import { NavigateButton } from './NavigateButton';
 
 export const Crafting = () => {
-    const [synthesis, setSynthesis] = useState<Synthesis[]>([]);
+    const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
 
-    const { getSynthesis } = useSynthesis();
+    const { getSyntheses } = useSynthesis();
 
     useEffect(() => {
         (async () => {
-            const synthesis = await getSynthesis();
-            setSynthesis(synthesis);
+            const synthesis = await getSyntheses();
+            setSyntheses(synthesis);
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -23,12 +23,12 @@ export const Crafting = () => {
         <>
             <NavigateButton
                 startIcon={<AddIcon />}
-                navigateTo={'/crafting/create'}
+                navigateTo={'/synthesis/create'}
             >
                 Add Synthesis
             </NavigateButton>
             <Grid container>
-                {synthesis.map((synth) => (
+                {syntheses.map((synth) => (
                     <Grid key={synth.id} item xs={4}>
                         <SynthesisCard synthesis={synth} />
                     </Grid>

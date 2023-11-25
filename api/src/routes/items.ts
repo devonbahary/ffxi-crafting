@@ -108,9 +108,7 @@ router.put(
 
         // eslint-disable-next-line
         withErrorHandling(next, async () => {
-            const item = await Item.findOne({
-                where: { id },
-            });
+            const item = await Item.findByPk(id);
 
             if (item === null) {
                 res.sendStatus(404);
@@ -134,9 +132,7 @@ router.put(
                 }
             );
 
-            const updatedItem = await Item.findOne({
-                where: { id },
-            });
+            const updatedItem = await Item.findByPk(id);
 
             res.send(updatedItem);
         });
@@ -148,9 +144,7 @@ router.delete('/:id', (req, res, next) => {
 
     // eslint-disable-next-line
     withErrorHandling(next, async () => {
-        const item = await Item.findOne({
-            where: { id },
-        });
+        const item = await Item.findByPk(id);
 
         if (item === null) {
             res.sendStatus(404);

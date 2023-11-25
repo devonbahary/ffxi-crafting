@@ -6,7 +6,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Dashboard } from './dashboard/Dashboard';
 import { AuctionHouse } from './auction-house/AuctionHouse';
 import { Crafting } from './crafting/Crafting';
-import { CraftingCreate } from './crafting/CraftingCreate';
+import { Synthesis } from './crafting/Synthesis';
 
 type Navigation = RouteObject &
     Required<Pick<RouteObject, 'path'>> & {
@@ -34,7 +34,11 @@ export const navigationItems: Navigation[] = [
         navIcon: <CarpenterIcon />,
     },
     {
-        path: '/crafting/create',
-        element: <CraftingCreate />,
+        path: '/synthesis/create',
+        element: <Synthesis />,
+    },
+    {
+        path: '/synthesis/edit/:id',
+        element: <Synthesis />,
     },
 ];

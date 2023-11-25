@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { useNavigate } from 'react-router';
 import Typography, { TypographyProps } from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -248,6 +249,8 @@ const SynthesisMonetaryBreakdown: FC<{
 export const SynthesisCard: FC<SynthesisCardProps> = ({ synthesis }) => {
     const [expanded, setExpanded] = useState(false);
 
+    const navigate = useNavigate();
+
     const unitProfit = getSynthesisProfit(synthesis, false);
     const stackProfit = getSynthesisProfit(synthesis, true);
 
@@ -311,7 +314,11 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({ synthesis }) => {
                 </CardContent>
                 <Divider />
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
-                    <IconButton>
+                    <IconButton
+                        onClick={() =>
+                            navigate(`/synthesis/edit/${synthesis.id}`)
+                        }
+                    >
                         <EditIcon {...actionIconProps} />
                     </IconButton>
                     <IconButton>

@@ -11,17 +11,21 @@ type ChipSelectProps<T> = {
     multi?: boolean;
     onChange: (values: T | T[] | null) => void;
     options: Option<T>[];
+    value: T | T[];
 };
 
 export const ChipSelect = <T,>({
     multi = false,
     onChange,
     options,
+    value,
 }: ChipSelectProps<T>) => {
     const [multiSelectionSet, setMultiSelectionSet] = useState<Set<T>>(
-        new Set()
+        new Set(Array.isArray(value) ? [...value] : [value])
     );
-    const [singleSelection, setSingleSelection] = useState<T | null>(null);
+    const [singleSelection, setSingleSelection] = useState<T | null>(
+        Array.isArray(value) ? null : value
+    );
 
     const onSelect = (value: T) => {
         if (multi) {
@@ -36,27 +40,28 @@ export const ChipSelect = <T,>({
 
                 return updated;
             });
+
+            onChange([...multiSelectionSet]);
         } else {
             setSingleSelection((prev) => (prev !== value ? value : null));
-        }
-    };
 
-    const isSelected = (value: T) => {
-        return multi ? multiSelectionSet.has(value) : singleSelection === value;
+            onChange(singleSelection);
+        }
     };
 
     useEffect(() => {
         if (multi) {
-            onChange([...multiSelectionSet]);
+            setMultiSelectionSet(
+                new Set(Array.isArray(value) ? [...value] : [value])
+            );
         } else {
-            onChange(singleSelection);
+            setSingleSelection(Array.isArray(value) ? null : value);
         }
-    }, [multi, multiSelectionSet, singleSelection, onChange]);
+    }, [multi, value]);
 
-    useEffect(() => {
-        setMultiSelectionSet(new Set());
-        setSingleSelection(null);
-    }, [multi]);
+    const isSelected = (value: T) => {
+        return multi ? multiSelectionSet.has(value) : singleSelection === value;
+    };
 
     return (
         <Box display="flex" justifyContent="space-around" width="100%">
