@@ -19,3 +19,9 @@ Migrations are managed by [Sequelize](https://sequelize.org/docs/v6/other-topics
 `MYSQL_HOST=localhost`
 
 `npm run migrate-up|migrate-down [-- --env test]`
+
+## Seeds
+
+`npm run seed`
+
+`npx sequelize-cli db:seed:undo`
