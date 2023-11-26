@@ -24,4 +24,4 @@ Migrations are managed by [Sequelize](https://sequelize.org/docs/v6/other-topics
 
 `npm run seed`
 
-`npx sequelize-cli db:seed:undo`
+`npm run seed:undo`
