@@ -158,6 +158,33 @@ const seedSyntheses = [
     },
 ];
 
+const seedSynthesisIngredients = [
+    {
+        id: 1,
+        synthesis_id: 1,
+        item_id: 9,
+        quantity: 1,
+    },
+    {
+        id: 2,
+        synthesis_id: 2,
+        item_id: 12,
+        quantity: 4,
+    },
+    {
+        id: 3,
+        synthesis_id: 3,
+        item_id: 14,
+        quantity: 2,
+    },
+    {
+        id: 4,
+        synthesis_id: 3,
+        item_id: 15,
+        quantity: 1,
+    },
+];
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
@@ -169,6 +196,14 @@ module.exports = {
         await queryInterface.bulkInsert(
             'synthesis',
             seedSyntheses.map((synthesis) => ({ ...synthesis, ...timestamps }))
+        );
+
+        await queryInterface.bulkInsert(
+            'synthesis_ingredients',
+            seedSynthesisIngredients.map((ingredient) => ({
+                ...ingredient,
+                ...timestamps,
+            }))
         );
     },
 
