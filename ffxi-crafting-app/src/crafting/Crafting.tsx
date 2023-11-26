@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import Grid from '@mui/material/Grid';
-import { useSynthesis } from './use-synthesis';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from './SynthesisCard';
 import { NavigateButton } from './NavigateButton';
