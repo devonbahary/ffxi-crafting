@@ -38,14 +38,16 @@ export const ChipSelect = <T,>({
                     updated.add(value);
                 }
 
+                onChange(Array.from(updated));
+
                 return updated;
             });
-
-            onChange([...multiSelectionSet]);
         } else {
-            setSingleSelection((prev) => (prev !== value ? value : null));
-
-            onChange(singleSelection);
+            setSingleSelection((prev) => {
+                const newVal = prev !== value ? value : null;
+                onChange(newVal);
+                return newVal;
+            });
         }
     };
 
@@ -64,7 +66,7 @@ export const ChipSelect = <T,>({
     };
 
     return (
-        <Box display="flex" justifyContent="space-around" width="100%">
+        <Box display="flex" gap={2}>
             {options.map(({ label, value }) => (
                 <Chip
                     key={label}
