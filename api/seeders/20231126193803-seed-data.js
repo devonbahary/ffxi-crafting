@@ -7,9 +7,13 @@ const timestamps = {
     updated_at: LAST_UPDATED,
 };
 
+const STACK_SIZE_12 = {
+    stack_size: 12,
+};
+
 const crystal = {
     category: 'Crystals',
-    stack_size: 12,
+    ...STACK_SIZE_12,
 };
 
 const seedItems = [
@@ -74,6 +78,7 @@ const seedItems = [
         name: 'Sheepskin',
         unit_price: 200,
         stack_price: 3000,
+        ...STACK_SIZE_12,
         category: 'Materials.Leathercraft',
     },
     {
@@ -81,6 +86,7 @@ const seedItems = [
         name: 'Sheep Leather',
         unit_price: 1000,
         stack_price: 10000,
+        ...STACK_SIZE_12,
         category: 'Materials.Leathercraft',
     },
     {
@@ -88,6 +94,7 @@ const seedItems = [
         name: 'Mythril Ingot',
         unit_price: 5500,
         stack_price: 14000,
+        ...STACK_SIZE_12,
         category: 'Materials.Goldsmithing',
     },
     {
@@ -95,6 +102,7 @@ const seedItems = [
         name: 'Mythril Ore',
         unit_price: 1000,
         stack_price: 14000,
+        ...STACK_SIZE_12,
         category: 'Materials.Goldsmithing',
     },
     {
@@ -102,6 +110,7 @@ const seedItems = [
         name: 'Tsurara',
         unit_price: 1,
         stack_price: 2000,
+        stack_size: 99,
         category: 'Others.Ninja Tools',
     },
     {
@@ -109,6 +118,7 @@ const seedItems = [
         name: 'Distilled Water',
         unit_price: 10,
         stack_price: 300,
+        ...STACK_SIZE_12,
         category: 'Food.Ingredients',
     },
     {
@@ -116,6 +126,7 @@ const seedItems = [
         name: 'Rock Salt',
         unit_price: 14,
         stack_price: 400,
+        ...STACK_SIZE_12,
         category: 'Materials.Alchemy',
     },
 ];
