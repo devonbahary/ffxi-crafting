@@ -92,8 +92,6 @@ export const AuctionHouse = () => {
         if (isNewRow(updatedRow)) {
             const oldId = updatedRow.id;
 
-            // don't send client-given ID to server
-            // const { id, ...newItem } = updatedRow;
             const createdItem = await createItem(updatedRow);
 
             pushSuccessMessage('Successfully created item');
