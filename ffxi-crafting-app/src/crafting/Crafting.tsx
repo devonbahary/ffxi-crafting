@@ -5,11 +5,14 @@ import { useSynthesis } from './use-synthesis';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from './SynthesisCard';
 import { NavigateButton } from './NavigateButton';
+import { useGet } from '../use-api';
+import { CircularProgress } from '@mui/material';
 
 export const Crafting = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
 
-    const { getSyntheses } = useSynthesis();
+    const { loading: loadingSyntheses, get: getSyntheses } =
+        useGet<Synthesis[]>('/synthesis');
 
     useEffect(() => {
         (async () => {
@@ -27,13 +30,17 @@ export const Crafting = () => {
             >
                 Add Synthesis
             </NavigateButton>
-            <Grid container>
-                {syntheses.map((synth) => (
-                    <Grid key={synth.id} item xs={4}>
-                        <SynthesisCard synthesis={synth} />
-                    </Grid>
-                ))}
-            </Grid>
+            {loadingSyntheses ? (
+                <CircularProgress />
+            ) : (
+                <Grid container spacing={2}>
+                    {syntheses.map((synth) => (
+                        <Grid key={synth.id} item xs={4}>
+                            <SynthesisCard synthesis={synth} />
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
         </>
     );
 };

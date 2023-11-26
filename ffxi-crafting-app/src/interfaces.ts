@@ -33,3 +33,9 @@ export interface SynthesisIngredient extends Record {
     item: Item;
     quantity: number;
 }
+
+export type GetItemsSearchParams = {
+    name?: string;
+    excludeCategory?: Category;
+    categories?: Category[];
+};

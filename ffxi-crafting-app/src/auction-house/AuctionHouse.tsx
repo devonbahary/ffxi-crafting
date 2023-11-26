@@ -12,7 +12,6 @@ import {
 import { randomId } from '@mui/x-data-grid-generator';
 import { AxiosError } from 'axios';
 import { formatDistanceToNow } from 'date-fns';
-import { useItems } from './use-items';
 import { Item } from '../interfaces';
 import { Alert, Button, Snackbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,6 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useAlertMessages } from './use-alert-messages';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
+import { useDelete, useGet, usePost, usePut } from '../use-api';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -42,7 +42,10 @@ export const AuctionHouse = () => {
         shiftAlertMessages,
     } = useAlertMessages();
 
-    const { getItems, createItem, updateItem, deleteItem } = useItems();
+    const { get: getItems } = useGet<Item[]>('/items');
+    const { post: createItem } = usePost<Item, Item>('/items');
+    const { put: updateItem } = usePut<Item, Item>('/items');
+    const { delete: deleteItem } = useDelete('/items');
 
     const handleAddItem = () => {
         const id = randomId();
@@ -107,7 +110,7 @@ export const AuctionHouse = () => {
 
             return createdItem;
         } else {
-            const updatedItem = await updateItem(updatedRow);
+            const updatedItem = await updateItem(updatedRow.id, updatedRow);
 
             pushSuccessMessage('Successfully updated item');
 

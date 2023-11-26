@@ -21,15 +21,14 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { Item, SynthesisIngredient } from '../interfaces';
-import { GetItemsSearchParams, useItems } from '../auction-house/use-items';
+import { GetItemsSearchParams, Item, SynthesisIngredient } from '../interfaces';
 import { CRAFT_OPTIONS } from '../inputs/input-options';
 import { Category, Craft } from '../enums';
 import { NumberInput } from '../inputs/NumberInput';
 import { ChipSelect } from '../inputs/ChipSelect';
-import { useSynthesis } from './use-synthesis';
 import { debounce } from '@mui/material/utils';
 import { type Synthesis as SynthesisI } from '../interfaces';
+import { useGet, useGetId, usePost, usePut } from '../use-api';
 
 type Nullable<T> = T | null;
 
@@ -54,6 +53,20 @@ type ItemSearchInputProps = {
     value: Item | null;
 };
 
+interface SynthesisIngredientInput {
+    itemId: string | number;
+    quantity: number;
+}
+
+interface SynthesisInput {
+    synthesis: Pick<SynthesisI, 'yield' | 'craft' | 'craftLevel'> & {
+        itemId: string | number;
+        crystalItemId: string | number;
+    };
+    subCrafts: Omit<SynthesisI['subCrafts'][0], 'id'>[];
+    ingredients: SynthesisIngredientInput[];
+}
+
 const ItemSearchInput: FC<ItemSearchInputProps> = ({
     getItemSearchParams = {},
     label,
@@ -63,7 +76,10 @@ const ItemSearchInput: FC<ItemSearchInputProps> = ({
     const [items, setItems] = useState<Item[]>([]);
     const [searchText, setSearchText] = useState('');
 
-    const { getItems, loadingGetItems } = useItems();
+    const { loading: loadingGetItems, get: getItems } = useGet<
+        Item[],
+        GetItemsSearchParams
+    >('/items');
 
     const getItemsForSearchText = useCallback(
         debounce(async (name: string) => {
@@ -249,8 +265,16 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
         synthesis?.ingredients || []
     );
 
-    const { createSynthesis, loadingCreateSynthesis, updateSynthesis } =
-        useSynthesis();
+    const { loading: loadingCreateSynthesis, post: createSynthesis } = usePost<
+        SynthesisI,
+        SynthesisInput
+    >('/synthesis');
+    const { loading: loadingUpdateSynthesis, put: updateSynthesis } = usePut<
+        SynthesisI,
+        SynthesisInput
+    >('/synthesis');
+
+    const saving = loadingCreateSynthesis || loadingUpdateSynthesis;
 
     const navigate = useNavigate();
 
@@ -263,7 +287,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
             craftLevel &&
             areAllSubCraftsComplete(subCrafts) &&
             areAllIngredientsComplete(ingredients) &&
-            !loadingCreateSynthesis
+            !saving
         ) {
             const input = {
                 synthesis: {
@@ -484,12 +508,10 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                         <Button
                             startIcon={<SaveIcon />}
                             variant="contained"
-                            disabled={
-                                !isFormComplete && !loadingCreateSynthesis
-                            }
+                            disabled={!isFormComplete && !saving}
                             onClick={onSubmit}
                         >
-                            {loadingCreateSynthesis ? 'Saving...' : 'Save'}
+                            {saving ? 'Saving...' : 'Save'}
                         </Button>
                     </Box>
                 </>
@@ -500,9 +522,8 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
 
 export const Synthesis = () => {
     const [synthesis, setSynthesis] = useState<SynthesisI | null>(null);
-
-    const { getSynthesis } = useSynthesis();
-
+    const { loading: loadingSynthesis, getId: getSynthesis } =
+        useGetId<SynthesisI>('/synthesis');
     const { id } = useParams();
 
     useEffect(() => {
@@ -520,7 +541,7 @@ export const Synthesis = () => {
                 Back
             </NavigateButton>
             {id ? (
-                synthesis ? (
+                synthesis && !loadingSynthesis ? (
                     <SynthesisForm synthesis={synthesis} />
                 ) : (
                     <Box>
