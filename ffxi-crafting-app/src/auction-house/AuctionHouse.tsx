@@ -132,6 +132,8 @@ export const AuctionHouse = () => {
 
             pushSuccessMessage(`Successfully deleted item`);
 
+            setPendingDeleteId(null);
+
             setItems((prevItems) =>
                 prevItems.filter((item) => item.id !== pendingDeleteId)
             );
