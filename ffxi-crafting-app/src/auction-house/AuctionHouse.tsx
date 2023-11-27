@@ -7,7 +7,6 @@ import {
     GridRowModes,
     GridRowModesModel,
     GridRowParams,
-    GridToolbarContainer,
 } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { randomId } from '@mui/x-data-grid-generator';
@@ -190,6 +189,14 @@ export const AuctionHouse = () => {
 
     return (
         <>
+            <Button
+                startIcon={<AddIcon />}
+                onClick={handleAddItem}
+                variant="outlined"
+                sx={{ marginBottom: 2 }}
+            >
+                Add Item
+            </Button>
             <DataGrid
                 editMode={editMode}
                 rows={items}
@@ -198,18 +205,6 @@ export const AuctionHouse = () => {
                 rowModesModel={rowModesModel}
                 onRowModesModelChange={setRowModesModel}
                 loading={loadingGetItems || loadingCreateItem}
-                slots={{
-                    toolbar: () => (
-                        <GridToolbarContainer>
-                            <Button
-                                startIcon={<AddIcon />}
-                                onClick={handleAddItem}
-                            >
-                                Add Item
-                            </Button>
-                        </GridToolbarContainer>
-                    ),
-                }}
             />
             <DeleteConfirmationModal
                 pendingDeleteItem={pendingDeleteItem}
