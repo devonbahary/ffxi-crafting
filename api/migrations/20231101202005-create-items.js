@@ -25,8 +25,7 @@ module.exports = {
             },
             stack_price: {
                 type: Sequelize.INTEGER,
-                defaultValue: 0,
-                allowNull: false,
+                allowNull: true,
             },
             stack_size: {
                 type: Sequelize.INTEGER,

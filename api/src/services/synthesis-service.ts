@@ -4,12 +4,13 @@ import {
     type InferAttributes,
 } from 'sequelize';
 import { Category, type Craft } from '../enums';
-import { Item } from '../models/Item';
-import { Synthesis } from '../models/Synthesis';
-import { SynthesisIngredient } from '../models/SynthesisIngredient';
-import { SynthesisSubCraft } from '../models/SynthesisSubCraft';
 import { sequelize } from '../sequelize';
-import { Op } from 'sequelize';
+import {
+    Item,
+    Synthesis,
+    SynthesisIngredient,
+    SynthesisSubCraft,
+} from '../models';
 
 interface Crafting {
     craft: Craft;
@@ -78,9 +79,7 @@ export const getSyntheses = async ({
     const where: WhereOptions = {};
 
     if (crafts.length > 0) {
-        where.craft = {
-            [Op.in]: crafts,
-        };
+        where.craft = crafts;
     }
 
     return await Synthesis.findAll({
@@ -144,6 +143,11 @@ const validateInput = async (input: SynthesisInput): Promise<void> => {
     }
 
     const { synthesis, ingredients } = input;
+
+    if (ingredients.length === 0) {
+        throw new Error(`Synthesis must consist of at least 1 ingredient`);
+    }
+
     if (await isCrystal(synthesis.itemId)) {
         throw new Error(
             `Synthesis product cannot be of category ${Category.Crystals} `

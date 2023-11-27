@@ -9,7 +9,7 @@ import { sequelize } from '../sequelize';
 import { isCategory, isStackSize } from '../validators';
 import { type Category } from '../enums';
 
-export class Item extends Model<
+export default class Item extends Model<
     InferAttributes<Item>,
     InferCreationAttributes<Item>
 > {
@@ -51,7 +51,7 @@ Item.init(
         },
         stackPrice: {
             type: DataTypes.INTEGER.UNSIGNED,
-            defaultValue: 0,
+            allowNull: true,
             validate: {
                 min: 0,
             },
@@ -70,5 +70,21 @@ Item.init(
         tableName: 'items',
         underscored: true,
         sequelize,
+        validate: {
+            stackPriceValidity() {
+                if (this.stackSize === 1 && this.stackPrice !== null) {
+                    throw new Error(
+                        `cannot have stack price when stack size is 1`
+                    );
+                }
+
+                if (
+                    this.stackSize !== 1 &&
+                    (this.stackPrice === undefined || this.stackPrice === null)
+                ) {
+                    throw new Error(`must have stack price if stack size > 1`);
+                }
+            },
+        },
     }
 );

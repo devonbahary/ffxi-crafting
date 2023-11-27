@@ -6,10 +6,9 @@ import {
     Model,
 } from 'sequelize';
 import { sequelize } from '../sequelize';
-import { Item } from './Item';
-import { Synthesis } from './Synthesis';
+import { Item, Synthesis } from '.';
 
-export class SynthesisIngredient extends Model<
+export default class SynthesisIngredient extends Model<
     InferAttributes<SynthesisIngredient>,
     InferCreationAttributes<SynthesisIngredient>
 > {

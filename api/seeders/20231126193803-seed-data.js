@@ -145,6 +145,37 @@ const seedItems = [
         ...STACK_SIZE_12,
         category: 'Materials.Clothcraft',
     },
+    {
+        id: 18,
+        name: "Fisherman's Boots",
+        unit_price: 2000,
+        stack_size: 1,
+        category: 'Armor.Feet',
+    },
+    {
+        id: 19,
+        name: 'Lizard Skin',
+        unit_price: 200,
+        stack_price: 2000,
+        ...STACK_SIZE_12,
+        category: 'Materials.Leathercraft',
+    },
+    {
+        id: 20,
+        name: 'Grass Cloth',
+        unit_price: 300,
+        stack_price: 4000,
+        ...STACK_SIZE_12,
+        category: 'Materials.Clothcraft',
+    },
+    {
+        id: 21,
+        name: 'Bronze Scales',
+        unit_price: 100,
+        stack_price: 500,
+        ...STACK_SIZE_12,
+        category: 'Materials.Smithing',
+    },
 ];
 
 const seedSyntheses = [
@@ -180,6 +211,14 @@ const seedSyntheses = [
         craft_level: 23,
         yield: 1,
     },
+    {
+        id: 5,
+        item_id: 18,
+        crystal_item_id: 1,
+        craft: 'Leathercraft',
+        craft_level: 20,
+        yield: 1,
+    },
 ];
 
 const seedSynthesisIngredients = [
@@ -213,6 +252,24 @@ const seedSynthesisIngredients = [
         item_id: 17,
         quantity: 3,
     },
+    {
+        id: 6,
+        synthesis_id: 5,
+        item_id: 19,
+        quantity: 2,
+    },
+    {
+        id: 7,
+        synthesis_id: 5,
+        item_id: 20,
+        quantity: 1,
+    },
+    {
+        id: 8,
+        synthesis_id: 5,
+        item_id: 21,
+        quantity: 1,
+    },
 ];
 
 /** @type {import('sequelize-cli').Migration} */
@@ -238,6 +295,7 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
+        // due to triggers, should delete all synthesis, subcrafts, ingredients
         await queryInterface.bulkDelete('items');
     },
 };

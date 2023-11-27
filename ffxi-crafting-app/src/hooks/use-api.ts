@@ -73,10 +73,10 @@ const useApiCallback = (
 
                 return data;
             } catch (err: any) {
+                const msg = failureMessage || 'Failure';
+
                 if (err.response?.data) {
                     const data = err.response.data as any;
-
-                    const msg = failureMessage || 'Failure';
 
                     if (data.errors) {
                         for (const error of data.errors) {
@@ -84,11 +84,9 @@ const useApiCallback = (
                         }
                     } else if (data.error) {
                         notifyError(`${msg}: ${data.error}`);
-                    } else if (err.message) {
-                        notifyError(`${msg}: ${err.message}`);
                     }
-                } else {
-                    console.log(err);
+                } else if (err.message) {
+                    notifyError(`${msg}: ${err.message}`);
                 }
 
                 setLoading(false);

@@ -6,13 +6,11 @@ import {
     Model,
 } from 'sequelize';
 import { sequelize } from '../sequelize';
-import { Item } from './Item';
 import { type Craft } from '../enums';
 import { isCraft } from '../validators';
-import { SynthesisIngredient } from './SynthesisIngredient';
-import { SynthesisSubCraft } from './SynthesisSubCraft';
+import { Item } from '.';
 
-export class Synthesis extends Model<
+export default class Synthesis extends Model<
     InferAttributes<Synthesis>,
     InferCreationAttributes<Synthesis>
 > {
@@ -22,6 +20,8 @@ export class Synthesis extends Model<
     declare craft: Craft;
     declare craftLevel: number;
     declare crystalItemId: number;
+    declare unitProfit: CreationOptional<number>;
+    declare stackProfit: CreationOptional<number>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
@@ -70,6 +70,16 @@ Synthesis.init(
             allowNull: false,
             onDelete: 'CASCADE',
         },
+        unitProfit: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        stackProfit: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
     },
@@ -79,9 +89,3 @@ Synthesis.init(
         sequelize,
     }
 );
-
-Synthesis.hasMany(SynthesisIngredient, { as: 'ingredients' });
-Synthesis.hasMany(SynthesisSubCraft, { as: 'subCrafts' });
-Synthesis.belongsTo(Item, { foreignKey: 'itemId', as: 'product' });
-Synthesis.belongsTo(Item, { foreignKey: 'crystalItemId', as: 'crystal' });
-SynthesisIngredient.belongsTo(Item, { as: 'item' });

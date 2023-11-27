@@ -21,8 +21,8 @@ import {
     getSynthesis,
     updateSynthesis,
 } from '../services/synthesis-service';
-import { Synthesis } from '../models/Synthesis';
 import { type Craft } from '../enums';
+import { Synthesis } from '../models';
 
 const router = Router();
 

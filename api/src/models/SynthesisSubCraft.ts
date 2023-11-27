@@ -7,10 +7,10 @@ import {
 } from 'sequelize';
 import { sequelize } from '../sequelize';
 import { type Craft } from '../enums';
-import { Synthesis } from './Synthesis';
 import { isCraft } from '../validators';
+import { Synthesis } from '.';
 
-export class SynthesisSubCraft extends Model<
+export default class SynthesisSubCraft extends Model<
     InferAttributes<SynthesisSubCraft>,
     InferCreationAttributes<SynthesisSubCraft>
 > {

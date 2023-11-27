@@ -11,8 +11,8 @@ import {
     createItemNameValidator,
     createItemStackSizeValidator,
 } from '../validators';
-import { Item } from '../models/Item';
 import { Op, type WhereOptions } from 'sequelize';
+import { Item } from '../models';
 
 const createValidationRules = [
     createItemNameValidator(),

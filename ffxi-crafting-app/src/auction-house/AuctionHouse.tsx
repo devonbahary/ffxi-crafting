@@ -29,7 +29,7 @@ import {
     useUpdateItem,
 } from '../hooks/use-items';
 import { CategoryFilters } from './CategoryFilters';
-import { Category } from '../enums';
+import { Category, StackSize } from '../enums';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -87,6 +87,12 @@ export const AuctionHouse = () => {
         updatedRow,
         oldRow
     ) => {
+        if (updatedRow.stackSize === parseInt(StackSize.One)) {
+            updatedRow.stackPrice = null;
+        } else if (updatedRow.stackPrice === null) {
+            updatedRow.stackPrice = updatedRow.unitPrice;
+        }
+
         if (isNewRow(updatedRow)) {
             const oldId = updatedRow.id;
 
@@ -147,6 +153,14 @@ export const AuctionHouse = () => {
             ...editable,
         },
         {
+            field: 'stackSize',
+            headerName: 'Stack Size',
+            type: 'singleSelect',
+            valueOptions: STACK_SIZE_OPTIONS,
+            ...small,
+            ...editable,
+        },
+        {
             field: 'unitPrice',
             headerName: 'Unit Price',
             ...small,
@@ -155,14 +169,6 @@ export const AuctionHouse = () => {
         {
             field: 'stackPrice',
             headerName: 'Stack Price',
-            ...small,
-            ...editable,
-        },
-        {
-            field: 'stackSize',
-            headerName: 'Stack Size',
-            type: 'singleSelect',
-            valueOptions: STACK_SIZE_OPTIONS,
             ...small,
             ...editable,
         },
@@ -240,6 +246,14 @@ export const AuctionHouse = () => {
                 rowModesModel={rowModesModel}
                 onRowModesModelChange={setRowModesModel}
                 loading={loadingGetItems || loadingCreateItem}
+                isCellEditable={(params) => {
+                    if (params.field === 'stackPrice') {
+                        return params.row.stackSize !== parseInt(StackSize.One);
+                    }
+                    return params.colDef.editable !== undefined
+                        ? params.colDef.editable
+                        : true;
+                }}
             />
             <DeleteConfirmationModal
                 pendingDeleteItem={pendingDeleteItem}
