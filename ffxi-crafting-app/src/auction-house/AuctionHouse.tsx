@@ -9,17 +9,20 @@ import {
     GridRowParams,
     GridToolbarContainer,
 } from '@mui/x-data-grid';
+import Button from '@mui/material/Button';
 import { randomId } from '@mui/x-data-grid-generator';
-import { AxiosError } from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { Item } from '../interfaces';
-import { Alert, Button, Snackbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { useAlertMessages } from './use-alert-messages';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
-import { useDelete, useGet, usePost, usePut } from '../use-api';
+import {
+    useCreateItem,
+    useDeleteItem,
+    useGetItems,
+    useUpdateItem,
+} from '../hooks/use-items';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -35,17 +38,10 @@ export const AuctionHouse = () => {
         string | number | null
     >(null);
 
-    const {
-        alertMessages,
-        pushSuccessMessage,
-        pushErrorMessage,
-        shiftAlertMessages,
-    } = useAlertMessages();
-
-    const { get: getItems } = useGet<Item[]>('/items');
-    const { post: createItem } = usePost<Item, Item>('/items');
-    const { put: updateItem } = usePut<Item, Item>('/items');
-    const { delete: deleteItem } = useDelete('/items');
+    const { loading: loadingGetItems, getItems } = useGetItems();
+    const { loading: loadingCreateItem, createItem } = useCreateItem();
+    const { updateItem } = useUpdateItem();
+    const { loading: loadingDeleteItem, deleteItem } = useDeleteItem();
 
     const handleAddItem = () => {
         const id = randomId();
@@ -69,32 +65,14 @@ export const AuctionHouse = () => {
         setEditMode('row');
     };
 
-    const onProcessRowError: DataGridProps['onProcessRowUpdateError'] = (
-        error: AxiosError
-    ) => {
-        if (error.response?.data) {
-            const data = error.response.data as any;
-            if (data.errors) {
-                for (const error of data.errors) {
-                    pushErrorMessage(`Failure: ${error.msg}`);
-                }
-            } else if (data.error) {
-                pushErrorMessage(`Failure: ${data.error}`);
-            } else if (error.message) {
-                pushErrorMessage(`Failure: ${error.message}`);
-            }
-        }
-    };
-
     const processRowUpdate: DataGridProps['processRowUpdate'] = async (
-        updatedRow
+        updatedRow,
+        oldRow
     ) => {
         if (isNewRow(updatedRow)) {
             const oldId = updatedRow.id;
 
             const createdItem = await createItem(updatedRow);
-
-            pushSuccessMessage('Successfully created item');
 
             setItems((prevItems) =>
                 prevItems.map((item) => {
@@ -108,11 +86,12 @@ export const AuctionHouse = () => {
 
             return createdItem;
         } else {
-            const updatedItem = await updateItem(updatedRow.id, updatedRow);
-
-            pushSuccessMessage('Successfully updated item');
-
-            return updatedItem;
+            try {
+                const updatedItem = await updateItem(updatedRow.id, updatedRow);
+                return updatedItem;
+            } catch (err) {
+                return oldRow;
+            }
         }
     };
 
@@ -131,19 +110,13 @@ export const AuctionHouse = () => {
         try {
             await deleteItem(pendingDeleteId);
 
-            pushSuccessMessage(`Successfully deleted item`);
-
             setPendingDeleteId(null);
 
             setItems((prevItems) =>
                 prevItems.filter((item) => item.id !== pendingDeleteId)
             );
-        } catch (err: any) {
-            pushErrorMessage(`Failure: ${err.message}`);
-        }
+        } catch (err) {}
     };
-
-    const handleSnackbarClose = () => shiftAlertMessages();
 
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Name', ...large, ...editable },
@@ -205,8 +178,12 @@ export const AuctionHouse = () => {
 
     useEffect(() => {
         (async () => {
-            const items = await getItems({});
-            setItems(items);
+            try {
+                const items = await getItems({});
+                setItems(items);
+            } catch (err) {
+                setItems([]);
+            }
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -218,9 +195,9 @@ export const AuctionHouse = () => {
                 rows={items}
                 columns={columns}
                 processRowUpdate={processRowUpdate}
-                onProcessRowUpdateError={onProcessRowError}
                 rowModesModel={rowModesModel}
                 onRowModesModelChange={setRowModesModel}
+                loading={loadingGetItems || loadingCreateItem}
                 slots={{
                     toolbar: () => (
                         <GridToolbarContainer>
@@ -238,21 +215,8 @@ export const AuctionHouse = () => {
                 pendingDeleteItem={pendingDeleteItem}
                 onClose={() => setPendingDeleteId(null)}
                 onConfirm={() => deleteRow()}
+                loadingDeleteItem={loadingDeleteItem}
             />
-            <Snackbar
-                open={alertMessages.length > 0}
-                autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-            >
-                {alertMessages.length ? (
-                    <Alert
-                        severity={alertMessages[0].severity}
-                        onClose={handleSnackbarClose}
-                    >
-                        {alertMessages[0].msg}
-                    </Alert>
-                ) : undefined}
-            </Snackbar>
         </>
     );
 };

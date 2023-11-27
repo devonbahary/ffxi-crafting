@@ -6,6 +6,7 @@ import React, {
     useEffect,
     useState,
 } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -31,12 +32,14 @@ type DeleteConfirmationModalProps = {
     pendingDeleteItem?: Partial<Item>;
     onClose: () => void;
     onConfirm: () => void;
+    loadingDeleteItem: boolean;
 };
 
 export const DeleteConfirmationModal: FC<DeleteConfirmationModalProps> = ({
     pendingDeleteItem,
     onClose,
     onConfirm,
+    loadingDeleteItem,
 }) => {
     const [name, setName] = useState<string | undefined>();
 
@@ -61,14 +64,23 @@ export const DeleteConfirmationModal: FC<DeleteConfirmationModalProps> = ({
             <DialogActions>
                 <Grid container>
                     <Grid item flex={1} textAlign="center">
-                        <IconButton onClick={onClose}>
+                        <IconButton
+                            onClick={onClose}
+                            disabled={loadingDeleteItem}
+                        >
                             <CloseIcon />
                         </IconButton>
                     </Grid>
                     <Grid item flex={1} textAlign="center">
-                        <IconButton onClick={onConfirm} color="primary">
-                            <CheckIcon />
-                        </IconButton>
+                        {loadingDeleteItem ? (
+                            <IconButton color="primary">
+                                <CircularProgress size={20} />
+                            </IconButton>
+                        ) : (
+                            <IconButton onClick={onConfirm} color="primary">
+                                <CheckIcon />
+                            </IconButton>
+                        )}
                     </Grid>
                 </Grid>
             </DialogActions>

@@ -89,6 +89,7 @@ router.post(
                 stackPrice,
                 stackSize,
             });
+
             res.send(item.toJSON());
         });
     }

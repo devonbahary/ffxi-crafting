@@ -34,8 +34,6 @@ export interface SynthesisIngredient extends Record {
     quantity: number;
 }
 
-export type GetItemsSearchParams = {
-    name?: string;
-    excludeCategory?: Category;
-    categories?: Category[];
-};
+export interface Loading {
+    loading: boolean;
+}

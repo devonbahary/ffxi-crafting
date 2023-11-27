@@ -21,14 +21,15 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { GetItemsSearchParams, Item, SynthesisIngredient } from '../interfaces';
+import { Item, SynthesisIngredient } from '../interfaces';
 import { CRAFT_OPTIONS } from '../inputs/input-options';
 import { Category, Craft } from '../enums';
 import { NumberInput } from '../inputs/NumberInput';
 import { ChipSelect } from '../inputs/ChipSelect';
 import { debounce } from '@mui/material/utils';
 import { type Synthesis as SynthesisI } from '../interfaces';
-import { useGet, useGetId, usePost, usePut } from '../use-api';
+import { useGet, useGetId, usePost, usePut } from '../hooks/use-api';
+import { GetItemsSearchParams } from '../hooks/use-items';
 
 type Nullable<T> = T | null;
 
