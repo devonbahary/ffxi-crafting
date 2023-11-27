@@ -25,6 +25,8 @@ export interface Synthesis extends Record, Crafting {
     yield: number;
     subCrafts: SubCraft[];
     crystal: Item;
+    unitProfit: number;
+    stackProfit: number;
     updatedAt: string;
     ingredients: SynthesisIngredient[];
 }

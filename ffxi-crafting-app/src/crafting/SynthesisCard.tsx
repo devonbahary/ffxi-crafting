@@ -17,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Item, Synthesis, SynthesisIngredient } from '../interfaces';
 import { useDeleteSynthesis } from '../hooks/use-synthesis';
+import { StackSize } from '../enums';
 
 type SynthesisCardProps = {
     synthesis: Synthesis;
@@ -31,35 +32,15 @@ const getStackUnitPrice = (item: Item): number => {
     return item.stackPrice / parseInt(item.stackSize);
 };
 
+const getStackUnitPriceText = (item: Item): string => {
+    return `(${item.stackPrice} / ${item.stackSize})`;
+};
+
 const getIngredientQuantityCost = (ingredient: SynthesisIngredient): number => {
     return (
         (ingredient.item.stackPrice / parseInt(ingredient.item.stackSize)) *
         ingredient.quantity
     );
-};
-
-const getSynthesisProfit = (
-    synthesis: Synthesis,
-    sellAsStack: boolean
-): number => {
-    const crystalCost = getStackUnitPrice(synthesis.crystal);
-
-    const ingredientsCost = synthesis.ingredients.reduce((acc, ingredient) => {
-        return acc + getIngredientQuantityCost(ingredient);
-    }, 0);
-
-    if (sellAsStack) {
-        const repeatsToGetToStack =
-            parseInt(synthesis.product.stackSize) / synthesis.yield;
-
-        const costToStack =
-            repeatsToGetToStack * (crystalCost + ingredientsCost);
-
-        return synthesis.product.stackPrice - costToStack;
-    }
-
-    const revenue = synthesis.product.unitPrice * synthesis.yield;
-    return revenue - crystalCost - ingredientsCost;
 };
 
 const formatGil = (val: number): number => Math.round(val);
@@ -128,9 +109,9 @@ const SynthesisMonetaryBreakdown: FC<{
 
     const crystalCost = sellAsStack
         ? repeatsToGetToStack * getStackUnitPrice(crystal)
-        : getStackUnitPrice(crystal);
+        : getStackUnitPrice(crystal) / synthesis.yield;
 
-    const profit = getSynthesisProfit(synthesis, sellAsStack);
+    const profit = sellAsStack ? synthesis.stackProfit : synthesis.unitProfit;
 
     return (
         <>
@@ -185,8 +166,12 @@ const SynthesisMonetaryBreakdown: FC<{
                             color={SECONDARY_COLOR}
                             variant="body2"
                         >
-                            ({crystal.stackPrice} / {crystal.stackSize})
-                            {sellAsStack ? ` x${repeatsToGetToStack}` : null}
+                            {getStackUnitPriceText(crystal)}
+                            {sellAsStack
+                                ? ` x${repeatsToGetToStack}`
+                                : synthesis.yield > 1
+                                ? ` / ${synthesis.yield}`
+                                : null}
                         </Typography>
                         &nbsp;
                         <Typography display="inline-block" color={LOSS_COLOR}>
@@ -201,15 +186,20 @@ const SynthesisMonetaryBreakdown: FC<{
                             quantityToGetToProductStack *
                             getStackUnitPrice(ingredient.item);
 
-                        const unitPriceText = `(${ingredient.item.stackPrice} / ${ingredient.item.stackSize})`;
-                        const quantityToStackText =
+                        const unitPriceText = getStackUnitPriceText(
+                            ingredient.item
+                        );
+                        const quantityToTargetSizeText =
                             sellAsStack && quantityToGetToProductStack > 1
                                 ? ` x${quantityToGetToProductStack}`
+                                : ingredient.quantity > 1
+                                ? ` x${ingredient.quantity}`
                                 : null;
                         const costText = `-${formatGil(
                             sellAsStack
                                 ? costToProductStack
-                                : getIngredientQuantityCost(ingredient)
+                                : getIngredientQuantityCost(ingredient) /
+                                      synthesis.yield
                         )}`;
 
                         return (
@@ -220,7 +210,10 @@ const SynthesisMonetaryBreakdown: FC<{
                                     variant="body2"
                                 >
                                     {unitPriceText}
-                                    {quantityToStackText}
+                                    {quantityToTargetSizeText}
+                                    {!sellAsStack && synthesis.yield > 1
+                                        ? ` / ${synthesis.yield}`
+                                        : null}
                                 </Typography>
                                 &nbsp;
                                 <Typography
@@ -268,8 +261,7 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
         } catch (err) {}
     };
 
-    const unitProfit = getSynthesisProfit(synthesis, false);
-    const stackProfit = getSynthesisProfit(synthesis, true);
+    const { unitProfit, stackProfit } = synthesis;
 
     const unitProfitLabel =
         (unitProfit >= 0 ? '+' : '') + formatGil(unitProfit) + ' unit';
@@ -280,6 +272,9 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
         color: 'disabled',
         sx: { ':hover': { color: 'inherit' } },
     };
+
+    const isStackable =
+        parseInt(synthesis.product.stackSize) !== parseInt(StackSize.One);
 
     return (
         <Card
@@ -308,11 +303,15 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                                 color={unitProfit >= 0 ? 'success' : 'error'}
                                 variant="outlined"
                             />
-                            <Chip
-                                label={stackProfitLabel}
-                                color={stackProfit >= 0 ? 'success' : 'error'}
-                                variant="outlined"
-                            />
+                            {isStackable && (
+                                <Chip
+                                    label={stackProfitLabel}
+                                    color={
+                                        stackProfit >= 0 ? 'success' : 'error'
+                                    }
+                                    variant="outlined"
+                                />
+                            )}
                         </Stack>
                     </Grid>
                 </Grid>
@@ -321,10 +320,12 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                 <Divider />
                 <CardContent>
                     <SynthesisMonetaryBreakdown synthesis={synthesis} />
-                    <SynthesisMonetaryBreakdown
-                        synthesis={synthesis}
-                        sellAsStack
-                    />
+                    {isStackable && (
+                        <SynthesisMonetaryBreakdown
+                            synthesis={synthesis}
+                            sellAsStack
+                        />
+                    )}
                 </CardContent>
                 <Divider />
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
