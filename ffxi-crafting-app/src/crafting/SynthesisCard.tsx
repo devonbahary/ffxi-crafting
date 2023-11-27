@@ -1,21 +1,26 @@
-import React, { FC, useState } from 'react';
+import React, { FC, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
-import Typography, { TypographyProps } from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
+import CardActions from '@mui/material/CardActions';
+import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import { CardActions, IconButton, SvgIconProps } from '@mui/material';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import Typography, { TypographyProps } from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Item, Synthesis, SynthesisIngredient } from '../interfaces';
+import { useDeleteSynthesis } from '../hooks/use-synthesis';
 
 type SynthesisCardProps = {
     synthesis: Synthesis;
+    onDelete: () => void;
 };
 
 const GAIN_COLOR: TypographyProps['color'] = 'success.main';
@@ -239,10 +244,29 @@ const SynthesisMonetaryBreakdown: FC<{
     );
 };
 
-export const SynthesisCard: FC<SynthesisCardProps> = ({ synthesis }) => {
+export const SynthesisCard: FC<SynthesisCardProps> = ({
+    synthesis,
+    onDelete,
+}) => {
     const [expanded, setExpanded] = useState(false);
 
     const navigate = useNavigate();
+
+    const { loading: loadingDeleteSynthesis, deleteSynthesis } =
+        useDeleteSynthesis();
+
+    const handleEditSynthesis = (e: MouseEvent) => {
+        e.stopPropagation();
+        navigate(`/synthesis/edit/${synthesis.id}`);
+    };
+
+    const handleDeleteSynthesis = async (e: MouseEvent) => {
+        e.stopPropagation();
+        try {
+            await deleteSynthesis(synthesis.id);
+            onDelete();
+        } catch (err) {}
+    };
 
     const unitProfit = getSynthesisProfit(synthesis, false);
     const stackProfit = getSynthesisProfit(synthesis, true);
@@ -305,14 +329,20 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({ synthesis }) => {
                 <Divider />
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
                     <IconButton
-                        onClick={() =>
-                            navigate(`/synthesis/edit/${synthesis.id}`)
-                        }
+                        onClick={handleEditSynthesis}
+                        disabled={loadingDeleteSynthesis}
                     >
                         <EditIcon {...actionIconProps} />
                     </IconButton>
-                    <IconButton>
-                        <DeleteIcon {...actionIconProps} />
+                    <IconButton
+                        onClick={handleDeleteSynthesis}
+                        disabled={loadingDeleteSynthesis}
+                    >
+                        {loadingDeleteSynthesis ? (
+                            <CircularProgress size={20} />
+                        ) : (
+                            <DeleteIcon {...actionIconProps} />
+                        )}
                     </IconButton>
                 </CardActions>
             </Collapse>

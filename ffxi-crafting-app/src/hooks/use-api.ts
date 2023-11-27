@@ -89,6 +89,8 @@ const useApiCallback = (
                     } else if (err.message) {
                         notifyError(`${msg}: ${err.message}`);
                     }
+                } else {
+                    console.log(err);
                 }
 
                 setLoading(false);
@@ -96,14 +98,7 @@ const useApiCallback = (
                 throw err;
             }
         },
-        [
-            apiRequest,
-            notifySuccess,
-            notifyError,
-            successMessage,
-            failureMessage,
-            clearNotifications,
-        ]
+        [apiRequest, notifySuccess, notifyError, successMessage, failureMessage]
     );
 
     return {
@@ -137,30 +132,25 @@ export const useGet = <Data, QueryParams = {}>(
 };
 
 export const useGetId = <Data, QueryParams = {}>(
-    route: string
+    route: string,
+    options: UseApiOptions = {}
 ): UseGetId<Data, QueryParams> => {
-    const [loading, setLoading] = useState(false);
-
     const getId = useCallback(
-        async (id: number | string, params?: QueryParams) => {
-            const url =
-                BASE_URL +
-                route +
-                `/${id}` +
-                (params ? toQueryParams(params) : '');
-
-            setLoading(true);
-            const { data } = await axios.get(url);
-            setLoading(false);
-
-            return data;
+        async (id: number | string) => {
+            const url = BASE_URL + route + `/${id}`;
+            return axios.get(url);
         },
         [route]
     );
 
+    const { loading, withLoadingAndNotifications } = useApiCallback(
+        getId,
+        options
+    );
+
     return {
         loading,
-        getId,
+        getId: withLoadingAndNotifications,
     };
 };
 

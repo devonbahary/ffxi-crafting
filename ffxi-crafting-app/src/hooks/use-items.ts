@@ -30,6 +30,7 @@ export const useGetItems = (): UseGetItems => {
     const { loading, get } = useGet<Item[]>(ITEMS_URL, {
         failureMessage: 'Failed to load items',
     });
+
     return { loading, getItems: get };
 };
 
@@ -38,6 +39,7 @@ export const useCreateItem = (): UseCreateItem => {
         successMessage: 'Created item',
         failureMessage: 'Failed to create item',
     });
+
     return {
         loading,
         createItem: post,
@@ -49,6 +51,7 @@ export const useUpdateItem = (): UseUpdateItem => {
         successMessage: 'Updated item',
         failureMessage: 'Failed to update item',
     });
+
     return {
         loading,
         updateItem: put,
@@ -60,6 +63,7 @@ export const useDeleteItem = (): UseDeleteItem => {
         successMessage: 'Deleted item',
         failureMessage: 'Failed to delete item',
     });
+
     return {
         loading,
         deleteItem: deleteFn,

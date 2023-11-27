@@ -1,35 +1,31 @@
-import React, {
-    FC,
-    SyntheticEvent,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useNavigate, useParams } from 'react-router';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SaveIcon from '@mui/icons-material/Save';
-import { NavigateButton } from './NavigateButton';
-import Autocomplete from '@mui/material/Autocomplete';
+import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SaveIcon from '@mui/icons-material/Save';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { NavigateButton } from './NavigateButton';
 import { Item, SynthesisIngredient } from '../interfaces';
 import { CRAFT_OPTIONS } from '../inputs/input-options';
 import { Category, Craft } from '../enums';
 import { NumberInput } from '../inputs/NumberInput';
 import { ChipSelect } from '../inputs/ChipSelect';
-import { debounce } from '@mui/material/utils';
 import { type Synthesis as SynthesisI } from '../interfaces';
-import { useGet, useGetId, usePost, usePut } from '../hooks/use-api';
-import { GetItemsSearchParams } from '../hooks/use-items';
+import {
+    useCreateSynthesis,
+    useGetSynthesis,
+    useUpdateSynthesis,
+} from '../hooks/use-synthesis';
+import { ItemSearchInput } from '../inputs/ItemSearchInput';
 
 type Nullable<T> = T | null;
 
@@ -44,96 +40,6 @@ type NonNullableRecord<T extends {}> = {
 type FormSynthesisIngredient = NullableRecord<SynthesisIngredient> &
     Pick<SynthesisIngredient, 'id'>;
 
-type ItemSearchInputProps = {
-    label: string;
-    onChange: (item: Item | null) => void;
-    getItemSearchParams?: Pick<
-        GetItemsSearchParams,
-        'categories' | 'excludeCategory'
-    >;
-    value: Item | null;
-};
-
-interface SynthesisIngredientInput {
-    itemId: string | number;
-    quantity: number;
-}
-
-interface SynthesisInput {
-    synthesis: Pick<SynthesisI, 'yield' | 'craft' | 'craftLevel'> & {
-        itemId: string | number;
-        crystalItemId: string | number;
-    };
-    subCrafts: Omit<SynthesisI['subCrafts'][0], 'id'>[];
-    ingredients: SynthesisIngredientInput[];
-}
-
-const ItemSearchInput: FC<ItemSearchInputProps> = ({
-    getItemSearchParams = {},
-    label,
-    onChange,
-    value,
-}) => {
-    const [items, setItems] = useState<Item[]>([]);
-    const [searchText, setSearchText] = useState('');
-
-    const { loading: loadingGetItems, get: getItems } = useGet<
-        Item[],
-        GetItemsSearchParams
-    >('/items');
-
-    const getItemsForSearchText = useCallback(
-        debounce(async (name: string) => {
-            const items = await getItems({
-                name,
-                ...getItemSearchParams,
-            });
-            setItems(items);
-        }, 250),
-        []
-    );
-
-    const onInputChange = (e: SyntheticEvent, val: string) => {
-        setSearchText(val);
-    };
-
-    useEffect(() => {
-        getItemsForSearchText(searchText);
-    }, [getItemsForSearchText, searchText]);
-
-    return (
-        <Autocomplete
-            options={items}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label={label}
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                            <>
-                                {loadingGetItems ? (
-                                    <CircularProgress size={20} />
-                                ) : null}
-                                {params.InputProps.endAdornment}
-                            </>
-                        ),
-                    }}
-                />
-            )}
-            getOptionLabel={(item) => item.name}
-            filterOptions={(x) => x}
-            inputValue={searchText}
-            onChange={(e, val) => onChange(val)}
-            onInputChange={onInputChange}
-            loading={loadingGetItems}
-            loadingText="Loading items..."
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            value={value}
-        />
-    );
-};
-
 type Crafting = {
     id: number | string;
     craft: Craft | null;
@@ -143,6 +49,15 @@ type Crafting = {
 type CraftAndCraftLevelInputsProps = {
     onChange: (craft: Crafting) => void;
     value: Crafting;
+};
+
+type SynthesisIngredientInputsProps = {
+    onChange: (ingredient: FormSynthesisIngredient) => void;
+    value: FormSynthesisIngredient;
+};
+
+type SynthesisFormProps = {
+    synthesis?: SynthesisI;
 };
 
 const CraftAndCraftLevelInputs: FC<CraftAndCraftLevelInputsProps> = ({
@@ -179,11 +94,6 @@ const CraftAndCraftLevelInputs: FC<CraftAndCraftLevelInputsProps> = ({
             />
         </Stack>
     );
-};
-
-type SynthesisIngredientInputsProps = {
-    onChange: (ingredient: FormSynthesisIngredient) => void;
-    value: FormSynthesisIngredient;
 };
 
 const SynthesisIngredientInputs: FC<SynthesisIngredientInputsProps> = ({
@@ -239,10 +149,6 @@ const areAllIngredientsComplete = (
     );
 };
 
-type SynthesisFormProps = {
-    synthesis?: SynthesisI;
-};
-
 const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
     const [synthYield, setYield] = useState<number | null>(
         synthesis?.yield || null
@@ -264,14 +170,10 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
         synthesis?.ingredients || []
     );
 
-    const { loading: loadingCreateSynthesis, post: createSynthesis } = usePost<
-        SynthesisI,
-        SynthesisInput
-    >('/synthesis');
-    const { loading: loadingUpdateSynthesis, put: updateSynthesis } = usePut<
-        SynthesisI,
-        SynthesisInput
-    >('/synthesis');
+    const { loading: loadingCreateSynthesis, createSynthesis } =
+        useCreateSynthesis();
+    const { loading: loadingUpdateSynthesis, updateSynthesis } =
+        useUpdateSynthesis();
 
     const saving = loadingCreateSynthesis || loadingUpdateSynthesis;
 
@@ -303,13 +205,15 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                 })),
             };
 
-            if (synthesis) {
-                await updateSynthesis(synthesis.id, input);
-            } else {
-                await createSynthesis(input);
-            }
+            try {
+                if (synthesis) {
+                    await updateSynthesis(synthesis.id, input);
+                } else {
+                    await createSynthesis(input);
+                }
 
-            navigate(-1);
+                navigate(-1);
+            } catch (err) {}
         }
     };
 
@@ -515,21 +419,25 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                     </Box>
                 </>
             )}
+            <Backdrop open={saving}>
+                <CircularProgress />
+            </Backdrop>
         </Stack>
     );
 };
 
 export const Synthesis = () => {
     const [synthesis, setSynthesis] = useState<SynthesisI | null>(null);
-    const { loading: loadingSynthesis, getId: getSynthesis } =
-        useGetId<SynthesisI>('/synthesis');
+    const { loading: loadingSynthesis, getSynthesis } = useGetSynthesis();
     const { id } = useParams();
 
     useEffect(() => {
         (async () => {
             if (id) {
-                const synthesis = await getSynthesis(id);
-                setSynthesis(synthesis);
+                try {
+                    const synthesis = await getSynthesis(id);
+                    setSynthesis(synthesis);
+                } catch (err) {}
             }
         })();
     }, [id, getSynthesis]);
@@ -543,9 +451,9 @@ export const Synthesis = () => {
                 synthesis && !loadingSynthesis ? (
                     <SynthesisForm synthesis={synthesis} />
                 ) : (
-                    <Box>
+                    <Backdrop open={loadingSynthesis}>
                         <CircularProgress />
-                    </Box>
+                    </Backdrop>
                 )
             ) : (
                 <SynthesisForm />

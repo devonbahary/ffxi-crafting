@@ -17,6 +17,10 @@ export const Crafting = () => {
 
     const { loading: loadingGetSyntheses, getSyntheses } = useGetSyntheses();
 
+    const handleDelete = (id: number | string) => {
+        setSyntheses((prev) => prev.filter((synth) => synth.id !== id));
+    };
+
     useEffect(() => {
         (async () => {
             const syntheses = await getSyntheses({
@@ -49,7 +53,10 @@ export const Crafting = () => {
                 <Grid container spacing={2}>
                     {syntheses.map((synth) => (
                         <Grid key={synth.id} item xs={4}>
-                            <SynthesisCard synthesis={synth} />
+                            <SynthesisCard
+                                synthesis={synth}
+                                onDelete={() => handleDelete(synth.id)}
+                            />
                         </Grid>
                     ))}
                 </Grid>

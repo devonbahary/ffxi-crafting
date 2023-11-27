@@ -82,7 +82,6 @@ router.post(
         // eslint-disable-next-line
         withErrorHandling(next, async () => {
             const synthesis = await createSynthesis(req.body);
-
             res.json(synthesis);
         });
     }
@@ -118,5 +117,23 @@ router.put(
         });
     }
 );
+
+router.delete('/:id', (req, res, next) => {
+    const { id } = req.params;
+
+    // eslint-disable-next-line
+    withErrorHandling(next, async () => {
+        const item = await Synthesis.findByPk(id);
+
+        if (item === null) {
+            res.sendStatus(404);
+            return;
+        }
+
+        await Synthesis.destroy({ where: { id } });
+
+        res.sendStatus(200);
+    });
+});
 
 export default router;
