@@ -2,9 +2,10 @@ import { Category, Craft, StackSize } from '../enums';
 
 export const CATEGORY_OPTIONS = Object.entries(Category)
     .map(([key, value]) => {
+        const parts = value.split('.');
         return {
             value,
-            label: key,
+            label: parts[parts.length - 1],
         };
     })
     .sort((a, b) => (a.label > b.label ? 1 : -1));

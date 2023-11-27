@@ -165,20 +165,18 @@ const CraftAndCraftLevelInputs: FC<CraftAndCraftLevelInputsProps> = ({
                 }}
                 value={value.craftLevel ?? ''}
             />
-            <Box display="flex" alignItems="center" flex={1}>
-                <ChipSelect
-                    onChange={(val) => {
-                        if (!Array.isArray(val)) {
-                            onChange({
-                                ...value,
-                                craft: val,
-                            });
-                        }
-                    }}
-                    options={CRAFT_OPTIONS}
-                    value={value.craft}
-                />
-            </Box>
+            <ChipSelect
+                onChange={(val) => {
+                    if (!Array.isArray(val)) {
+                        onChange({
+                            ...value,
+                            craft: val,
+                        });
+                    }
+                }}
+                options={CRAFT_OPTIONS}
+                value={value.craft}
+            />
         </Stack>
     );
 };

@@ -5,7 +5,7 @@ import {
     Router,
 } from 'express';
 import { validationResult } from 'express-validator';
-import { getLimitAndOffset, withErrorHandling } from './utilities';
+import { getArray, getLimitAndOffset, withErrorHandling } from './utilities';
 import {
     createItemCategoryValidator,
     createItemNameValidator,
@@ -32,7 +32,8 @@ router.get('/', (req, res, next): void => {
     // eslint-disable-next-line
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
-        const { name, categories, excludeCategory } = req.query;
+        const { name, excludeCategory } = req.query;
+        const categories = getArray(req.query.categories);
 
         const where: WhereOptions = {
             category: {
@@ -42,7 +43,7 @@ router.get('/', (req, res, next): void => {
                               [Op.not]: excludeCategory,
                           }
                         : undefined,
-                    categories !== undefined
+                    categories.length > 0
                         ? {
                               [Op.in]: categories,
                           }

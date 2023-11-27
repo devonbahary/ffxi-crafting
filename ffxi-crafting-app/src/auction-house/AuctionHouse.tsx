@@ -1,3 +1,4 @@
+import { formatDistanceToNow } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     DataGrid,
@@ -8,12 +9,13 @@ import {
     GridRowModesModel,
     GridRowParams,
 } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
 import { randomId } from '@mui/x-data-grid-generator';
-import { formatDistanceToNow } from 'date-fns';
-import { Item } from '../interfaces';
-import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Item } from '../interfaces';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
 import {
@@ -22,6 +24,8 @@ import {
     useGetItems,
     useUpdateItem,
 } from '../hooks/use-items';
+import { CategoryFilters } from './CategoryFilters';
+import { Category } from '../enums';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -36,6 +40,10 @@ export const AuctionHouse = () => {
     const [pendingDeleteId, setPendingDeleteId] = useState<
         string | number | null
     >(null);
+
+    const [categoryFilterSet, setCategoryFilterSet] = useState<Set<Category>>(
+        new Set()
+    );
 
     const { loading: loadingGetItems, getItems } = useGetItems();
     const { loading: loadingCreateItem, createItem } = useCreateItem();
@@ -178,14 +186,15 @@ export const AuctionHouse = () => {
     useEffect(() => {
         (async () => {
             try {
-                const items = await getItems({});
+                const items = await getItems({
+                    categories: Array.from(categoryFilterSet),
+                });
                 setItems(items);
             } catch (err) {
                 setItems([]);
             }
         })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [getItems, categoryFilterSet]);
 
     return (
         <>
@@ -197,6 +206,10 @@ export const AuctionHouse = () => {
             >
                 Add Item
             </Button>
+            <Box marginBottom={2}>
+                <Typography variant="overline">Filters</Typography>
+                <CategoryFilters onChange={setCategoryFilterSet} />
+            </Box>
             <DataGrid
                 editMode={editMode}
                 rows={items}

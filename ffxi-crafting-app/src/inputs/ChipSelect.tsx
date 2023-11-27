@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 
@@ -7,66 +7,32 @@ type Option<T> = {
     label: string;
 };
 
-type ChipSelectProps<T> = {
-    multi?: boolean;
-    onChange: (values: T | T[] | null) => void;
+type Options<T> = {
     options: Option<T>[];
-    value: T | T[];
 };
 
-export const ChipSelect = <T,>({
-    multi = false,
-    onChange,
+type BaseChipSelectProps<T> = Options<T> & {
+    onSelect: (val: T) => void;
+    isSelected: (val: T) => boolean;
+};
+
+type ChipSelectProps<T> = Options<T> & {
+    onChange: (values: T | null) => void;
+    value: T | null;
+};
+
+type MultiChipSelectProps<T> = Options<T> & {
+    onChange: (values: Set<T>) => void;
+    value: Set<T>;
+};
+
+const BaseChipSelect = <T,>({
     options,
-    value,
-}: ChipSelectProps<T>) => {
-    const [multiSelectionSet, setMultiSelectionSet] = useState<Set<T>>(
-        new Set(Array.isArray(value) ? [...value] : [value])
-    );
-    const [singleSelection, setSingleSelection] = useState<T | null>(
-        Array.isArray(value) ? null : value
-    );
-
-    const onSelect = (value: T) => {
-        if (multi) {
-            setMultiSelectionSet((prev) => {
-                const updated = new Set(prev);
-
-                if (updated.has(value)) {
-                    updated.delete(value);
-                } else {
-                    updated.add(value);
-                }
-
-                onChange(Array.from(updated));
-
-                return updated;
-            });
-        } else {
-            setSingleSelection((prev) => {
-                const newVal = prev !== value ? value : null;
-                onChange(newVal);
-                return newVal;
-            });
-        }
-    };
-
-    useEffect(() => {
-        if (multi) {
-            setMultiSelectionSet(
-                new Set(Array.isArray(value) ? [...value] : [value])
-            );
-        } else {
-            setSingleSelection(Array.isArray(value) ? null : value);
-        }
-    }, [multi, value]);
-
-    const isSelected = (value: T) => {
-        return multi ? multiSelectionSet.has(value) : singleSelection === value;
-    };
-
+    isSelected,
+    onSelect,
+}: BaseChipSelectProps<T>) => {
     return (
-        <Box display="flex" gap={2}>
+        <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
             {options.map(({ label, value }) => (
                 <Chip
                     key={label}
@@ -76,5 +42,57 @@ export const ChipSelect = <T,>({
                 />
             ))}
         </Box>
+    );
+};
+
+export const ChipSelect = <T,>({
+    onChange,
+    options,
+    value,
+}: ChipSelectProps<T>) => {
+    const onSelect = (newValue: T) => {
+        onChange(newValue !== value ? newValue : null);
+    };
+
+    const isSelected = (optionValue: T) => {
+        return value === optionValue;
+    };
+
+    return (
+        <BaseChipSelect
+            options={options}
+            onSelect={onSelect}
+            isSelected={isSelected}
+        />
+    );
+};
+
+export const MultiChipSelect = <T,>({
+    onChange,
+    options,
+    value,
+}: MultiChipSelectProps<T>) => {
+    const onSelect = (selection: T) => {
+        const updated = new Set(value);
+
+        if (updated.has(selection)) {
+            updated.delete(selection);
+        } else {
+            updated.add(selection);
+        }
+
+        onChange(updated);
+    };
+
+    const isSelected = (selection: T) => {
+        return value.has(selection);
+    };
+
+    return (
+        <BaseChipSelect
+            options={options}
+            isSelected={isSelected}
+            onSelect={onSelect}
+        />
     );
 };

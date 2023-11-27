@@ -6,23 +6,25 @@ import AddIcon from '@mui/icons-material/Add';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from './SynthesisCard';
 import { NavigateButton } from './NavigateButton';
-import { ChipSelect } from '../inputs/ChipSelect';
+import { MultiChipSelect } from '../inputs/ChipSelect';
 import { CRAFT_OPTIONS } from '../inputs/input-options';
 import { Craft } from '../enums';
 import { useGetSyntheses } from '../hooks/use-synthesis';
 
 export const Crafting = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
-    const [crafts, setCrafts] = useState<Craft[]>([]);
+    const [craftSet, setCraftSet] = useState<Set<Craft>>(new Set());
 
     const { loading: loadingGetSyntheses, getSyntheses } = useGetSyntheses();
 
     useEffect(() => {
         (async () => {
-            const syntheses = await getSyntheses({ crafts });
+            const syntheses = await getSyntheses({
+                crafts: Array.from(craftSet),
+            });
             setSyntheses(syntheses);
         })();
-    }, [crafts, getSyntheses]);
+    }, [craftSet, getSyntheses]);
 
     return (
         <>
@@ -33,15 +35,12 @@ export const Crafting = () => {
                 Add Synthesis
             </NavigateButton>
             <Box marginBottom={2}>
-                <ChipSelect
-                    multi
+                <MultiChipSelect
                     options={CRAFT_OPTIONS}
-                    onChange={(val) => {
-                        if (Array.isArray(val)) {
-                            setCrafts(val);
-                        }
+                    onChange={(crafts: Set<Craft>) => {
+                        setCraftSet(crafts);
                     }}
-                    value={crafts}
+                    value={craftSet}
                 />
             </Box>
             {loadingGetSyntheses ? (
