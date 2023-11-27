@@ -56,12 +56,10 @@ const useApiCallback = (
     const [loading, setLoading] = useState(false);
 
     const { successMessage, failureMessage } = options;
-    const { notifySuccess, notifyError, clearNotifications } =
-        useContext(NotificationsContext);
+    const { notifySuccess, notifyError } = useContext(NotificationsContext);
 
     const withLoadingAndNotifications = useCallback(
         async (...args: any) => {
-            clearNotifications();
             setLoading(true);
 
             try {

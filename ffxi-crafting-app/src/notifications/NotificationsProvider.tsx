@@ -19,7 +19,6 @@ interface NotificationsInterface {
     notifySuccess: (message: string) => void;
     notifyError: (message: string) => void;
     shift: () => void;
-    clearNotifications: () => void;
 }
 
 export const NotificationsContext = createContext<NotificationsInterface>(
@@ -65,11 +64,6 @@ export const NotificationsProvider: FC<{ children?: ReactNode }> = ({
         });
     }, []);
 
-    const clearNotifications = useCallback(() => {
-        setNotifications([]);
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    }, []);
-
     useEffect(() => {
         if (notifications.length && !timeoutRef.current) {
             timeoutRef.current = setTimeout(() => {
@@ -85,7 +79,6 @@ export const NotificationsProvider: FC<{ children?: ReactNode }> = ({
         notifySuccess,
         notifyError,
         shift,
-        clearNotifications,
     };
 
     return (
