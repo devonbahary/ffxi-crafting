@@ -82,10 +82,7 @@ const ItemAndQuantityTypography: FC<{
     </Box>
 );
 
-const SynthesisInfo: FC<{ synthesis: Synthesis; expanded: boolean }> = ({
-    synthesis,
-    expanded,
-}) => {
+const SynthesisInfo: FC<{ synthesis: Synthesis }> = ({ synthesis }) => {
     const { product, crystal, craft, craftLevel, subCrafts } = synthesis;
 
     return (
@@ -96,22 +93,20 @@ const SynthesisInfo: FC<{ synthesis: Synthesis; expanded: boolean }> = ({
             />
             <Box paddingLeft={1}>
                 <Typography color={SECONDARY_COLOR}>{crystal.name}</Typography>
-                <Collapse in={expanded}>
-                    <Box paddingLeft={1}>
-                        <Typography display="inline-block">
-                            {craft} {craftLevel}
+                <Box paddingLeft={1}>
+                    <Typography display="inline-block">
+                        {craft} {craftLevel}
+                    </Typography>
+                    {subCrafts.map((subCraft) => (
+                        <Typography
+                            key={subCraft.id}
+                            display="inline-block"
+                            color={SECONDARY_COLOR}
+                        >
+                            &nbsp;• {subCraft.craft} {subCraft.craftLevel}
                         </Typography>
-                        {subCrafts.map((subCraft) => (
-                            <Typography
-                                key={subCraft.id}
-                                display="inline-block"
-                                color={SECONDARY_COLOR}
-                            >
-                                &nbsp;• {subCraft.craft} {subCraft.craftLevel}
-                            </Typography>
-                        ))}
-                    </Box>
-                </Collapse>
+                    ))}
+                </Box>
             </Box>
         </>
     );
@@ -275,10 +270,7 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({ synthesis }) => {
             <CardContent>
                 <Grid container>
                     <Grid item flex={2}>
-                        <SynthesisInfo
-                            synthesis={synthesis}
-                            expanded={expanded}
-                        />
+                        <SynthesisInfo synthesis={synthesis} />
                     </Grid>
                     <Grid item flex={1} position="relative">
                         <Stack

@@ -35,9 +35,11 @@ const toQueryParams = (params: {}): string => {
         (acc, [key, val]) => {
             if (Array.isArray(val)) {
                 return [...acc, ...val.map((val) => `${key}=${val}`)];
-            } else {
+            } else if (val !== undefined) {
                 return [...acc, `${key}=${val}`];
             }
+
+            return acc;
         },
         []
     );

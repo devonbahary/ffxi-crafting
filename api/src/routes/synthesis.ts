@@ -4,7 +4,7 @@ import {
     type Response,
     Router,
 } from 'express';
-import { getLimitAndOffset, withErrorHandling } from './utilities';
+import { getArray, getLimitAndOffset, withErrorHandling } from './utilities';
 import {
     createSynthesisCraftLevelValidator,
     createSynthesisCraftValidator,
@@ -22,6 +22,7 @@ import {
     updateSynthesis,
 } from '../services/synthesis-service';
 import { Synthesis } from '../models/Synthesis';
+import { type Craft } from '../enums';
 
 const router = Router();
 
@@ -39,7 +40,17 @@ router.get('/', (req, res, next): void => {
     // eslint-disable-next-line
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
-        const synthesis = await getSyntheses(limit, offset);
+
+        const crafts = getArray<Craft>(req.query.crafts);
+
+        const synthesis = await getSyntheses({
+            limit,
+            offset,
+            searchParams: {
+                crafts,
+            },
+        });
+
         res.json(synthesis);
     });
 });

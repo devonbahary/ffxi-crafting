@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import AddIcon from '@mui/icons-material/Add';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
+import AddIcon from '@mui/icons-material/Add';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from './SynthesisCard';
 import { NavigateButton } from './NavigateButton';
-import { useGet } from '../use-api';
-import { CircularProgress } from '@mui/material';
+import { ChipSelect } from '../inputs/ChipSelect';
+import { CRAFT_OPTIONS } from '../inputs/input-options';
+import { Craft } from '../enums';
+import { useGetSyntheses } from '../hooks/use-synthesis';
 
 export const Crafting = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
+    const [crafts, setCrafts] = useState<Craft[]>([]);
 
-    const { loading: loadingSyntheses, get: getSyntheses } =
-        useGet<Synthesis[]>('/synthesis');
+    const { loading: loadingGetSyntheses, getSyntheses } = useGetSyntheses();
 
     useEffect(() => {
         (async () => {
-            const synthesis = await getSyntheses();
-            setSyntheses(synthesis);
+            const syntheses = await getSyntheses({ crafts });
+            setSyntheses(syntheses);
         })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [crafts, getSyntheses]);
 
     return (
         <>
@@ -29,7 +32,19 @@ export const Crafting = () => {
             >
                 Add Synthesis
             </NavigateButton>
-            {loadingSyntheses ? (
+            <Box marginBottom={2}>
+                <ChipSelect
+                    multi
+                    options={CRAFT_OPTIONS}
+                    onChange={(val) => {
+                        if (Array.isArray(val)) {
+                            setCrafts(val);
+                        }
+                    }}
+                    value={crafts}
+                />
+            </Box>
+            {loadingGetSyntheses ? (
                 <CircularProgress />
             ) : (
                 <Grid container spacing={2}>

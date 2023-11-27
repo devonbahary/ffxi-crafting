@@ -1,10 +1,15 @@
-import { type FindOptions, type InferAttributes } from 'sequelize';
+import {
+    type WhereOptions,
+    type FindOptions,
+    type InferAttributes,
+} from 'sequelize';
 import { type Craft } from '../enums';
 import { Category, Item } from '../models/Item';
 import { Synthesis } from '../models/Synthesis';
 import { SynthesisIngredient } from '../models/SynthesisIngredient';
 import { SynthesisSubCraft } from '../models/SynthesisSubCraft';
 import { sequelize } from '../sequelize';
+import { Op } from 'sequelize';
 
 interface Crafting {
     craft: Craft;
@@ -28,6 +33,10 @@ interface SynthesisInput {
     };
     subCrafts: SubCraft[];
     ingredients: SynthesisIngredientInput[];
+}
+
+interface GetSynthesisSearchParams {
+    crafts: Craft[];
 }
 
 const SYNTHESIS_INCLUDE: FindOptions<InferAttributes<Synthesis>>['include'] = [
@@ -55,14 +64,30 @@ const SYNTHESIS_INCLUDE: FindOptions<InferAttributes<Synthesis>>['include'] = [
     },
 ];
 
-export const getSyntheses = async (
-    limit?: number,
-    offset?: number
-): Promise<Synthesis[]> => {
+export const getSyntheses = async ({
+    limit,
+    offset,
+    searchParams,
+}: {
+    limit?: number;
+    offset?: number;
+    searchParams: GetSynthesisSearchParams;
+}): Promise<Synthesis[]> => {
+    const { crafts } = searchParams;
+
+    const where: WhereOptions = {};
+
+    if (crafts.length > 0) {
+        where.craft = {
+            [Op.in]: crafts,
+        };
+    }
+
     return await Synthesis.findAll({
         limit,
         offset,
         include: SYNTHESIS_INCLUDE,
+        where,
     });
 };
 

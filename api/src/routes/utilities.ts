@@ -20,6 +20,16 @@ export const getLimitAndOffset = (req: Request): LimitAndOffset => {
     };
 };
 
+export const getArray = <T>(val: any): T[] => {
+    if (Array.isArray(val)) {
+        return val;
+    }
+    if (val !== undefined) {
+        return [val];
+    }
+    return [];
+};
+
 export const withErrorHandling = async (
     next: NextFunction,
     callback: () => Promise<void>
