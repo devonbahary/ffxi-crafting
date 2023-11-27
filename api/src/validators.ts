@@ -1,6 +1,5 @@
 import { type ValidationChain, body } from 'express-validator';
-import { Category } from './models/Item';
-import { Craft } from './enums';
+import { Category, Craft } from './enums';
 
 const STACK_SIZES = [1, 12, 99];
 

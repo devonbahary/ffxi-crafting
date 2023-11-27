@@ -3,8 +3,8 @@ import {
     type FindOptions,
     type InferAttributes,
 } from 'sequelize';
-import { type Craft } from '../enums';
-import { Category, Item } from '../models/Item';
+import { Category, type Craft } from '../enums';
+import { Item } from '../models/Item';
 import { Synthesis } from '../models/Synthesis';
 import { SynthesisIngredient } from '../models/SynthesisIngredient';
 import { SynthesisSubCraft } from '../models/SynthesisSubCraft';
