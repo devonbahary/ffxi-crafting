@@ -129,6 +129,22 @@ const seedItems = [
         ...STACK_SIZE_12,
         category: 'Materials.Alchemy',
     },
+    {
+        id: 16,
+        name: 'Moblinweave',
+        unit_price: 8000,
+        stack_price: 25000,
+        ...STACK_SIZE_12,
+        category: 'Materials.Clothcraft',
+    },
+    {
+        id: 17,
+        name: 'Moblin Thread',
+        unit_price: 1200,
+        stack_price: 20000,
+        ...STACK_SIZE_12,
+        category: 'Materials.Clothcraft',
+    },
 ];
 
 const seedSyntheses = [
@@ -156,6 +172,14 @@ const seedSyntheses = [
         craft_level: 6,
         yield: 10,
     },
+    {
+        id: 4,
+        item_id: 16,
+        crystal_item_id: 1,
+        craft: 'Clothcraft',
+        craft_level: 23,
+        yield: 1,
+    },
 ];
 
 const seedSynthesisIngredients = [
@@ -182,6 +206,12 @@ const seedSynthesisIngredients = [
         synthesis_id: 3,
         item_id: 15,
         quantity: 1,
+    },
+    {
+        id: 5,
+        synthesis_id: 4,
+        item_id: 17,
+        quantity: 3,
     },
 ];
 
