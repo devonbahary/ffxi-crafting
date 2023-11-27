@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     DataGrid,
     DataGridProps,
@@ -12,9 +12,13 @@ import {
 import { randomId } from '@mui/x-data-grid-generator';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { debounce } from '@mui/material/utils';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import { Item } from '../interfaces';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
@@ -45,10 +49,17 @@ export const AuctionHouse = () => {
         new Set()
     );
 
+    const [searchText, setSearchText] = useState('');
+
     const { loading: loadingGetItems, getItems } = useGetItems();
     const { loading: loadingCreateItem, createItem } = useCreateItem();
     const { updateItem } = useUpdateItem();
     const { loading: loadingDeleteItem, deleteItem } = useDeleteItem();
+
+    const setSearchTextDebounced = useCallback(
+        debounce(setSearchText, 250),
+        []
+    );
 
     const handleAddItem = () => {
         const id = randomId();
@@ -187,6 +198,7 @@ export const AuctionHouse = () => {
         (async () => {
             try {
                 const items = await getItems({
+                    name: searchText,
                     categories: Array.from(categoryFilterSet),
                 });
                 setItems(items);
@@ -194,7 +206,7 @@ export const AuctionHouse = () => {
                 setItems([]);
             }
         })();
-    }, [getItems, categoryFilterSet]);
+    }, [getItems, categoryFilterSet, searchText]);
 
     return (
         <>
@@ -208,7 +220,17 @@ export const AuctionHouse = () => {
             </Button>
             <Box marginBottom={2}>
                 <Typography variant="overline">Filters</Typography>
-                <CategoryFilters onChange={setCategoryFilterSet} />
+                <Stack gap={2}>
+                    <CategoryFilters onChange={setCategoryFilterSet} />
+                    <TextField
+                        label="Search"
+                        InputProps={{
+                            startAdornment: <SearchIcon />,
+                        }}
+                        fullWidth
+                        onChange={(e) => setSearchTextDebounced(e.target.value)}
+                    />
+                </Stack>
             </Box>
             <DataGrid
                 editMode={editMode}

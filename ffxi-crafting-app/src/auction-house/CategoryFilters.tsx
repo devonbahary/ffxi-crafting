@@ -157,7 +157,7 @@ export const CategoryFilters: FC<CategoryFiltersProps> = ({ onChange }) => {
                     />
                 )}
             </Box>
-            <Stack gap={1} paddingLeft={2}>
+            <Stack gap={1} paddingLeft={2} marginBottom={1}>
                 {mainCategorySet.has(MainCategory.Weapons) && (
                     <Box>
                         <Typography variant="overline">Weapons</Typography>

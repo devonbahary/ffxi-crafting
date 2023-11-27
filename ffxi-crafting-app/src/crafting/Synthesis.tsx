@@ -25,7 +25,7 @@ import {
     useGetSynthesis,
     useUpdateSynthesis,
 } from '../hooks/use-synthesis';
-import { ItemSearchInput } from '../inputs/ItemSearchInput';
+import { ItemSearchInput } from './ItemSearchInput';
 
 type Nullable<T> = T | null;
 
