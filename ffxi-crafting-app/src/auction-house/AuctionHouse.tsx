@@ -22,7 +22,7 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import SearchIcon from '@mui/icons-material/Search';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Item } from '../interfaces';
-import { DeleteConfirmationModal } from './DeleteConfirmationModal';
+import { DeleteConfirmationModal } from '../DeleteConfirmationModal';
 import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
 import {
     useCreateItem,
@@ -148,6 +148,10 @@ export const AuctionHouse = () => {
             );
         }
         setPendingDeleteId(params.id);
+    };
+
+    const handleCloseDeleteModal = () => {
+        if (!loadingDeleteItem) setPendingDeleteId(null);
     };
 
     const deleteRow = async () => {
@@ -285,9 +289,9 @@ export const AuctionHouse = () => {
             />
             <DeleteConfirmationModal
                 pendingDeleteItem={pendingDeleteItem}
-                onClose={() => setPendingDeleteId(null)}
+                onClose={handleCloseDeleteModal}
                 onConfirm={() => deleteRow()}
-                loadingDeleteItem={loadingDeleteItem}
+                loading={loadingDeleteItem}
             />
         </>
     );

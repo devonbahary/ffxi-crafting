@@ -12,9 +12,10 @@ import { NavigateButton } from './NavigateButton';
 import { MultiChipSelect } from '../inputs/ChipSelect';
 import { CRAFT_OPTIONS } from '../inputs/input-options';
 import { Craft } from '../enums';
-import { useGetSyntheses } from '../hooks/use-synthesis';
+import { useDeleteSynthesis, useGetSyntheses } from '../hooks/use-synthesis';
 import { ViewTitle } from '../ViewTitle';
 import { Typography } from '@mui/material';
+import { DeleteConfirmationModal } from '../DeleteConfirmationModal';
 
 const SUBTITLE = (
     <>
@@ -41,11 +42,27 @@ const SUBTITLE = (
 export const Crafting = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
     const [craftSet, setCraftSet] = useState<Set<Craft>>(new Set());
+    const [pendingDeleteSynthesis, setPendingDeleteSynthesis] =
+        useState<Synthesis | null>(null);
+
+    const { loading: loadingDeleteSynthesis, deleteSynthesis } =
+        useDeleteSynthesis();
 
     const { loading: loadingGetSyntheses, getSyntheses } = useGetSyntheses();
 
-    const handleDelete = (id: number | string) => {
-        setSyntheses((prev) => prev.filter((synth) => synth.id !== id));
+    const handleDelete = async () => {
+        if (!pendingDeleteSynthesis) return;
+        try {
+            await deleteSynthesis(pendingDeleteSynthesis.id);
+            setSyntheses((prev) =>
+                prev.filter((synth) => synth.id !== pendingDeleteSynthesis.id)
+            );
+            setPendingDeleteSynthesis(null);
+        } catch (err) {}
+    };
+
+    const handleCloseDeleteModal = () => {
+        if (!loadingDeleteSynthesis) setPendingDeleteSynthesis(null);
     };
 
     useEffect(() => {
@@ -92,13 +109,21 @@ export const Crafting = () => {
                         <Grid key={synth.id} item xs={4}>
                             <SynthesisCard
                                 synthesis={synth}
-                                onDelete={() => handleDelete(synth.id)}
+                                onDelete={() =>
+                                    setPendingDeleteSynthesis(synth)
+                                }
                                 includeCardActions
                             />
                         </Grid>
                     ))}
                 </Grid>
             )}
+            <DeleteConfirmationModal
+                onClose={handleCloseDeleteModal}
+                onConfirm={() => handleDelete()}
+                loading={loadingDeleteSynthesis}
+                pendingDeleteItem={pendingDeleteSynthesis?.product}
+            />
         </>
     );
 };

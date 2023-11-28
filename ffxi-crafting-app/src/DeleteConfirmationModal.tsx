@@ -17,7 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import { TransitionProps } from '@mui/material/transitions';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { Item } from '../interfaces';
+import { Item } from './interfaces';
 
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {
@@ -32,14 +32,14 @@ type DeleteConfirmationModalProps = {
     pendingDeleteItem?: Partial<Item>;
     onClose: () => void;
     onConfirm: () => void;
-    loadingDeleteItem: boolean;
+    loading: boolean;
 };
 
 export const DeleteConfirmationModal: FC<DeleteConfirmationModalProps> = ({
     pendingDeleteItem,
     onClose,
     onConfirm,
-    loadingDeleteItem,
+    loading,
 }) => {
     const [name, setName] = useState<string | undefined>();
 
@@ -64,15 +64,12 @@ export const DeleteConfirmationModal: FC<DeleteConfirmationModalProps> = ({
             <DialogActions>
                 <Grid container>
                     <Grid item flex={1} textAlign="center">
-                        <IconButton
-                            onClick={onClose}
-                            disabled={loadingDeleteItem}
-                        >
+                        <IconButton onClick={onClose} disabled={loading}>
                             <CloseIcon />
                         </IconButton>
                     </Grid>
                     <Grid item flex={1} textAlign="center">
-                        {loadingDeleteItem ? (
+                        {loading ? (
                             <IconButton color="primary">
                                 <CircularProgress size={20} />
                             </IconButton>

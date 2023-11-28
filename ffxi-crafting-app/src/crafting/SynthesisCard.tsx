@@ -7,7 +7,6 @@ import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
 import CardActions from '@mui/material/CardActions';
-import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
@@ -16,7 +15,6 @@ import Typography, { TypographyProps } from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Item, Synthesis, SynthesisIngredient } from '../interfaces';
-import { useDeleteSynthesis } from '../hooks/use-synthesis';
 import { StackSize } from '../enums';
 
 type SynthesisCardProps = {
@@ -249,9 +247,6 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
 
     const navigate = useNavigate();
 
-    const { loading: loadingDeleteSynthesis, deleteSynthesis } =
-        useDeleteSynthesis();
-
     const handleEditSynthesis = (e: MouseEvent) => {
         e.stopPropagation();
         navigate(`/synthesis/edit/${synthesis.id}`);
@@ -260,7 +255,6 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
     const handleDeleteSynthesis = async (e: MouseEvent) => {
         e.stopPropagation();
         try {
-            await deleteSynthesis(synthesis.id);
             if (onDelete) onDelete();
         } catch (err) {}
     };
@@ -337,21 +331,11 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                     <>
                         <Divider />
                         <CardActions sx={{ justifyContent: 'flex-end' }}>
-                            <IconButton
-                                onClick={handleEditSynthesis}
-                                disabled={loadingDeleteSynthesis}
-                            >
+                            <IconButton onClick={handleEditSynthesis}>
                                 <EditIcon {...actionIconProps} />
                             </IconButton>
-                            <IconButton
-                                onClick={handleDeleteSynthesis}
-                                disabled={loadingDeleteSynthesis}
-                            >
-                                {loadingDeleteSynthesis ? (
-                                    <CircularProgress size={20} />
-                                ) : (
-                                    <DeleteIcon {...actionIconProps} />
-                                )}
+                            <IconButton onClick={handleDeleteSynthesis}>
+                                <DeleteIcon {...actionIconProps} />
                             </IconButton>
                         </CardActions>
                     </>
