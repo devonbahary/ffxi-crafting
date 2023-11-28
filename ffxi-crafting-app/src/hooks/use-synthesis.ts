@@ -22,8 +22,19 @@ type GetSynthesisSearchParams = {
     crafts?: Craft[];
 };
 
+type GetSynthesisByProfitSearchParams = {
+    byUnitProfit: boolean;
+    byStackProfit: boolean;
+};
+
 type UseGetSyntheses = Loading & {
     getSyntheses: (params?: GetSynthesisSearchParams) => Promise<Synthesis[]>;
+};
+
+type UseGetSynthesesByProfit = Loading & {
+    getSynthesesByProfit: (
+        params: GetSynthesisByProfitSearchParams
+    ) => Promise<Synthesis[]>;
 };
 
 type UseGetSynthesis = Loading & {
@@ -47,7 +58,7 @@ type UseDeleteSynthesis = Loading & {
 
 export const useGetSyntheses = (): UseGetSyntheses => {
     const { loading, get } = useGet<Synthesis[]>(SYNTHESIS_URL, {
-        failureMessage: 'Failed to load items',
+        failureMessage: 'Failed to load syntheses',
     });
 
     return { loading, getSyntheses: get };
@@ -55,10 +66,18 @@ export const useGetSyntheses = (): UseGetSyntheses => {
 
 export const useGetSynthesis = (): UseGetSynthesis => {
     const { loading, getId } = useGetId<Synthesis>(SYNTHESIS_URL, {
-        failureMessage: 'Failed to load item',
+        failureMessage: 'Failed to load synthesis',
     });
 
     return { loading, getSynthesis: getId };
+};
+
+export const useGetSynthesesByProfit = (): UseGetSynthesesByProfit => {
+    const { loading, get } = useGet<Synthesis[]>(`${SYNTHESIS_URL}/by-profit`, {
+        failureMessage: 'Failed to load syntheses',
+    });
+
+    return { loading, getSynthesesByProfit: get };
 };
 
 export const useCreateSynthesis = (): UseCreateSynthesis => {

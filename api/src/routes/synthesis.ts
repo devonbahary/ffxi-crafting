@@ -16,8 +16,10 @@ import {
 } from '../validators';
 import { validationResult } from 'express-validator';
 import {
+    type GetSynthesisByProfitSearchParams,
     createSynthesis,
     getSyntheses,
+    getSynthesesByProfit,
     getSynthesis,
     updateSynthesis,
 } from '../services/synthesis-service';
@@ -52,6 +54,22 @@ router.get('/', (req, res, next): void => {
         });
 
         res.json(synthesis);
+    });
+});
+
+router.get('/by-profit', (req, res, next): void => {
+    // eslint-disable-next-line
+    withErrorHandling(next, async () => {
+        const params = Object.entries(req.query).reduce(
+            (acc, [key, val]) => ({
+                ...acc,
+                [key]: val === 'true',
+            }),
+            {}
+        ) as GetSynthesisByProfitSearchParams;
+
+        const syntheses = await getSynthesesByProfit(params);
+        res.json(syntheses);
     });
 });
 

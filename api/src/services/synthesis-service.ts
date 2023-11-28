@@ -2,6 +2,7 @@ import {
     type WhereOptions,
     type FindOptions,
     type InferAttributes,
+    type Order,
 } from 'sequelize';
 import { Category, type Craft } from '../enums';
 import { sequelize } from '../sequelize';
@@ -38,6 +39,11 @@ interface SynthesisInput {
 
 interface GetSynthesisSearchParams {
     crafts: Craft[];
+}
+
+export interface GetSynthesisByProfitSearchParams {
+    byUnitProfit: boolean;
+    byStackProfit: boolean;
 }
 
 const SYNTHESIS_INCLUDE: FindOptions<InferAttributes<Synthesis>>['include'] = [
@@ -87,6 +93,32 @@ export const getSyntheses = async ({
         offset,
         include: SYNTHESIS_INCLUDE,
         where,
+    });
+};
+
+const getByProfitOrder = (params: GetSynthesisByProfitSearchParams): Order => {
+    const { byUnitProfit, byStackProfit } = params;
+
+    if (byUnitProfit && byStackProfit) {
+        return sequelize.literal(`CASE 
+        WHEN unit_profit > stack_profit THEN unit_profit
+        ELSE stack_profit
+        END DESC`);
+    }
+
+    if (byStackProfit) {
+        return [['stack_profit', 'DESC']];
+    }
+
+    return [['unit_profit', 'DESC']];
+};
+
+export const getSynthesesByProfit = async (
+    params: GetSynthesisByProfitSearchParams
+): Promise<Synthesis[]> => {
+    return await Synthesis.findAll({
+        include: SYNTHESIS_INCLUDE,
+        order: getByProfitOrder(params),
     });
 };
 

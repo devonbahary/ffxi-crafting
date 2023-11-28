@@ -18,7 +18,9 @@ import Typography from '@mui/material/Typography';
 import { debounce } from '@mui/material/utils';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InsightsIcon from '@mui/icons-material/Insights';
 import SearchIcon from '@mui/icons-material/Search';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Item } from '../interfaces';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
@@ -30,12 +32,32 @@ import {
 } from '../hooks/use-items';
 import { CategoryFilters } from './CategoryFilters';
 import { Category, StackSize } from '../enums';
+import { ViewTitle } from '../ViewTitle';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
 const editable: Pick<GridColDef, 'editable'> = { editable: true };
 
 const isNewRow = (row: any): boolean => typeof row.id === 'string';
+
+const SUBTITLE = (
+    <>
+        The <InsightsIcon fontSize="small" /> Insights view is only as accurate
+        as the prices of the Items here at the{' '}
+        <StorefrontIcon fontSize="small" /> Auction House, so the key labor of
+        this application is to update Item prices so that Synthesis profits are
+        a reflection of the most up-to-date economics. Maybe one day the
+        HorizonXI server will expose a public API to query Item prices and this
+        effort will become unnecessary. 😉
+        <br />
+        <br />
+        Stackability:
+        <br />
+        Items are sold at the in-game Auction House only as a single or as a
+        stack; that is the basis for Synthesis profitability being measured in
+        those two dimensions.
+    </>
+);
 
 export const AuctionHouse = () => {
     const [items, setItems] = useState<Partial<Item>[]>([]);
@@ -216,14 +238,11 @@ export const AuctionHouse = () => {
 
     return (
         <>
-            <Button
-                startIcon={<AddIcon />}
-                onClick={handleAddItem}
-                variant="outlined"
-                sx={{ marginBottom: 2 }}
-            >
-                Add Item
-            </Button>
+            <ViewTitle
+                Icon={StorefrontIcon}
+                title="Auction House"
+                subtitle={SUBTITLE}
+            />
             <Box marginBottom={2}>
                 <Typography variant="overline">Filters</Typography>
                 <Stack gap={2}>
@@ -238,6 +257,14 @@ export const AuctionHouse = () => {
                     />
                 </Stack>
             </Box>
+            <Button
+                startIcon={<AddIcon />}
+                onClick={handleAddItem}
+                variant="outlined"
+                sx={{ marginBottom: 2 }}
+            >
+                Add Item
+            </Button>
             <DataGrid
                 editMode={editMode}
                 rows={items}
@@ -254,6 +281,7 @@ export const AuctionHouse = () => {
                         ? params.colDef.editable
                         : true;
                 }}
+                autoHeight
             />
             <DeleteConfirmationModal
                 pendingDeleteItem={pendingDeleteItem}

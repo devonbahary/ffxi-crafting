@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import { RouteObject } from 'react-router-dom';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import InsightsIcon from '@mui/icons-material/Insights';
 import StorefrontIcon from '@mui/icons-material/Storefront';
-import { Dashboard } from './dashboard/Dashboard';
+import { InsightsDashboard } from './insights-dashboard/InsightsDashboard';
 import { AuctionHouse } from './auction-house/AuctionHouse';
 import { Crafting } from './crafting/Crafting';
 import { Synthesis } from './crafting/Synthesis';
@@ -17,9 +17,9 @@ type Navigation = RouteObject &
 export const navigationItems: Navigation[] = [
     {
         path: '/home',
-        element: <Dashboard />,
+        element: <InsightsDashboard />,
         navText: 'Home',
-        navIcon: <DashboardIcon />,
+        navIcon: <InsightsIcon />,
     },
     {
         path: '/auction-house',

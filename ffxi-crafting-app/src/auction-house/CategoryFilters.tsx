@@ -141,7 +141,7 @@ export const CategoryFilters: FC<CategoryFiltersProps> = ({ onChange }) => {
 
     return (
         <Box>
-            <Box display="flex" gap={2} marginBottom={1}>
+            <Box display="flex" gap={2}>
                 <Button
                     onClick={onClickPrimaryButton}
                     variant={openFilters ? 'contained' : 'outlined'}
@@ -157,7 +157,7 @@ export const CategoryFilters: FC<CategoryFiltersProps> = ({ onChange }) => {
                     />
                 )}
             </Box>
-            <Stack gap={1} paddingLeft={2} marginBottom={1}>
+            <Stack gap={1} paddingLeft={2} marginBottom={1} marginTop={1}>
                 {mainCategorySet.has(MainCategory.Weapons) && (
                     <Box>
                         <Typography variant="overline">Weapons</Typography>

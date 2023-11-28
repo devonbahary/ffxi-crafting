@@ -145,7 +145,11 @@ export const Navigation: FC<{ children: ReactNode }> = ({ children }) => {
                             : 'inherit';
 
                         return (
-                            <ListItem key={path} disablePadding>
+                            <ListItem
+                                key={path}
+                                disablePadding
+                                sx={{ marginBottom: 1 }}
+                            >
                                 <ListItemButton onClick={() => navigate(path)}>
                                     <ListItemIcon sx={{ color }}>
                                         {navIcon}

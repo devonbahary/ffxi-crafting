@@ -21,7 +21,8 @@ import { StackSize } from '../enums';
 
 type SynthesisCardProps = {
     synthesis: Synthesis;
-    onDelete: () => void;
+    onDelete?: () => void;
+    includeCardActions?: boolean;
 };
 
 const GAIN_COLOR: TypographyProps['color'] = 'success.main';
@@ -240,6 +241,7 @@ const SynthesisMonetaryBreakdown: FC<{
 export const SynthesisCard: FC<SynthesisCardProps> = ({
     synthesis,
     onDelete,
+    includeCardActions,
 }) => {
     const [expanded, setExpanded] = useState(false);
 
@@ -257,7 +259,7 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
         e.stopPropagation();
         try {
             await deleteSynthesis(synthesis.id);
-            onDelete();
+            if (onDelete) onDelete();
         } catch (err) {}
     };
 
@@ -327,25 +329,29 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                         />
                     )}
                 </CardContent>
-                <Divider />
-                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                    <IconButton
-                        onClick={handleEditSynthesis}
-                        disabled={loadingDeleteSynthesis}
-                    >
-                        <EditIcon {...actionIconProps} />
-                    </IconButton>
-                    <IconButton
-                        onClick={handleDeleteSynthesis}
-                        disabled={loadingDeleteSynthesis}
-                    >
-                        {loadingDeleteSynthesis ? (
-                            <CircularProgress size={20} />
-                        ) : (
-                            <DeleteIcon {...actionIconProps} />
-                        )}
-                    </IconButton>
-                </CardActions>
+                {includeCardActions && (
+                    <>
+                        <Divider />
+                        <CardActions sx={{ justifyContent: 'flex-end' }}>
+                            <IconButton
+                                onClick={handleEditSynthesis}
+                                disabled={loadingDeleteSynthesis}
+                            >
+                                <EditIcon {...actionIconProps} />
+                            </IconButton>
+                            <IconButton
+                                onClick={handleDeleteSynthesis}
+                                disabled={loadingDeleteSynthesis}
+                            >
+                                {loadingDeleteSynthesis ? (
+                                    <CircularProgress size={20} />
+                                ) : (
+                                    <DeleteIcon {...actionIconProps} />
+                                )}
+                            </IconButton>
+                        </CardActions>
+                    </>
+                )}
             </Collapse>
         </Card>
     );
