@@ -307,7 +307,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                     label="Crystal"
                     onChange={setCrystal}
                     getItemSearchParams={{
-                        categories: [Category.Crystals, Category.Alchemy],
+                        categories: [Category.Crystals],
                     }}
                     value={crystal}
                 />
