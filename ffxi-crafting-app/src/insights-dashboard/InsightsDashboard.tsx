@@ -128,7 +128,16 @@ export const InsightsDashboard = () => {
                 <Grid container spacing={2}>
                     {syntheses.map((synth) => (
                         <Grid key={synth.id} item xs={4}>
-                            <SynthesisCard synthesis={synth} />
+                            <SynthesisCard
+                                synthesis={synth}
+                                highlightProfit={
+                                    byUnitProfit && byStackProfit
+                                        ? 'both'
+                                        : byUnitProfit
+                                        ? 'unit'
+                                        : 'stack'
+                                }
+                            />
                         </Grid>
                     ))}
                 </Grid>

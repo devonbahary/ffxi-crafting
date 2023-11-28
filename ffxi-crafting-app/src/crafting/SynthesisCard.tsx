@@ -23,6 +23,7 @@ type SynthesisCardProps = {
     synthesis: Synthesis;
     onDelete?: () => void;
     includeCardActions?: boolean;
+    highlightProfit?: 'unit' | 'stack' | 'both';
 };
 
 const GAIN_COLOR: TypographyProps['color'] = 'success.main';
@@ -242,6 +243,7 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
     synthesis,
     onDelete,
     includeCardActions,
+    highlightProfit = 'both',
 }) => {
     const [expanded, setExpanded] = useState(false);
 
@@ -304,6 +306,7 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                                 label={unitProfitLabel}
                                 color={unitProfit >= 0 ? 'success' : 'error'}
                                 variant="outlined"
+                                disabled={highlightProfit === 'stack'}
                             />
                             {isStackable && (
                                 <Chip
@@ -312,6 +315,7 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                                         stackProfit >= 0 ? 'success' : 'error'
                                     }
                                     variant="outlined"
+                                    disabled={highlightProfit === 'unit'}
                                 />
                             )}
                         </Stack>
