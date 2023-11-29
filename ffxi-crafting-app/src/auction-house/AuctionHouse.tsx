@@ -191,12 +191,24 @@ export const AuctionHouse = () => {
             headerName: 'Unit Price',
             ...small,
             ...editable,
+            valueGetter: ({ value }) => {
+                if (typeof value === 'number') {
+                    return value.toLocaleString();
+                }
+                return value;
+            },
         },
         {
             field: 'stackPrice',
             headerName: 'Stack Price',
             ...small,
             ...editable,
+            valueGetter: ({ value }) => {
+                if (typeof value === 'number') {
+                    return value.toLocaleString();
+                }
+                return value;
+            },
         },
         {
             field: 'updatedAt',
