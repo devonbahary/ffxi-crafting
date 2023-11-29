@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     DataGrid,
     DataGridProps,
@@ -13,13 +13,10 @@ import { randomId } from '@mui/x-data-grid-generator';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { debounce } from '@mui/material/utils';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InsightsIcon from '@mui/icons-material/Insights';
-import SearchIcon from '@mui/icons-material/Search';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Item } from '../interfaces';
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
@@ -36,6 +33,7 @@ import {
 import { CategoryFilters } from './CategoryFilters';
 import { Category, StackSize } from '../enums';
 import { ViewTitle } from '../ViewTitle';
+import { DebouncedSearchInput } from './DebouncedSearchInput';
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -80,11 +78,6 @@ export const AuctionHouse = () => {
     const { loading: loadingCreateItem, createItem } = useCreateItem();
     const { updateItem } = useUpdateItem();
     const { loading: loadingDeleteItem, deleteItem } = useDeleteItem();
-
-    const setSearchTextDebounced = useCallback(
-        debounce(setSearchText, 250),
-        []
-    );
 
     const handleAddItem = () => {
         const id = randomId();
@@ -266,14 +259,7 @@ export const AuctionHouse = () => {
                 <Typography variant="overline">Filters</Typography>
                 <Stack gap={2}>
                     <CategoryFilters onChange={setCategoryFilterSet} />
-                    <TextField
-                        label="Search"
-                        InputProps={{
-                            startAdornment: <SearchIcon />,
-                        }}
-                        fullWidth
-                        onChange={(e) => setSearchTextDebounced(e.target.value)}
-                    />
+                    <DebouncedSearchInput onChange={setSearchText} />
                 </Stack>
             </Box>
             <Button

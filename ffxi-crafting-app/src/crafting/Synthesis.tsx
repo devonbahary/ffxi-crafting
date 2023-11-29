@@ -25,7 +25,7 @@ import {
     useGetSynthesis,
     useUpdateSynthesis,
 } from '../hooks/use-synthesis';
-import { ItemSearchInput } from './ItemSearchInput';
+import { ItemSearchAutocomplete } from './ItemSearchAutocomplete';
 
 type Nullable<T> = T | null;
 
@@ -117,7 +117,7 @@ const SynthesisIngredientInputs: FC<SynthesisIngredientInputsProps> = ({
                 value={value.quantity ?? ''}
             />
             <Box width={'100%'}>
-                <ItemSearchInput
+                <ItemSearchAutocomplete
                     label="Ingredient"
                     onChange={(item) => {
                         onChange({
@@ -292,7 +292,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                     value={synthYield ?? ''}
                 />
                 <Box width="100%">
-                    <ItemSearchInput
+                    <ItemSearchAutocomplete
                         label="Product"
                         onChange={setProductItem}
                         getItemSearchParams={{
@@ -303,7 +303,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                 </Box>
             </Stack>
             {productItem && (
-                <ItemSearchInput
+                <ItemSearchAutocomplete
                     label="Crystal"
                     onChange={setCrystal}
                     getItemSearchParams={{

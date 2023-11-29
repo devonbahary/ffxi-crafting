@@ -12,7 +12,7 @@ import { debounce } from '@mui/material/utils';
 import { Item } from '../interfaces';
 import { GetItemsSearchParams, useGetItems } from '../hooks/use-items';
 
-type ItemSearchInputProps = {
+type ItemSearchAutocompleteProps = {
     label: string;
     onChange: (item: Item | null) => void;
     getItemSearchParams?: Pick<
@@ -22,7 +22,7 @@ type ItemSearchInputProps = {
     value: Item | null;
 };
 
-export const ItemSearchInput: FC<ItemSearchInputProps> = ({
+export const ItemSearchAutocomplete: FC<ItemSearchAutocompleteProps> = ({
     getItemSearchParams = {},
     label,
     onChange,
