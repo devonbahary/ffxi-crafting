@@ -17,7 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import { TransitionProps } from '@mui/material/transitions';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { Item } from './interfaces';
+import { Item } from '../interfaces';
 
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {

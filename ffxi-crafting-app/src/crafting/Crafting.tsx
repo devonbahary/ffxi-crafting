@@ -7,15 +7,15 @@ import AddIcon from '@mui/icons-material/Add';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Synthesis } from '../interfaces';
-import { SynthesisCard } from './SynthesisCard';
+import { SynthesisCard } from '../common/synthesis/SynthesisCard';
 import { NavigateButton } from './NavigateButton';
-import { MultiChipSelect } from '../inputs/ChipSelect';
-import { CRAFT_OPTIONS } from '../inputs/input-options';
+import { MultiChipSelect } from '../common/inputs/ChipSelect';
+import { CRAFT_OPTIONS } from '../common/inputs/input-options';
 import { Craft } from '../enums';
 import { useDeleteSynthesis, useGetSyntheses } from '../hooks/use-synthesis';
 import { ViewTitle } from '../ViewTitle';
 import { Typography } from '@mui/material';
-import { DeleteConfirmationModal } from '../DeleteConfirmationModal';
+import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
 
 const SUBTITLE = (
     <>

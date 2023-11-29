@@ -4,8 +4,8 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import TuneIcon from '@mui/icons-material/Tune';
-import { MultiChipSelect } from '../inputs/ChipSelect';
-import { CATEGORY_OPTIONS } from '../inputs/input-options';
+import { MultiChipSelect } from '../common/inputs/ChipSelect';
+import { CATEGORY_OPTIONS } from '../common/inputs/input-options';
 import { Category } from '../enums';
 
 type CategoryFiltersProps = {

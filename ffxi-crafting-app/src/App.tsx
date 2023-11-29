@@ -13,6 +13,7 @@ import { navigationItems } from './routes';
 import { Navigation } from './Navigation';
 import { Notifications } from './notifications/Notifications';
 import { NotificationsProvider } from './notifications/NotificationsProvider';
+import { ShoppingCartProvider } from './shopping-cart/ShoppingCartProvider';
 
 const darkTheme = createTheme({
     palette: {
@@ -34,28 +35,33 @@ const App = () => (
     <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <NotificationsProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route
-                        element={
-                            <Navigation>
-                                {' '}
-                                <Outlet />{' '}
-                            </Navigation>
-                        }
-                    >
-                        {navigationItems.map((navItem) => (
+            <ShoppingCartProvider>
+                <BrowserRouter>
+                    <Routes>
+                        <Route
+                            element={
+                                <Navigation>
+                                    {' '}
+                                    <Outlet />{' '}
+                                </Navigation>
+                            }
+                        >
+                            {navigationItems.map((navItem) => (
+                                <Route
+                                    key={navItem.path}
+                                    path={navItem.path}
+                                    element={navItem.element}
+                                />
+                            ))}
+                            {/* redirect to "/" path if no route matched */}
                             <Route
-                                key={navItem.path}
-                                path={navItem.path}
-                                element={navItem.element}
+                                path="*"
+                                element={<Navigate to="/" replace />}
                             />
-                        ))}
-                        {/* redirect to "/" path if no route matched */}
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                    </Route>
-                </Routes>
-            </BrowserRouter>
+                        </Route>
+                    </Routes>
+                </BrowserRouter>
+            </ShoppingCartProvider>
             <Notifications />
         </NotificationsProvider>
     </ThemeProvider>

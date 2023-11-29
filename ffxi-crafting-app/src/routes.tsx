@@ -2,11 +2,13 @@ import { ReactNode } from 'react';
 import { RouteObject } from 'react-router-dom';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
 import InsightsIcon from '@mui/icons-material/Insights';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { InsightsDashboard } from './insights-dashboard/InsightsDashboard';
 import { AuctionHouse } from './auction-house/AuctionHouse';
 import { Crafting } from './crafting/Crafting';
 import { Synthesis } from './crafting/Synthesis';
+import { ShoppingCartPage } from './shopping-cart/ShoppingCartPage';
 
 type Navigation = RouteObject &
     Required<Pick<RouteObject, 'path'>> & {
@@ -40,5 +42,11 @@ export const navigationItems: Navigation[] = [
     {
         path: '/synthesis/edit/:id',
         element: <Synthesis />,
+    },
+    {
+        path: '/shopping-cart',
+        element: <ShoppingCartPage />,
+        navText: 'Shopping Cart',
+        navIcon: <ShoppingCartIcon />,
     },
 ];

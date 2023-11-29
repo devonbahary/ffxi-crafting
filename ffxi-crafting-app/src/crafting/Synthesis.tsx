@@ -15,10 +15,10 @@ import SaveIcon from '@mui/icons-material/Save';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { NavigateButton } from './NavigateButton';
 import { Item, SynthesisIngredient } from '../interfaces';
-import { CRAFT_OPTIONS } from '../inputs/input-options';
+import { CRAFT_OPTIONS } from '../common/inputs/input-options';
 import { Category, Craft } from '../enums';
-import { NumberInput } from '../inputs/NumberInput';
-import { ChipSelect } from '../inputs/ChipSelect';
+import { NumberInput } from '../common/inputs/NumberInput';
+import { ChipSelect } from '../common/inputs/ChipSelect';
 import { type Synthesis as SynthesisI } from '../interfaces';
 import {
     useCreateSynthesis,

@@ -1,4 +1,4 @@
-import { Category, Craft, StackSize } from '../enums';
+import { Category, Craft, StackSize } from '../../enums';
 
 export const CATEGORY_OPTIONS = Object.entries(Category)
     .map(([key, value]) => {

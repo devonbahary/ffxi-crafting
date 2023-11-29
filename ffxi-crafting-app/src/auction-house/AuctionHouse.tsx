@@ -22,8 +22,11 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import SearchIcon from '@mui/icons-material/Search';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { Item } from '../interfaces';
-import { DeleteConfirmationModal } from '../DeleteConfirmationModal';
-import { CATEGORY_OPTIONS, STACK_SIZE_OPTIONS } from '../inputs/input-options';
+import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
+import {
+    CATEGORY_OPTIONS,
+    STACK_SIZE_OPTIONS,
+} from '../common/inputs/input-options';
 import {
     useCreateItem,
     useDeleteItem,

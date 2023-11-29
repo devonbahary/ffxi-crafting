@@ -11,7 +11,7 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useGetSynthesesByProfit } from '../hooks/use-synthesis';
 import { Synthesis } from '../interfaces';
-import { SynthesisCard } from '../crafting/SynthesisCard';
+import { SynthesisCard } from '../common/synthesis/SynthesisCard';
 import { Button } from '@mui/material';
 import { ViewTitle } from '../ViewTitle';
 
