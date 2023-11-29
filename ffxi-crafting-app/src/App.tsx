@@ -1,4 +1,5 @@
 import React from 'react';
+import darkScrollbar from '@mui/material/darkScrollbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {
@@ -16,6 +17,16 @@ import { NotificationsProvider } from './notifications/NotificationsProvider';
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
+    },
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                html: {
+                    ...darkScrollbar(),
+                    scrollbarWidth: 'thin',
+                },
+            },
+        },
     },
 });
 
