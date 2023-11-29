@@ -4,6 +4,7 @@ import React, {
     createContext,
     useCallback,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -74,12 +75,15 @@ export const NotificationsProvider: FC<{ children?: ReactNode }> = ({
         }
     }, [notifications.length, shift]);
 
-    const value: NotificationsInterface = {
-        notifications,
-        notifySuccess,
-        notifyError,
-        shift,
-    };
+    const value: NotificationsInterface = useMemo(
+        () => ({
+            notifications,
+            notifySuccess,
+            notifyError,
+            shift,
+        }),
+        [notifications, notifySuccess, notifyError, shift]
+    );
 
     return (
         <NotificationsContext.Provider value={value}>
