@@ -17,6 +17,9 @@ const config = {
     host: MYSQL_HOST,
     dialect: 'mysql',
     port: MYSQL_PORT,
+    dialectOptions: {
+        multipleStatements: true,
+    },
 };
 
 module.exports = {
