@@ -16,6 +16,7 @@ import { useDeleteSynthesis, useGetSyntheses } from '../hooks/use-synthesis';
 import { ViewTitle } from '../ViewTitle';
 import { Typography } from '@mui/material';
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
+import { DebouncedSearchInput } from '../auction-house/DebouncedSearchInput';
 
 const SUBTITLE = (
     <>
@@ -45,6 +46,8 @@ export const Crafting = () => {
     const [pendingDeleteSynthesis, setPendingDeleteSynthesis] =
         useState<Synthesis | null>(null);
 
+    const [searchText, setSearchText] = useState('');
+
     const { loading: loadingDeleteSynthesis, deleteSynthesis } =
         useDeleteSynthesis();
 
@@ -69,12 +72,13 @@ export const Crafting = () => {
         (async () => {
             try {
                 const syntheses = await getSyntheses({
+                    productName: searchText.length ? searchText : undefined,
                     crafts: Array.from(craftSet),
                 });
                 setSyntheses(syntheses);
             } catch (err) {}
         })();
-    }, [craftSet, getSyntheses]);
+    }, [craftSet, getSyntheses, searchText]);
 
     return (
         <>
@@ -92,6 +96,9 @@ export const Crafting = () => {
                     }}
                     value={craftSet}
                 />
+            </Box>
+            <Box marginBottom={2}>
+                <DebouncedSearchInput onChange={setSearchText} />
             </Box>
             <NavigateButton
                 startIcon={<AddIcon />}

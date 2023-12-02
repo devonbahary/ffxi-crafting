@@ -19,6 +19,7 @@ interface SynthesisInput {
 }
 
 type GetSynthesisSearchParams = {
+    productName?: string;
     crafts?: Craft[];
 };
 
