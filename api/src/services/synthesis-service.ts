@@ -12,6 +12,7 @@ import {
     SynthesisIngredient,
     SynthesisSubCraft,
 } from '../models';
+import { Op } from 'sequelize';
 
 interface Crafting {
     craft: Craft;
@@ -39,6 +40,7 @@ interface SynthesisInput {
 
 interface GetSynthesisSearchParams {
     crafts: Craft[];
+    productName?: string;
 }
 
 export interface GetSynthesisByProfitSearchParams {
@@ -80,12 +82,18 @@ export const getSyntheses = async ({
     offset?: number;
     searchParams: GetSynthesisSearchParams;
 }): Promise<Synthesis[]> => {
-    const { crafts } = searchParams;
+    const { crafts, productName } = searchParams;
 
     const where: WhereOptions = {};
 
     if (crafts.length > 0) {
         where.craft = crafts;
+    }
+
+    if (typeof productName === 'string' && productName.length > 0) {
+        where['$product.name$'] = {
+            [Op.like]: `%${productName}%`,
+        };
     }
 
     return await Synthesis.findAll({
@@ -116,9 +124,18 @@ const getByProfitOrder = (params: GetSynthesisByProfitSearchParams): Order => {
 export const getSynthesesByProfit = async (
     params: GetSynthesisByProfitSearchParams
 ): Promise<Synthesis[]> => {
+    const where: WhereOptions = {};
+
+    if (!params.byUnitProfit) {
+        where.stackProfit = {
+            [Op.not]: null,
+        };
+    }
+
     return await Synthesis.findAll({
         include: SYNTHESIS_INCLUDE,
         order: getByProfitOrder(params),
+        where,
     });
 };
 
