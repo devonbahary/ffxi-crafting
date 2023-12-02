@@ -17,7 +17,7 @@ export default class Item extends Model<
     declare name: string;
     declare category: Category;
     declare unitPrice: CreationOptional<number>;
-    declare stackPrice: CreationOptional<number>;
+    declare stackPrice: CreationOptional<number> | null;
     declare stackSize: CreationOptional<number>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;

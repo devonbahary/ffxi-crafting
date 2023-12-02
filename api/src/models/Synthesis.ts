@@ -21,7 +21,7 @@ export default class Synthesis extends Model<
     declare craftLevel: number;
     declare crystalItemId: number;
     declare unitProfit: CreationOptional<number>;
-    declare stackProfit: CreationOptional<number>;
+    declare stackProfit: CreationOptional<number> | null;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
@@ -77,8 +77,7 @@ Synthesis.init(
         },
         stackProfit: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
+            allowNull: true,
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,

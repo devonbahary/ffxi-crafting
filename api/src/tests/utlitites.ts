@@ -7,11 +7,8 @@ import {
 } from '../models';
 import { sequelize } from '../sequelize';
 
-let randomName = 'hello';
-
 const getRandomName = (): string => {
-    randomName += 1;
-    return randomName;
+    return new Date().getTime() + '';
 };
 
 export const clearTables = async (): Promise<void> => {
@@ -35,14 +32,17 @@ export const createRandomItem = async (
     return await Item.create({
         name: getRandomName(),
         category: Category.Alchemy,
-        unitPrice: Math.round(Math.random() * 1000),
-        stackPrice: Math.round(Math.random() * 10000),
         stackSize: 12,
+        unitPrice: Math.round(Math.random() * 1000),
+        stackPrice:
+            seed.stackSize !== 1 ? Math.round(Math.random() * 10000) : null,
         ...seed,
     });
 };
 
-export const createSynthesisAndRelatedRecords = async (): Promise<{
+export const createSynthesisAndRelatedRecords = async (
+    productSeed: Partial<Item> = {}
+): Promise<{
     synthesis: Synthesis;
     product: Item;
     crystal: Item;
@@ -50,7 +50,9 @@ export const createSynthesisAndRelatedRecords = async (): Promise<{
     synthesisIngredient: SynthesisIngredient;
     ingredient: Item;
 }> => {
-    const product = await createRandomItem();
+    const product = await createRandomItem({
+        ...productSeed,
+    });
 
     const crystal = await createRandomItem({
         category: Category.Crystals,

@@ -3,7 +3,7 @@ import {
     type SynthesisIngredientWithItem,
     getUnitProfit,
     getStackProfit,
-    CalcProfitInput,
+    type CalcProfitInput,
 } from '../models/update-synth-profits-hooks';
 import { sequelize } from '../sequelize';
 import {
@@ -29,7 +29,7 @@ const getUnitAndStackProfits = (
     input: CalcProfitInput
 ): {
     unitProfit: number;
-    stackProfit: number;
+    stackProfit: number | null;
 } => {
     return {
         unitProfit: getUnitProfit(input),
@@ -40,7 +40,7 @@ const getUnitAndStackProfits = (
 const expectProfits = async (
     synthesis: Synthesis,
     unitProfit: number,
-    stackProfit: number
+    stackProfit: number | null
 ): Promise<void> => {
     await synthesis.reload(); // refresh changes from afterUpdate hook
 
@@ -109,7 +109,7 @@ describe('update synth profits', () => {
             await createSynthesisAndRelatedRecords();
 
         await product.update({
-            stackPrice: product.stackPrice + 500,
+            stackPrice: (product.stackPrice ?? 0) + 500,
         });
 
         const ingredientWithItem = await getSynthesisIngredientWithItem(
@@ -131,7 +131,7 @@ describe('update synth profits', () => {
             await createSynthesisAndRelatedRecords();
 
         await crystal.update({
-            stackPrice: crystal.stackPrice + 1000,
+            stackPrice: (crystal.stackPrice ?? 0) + 1000,
         });
 
         const ingredientWithItem = await getSynthesisIngredientWithItem(
@@ -175,7 +175,7 @@ describe('update synth profits', () => {
             await createSynthesisAndRelatedRecords();
 
         await ingredient.update({
-            stackPrice: ingredient.stackPrice + 2000,
+            stackPrice: (ingredient.stackPrice ?? 0) + 2000,
         });
 
         const ingredientWithItem = await getSynthesisIngredientWithItem(
@@ -212,6 +212,16 @@ describe('update synth profits', () => {
         });
 
         await expectProfits(synthesis, unitProfit, stackProfit);
+    });
+
+    test('a synthesis with product of stack_size 1 should have a null stack_profit', async () => {
+        const { synthesis } = await createSynthesisAndRelatedRecords({
+            stackSize: 1,
+        });
+
+        await synthesis.reload(); // might have to reload after create then to catch new values after hooks
+
+        expect(synthesis.stackProfit).toBe(null);
     });
 
     afterAll(async () => {

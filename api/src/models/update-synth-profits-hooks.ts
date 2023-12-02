@@ -17,6 +17,15 @@ const getItemUnitCost = (item: Item): number => {
     if (item.stackSize === 1) {
         return item.unitPrice;
     }
+
+    if (typeof item.stackPrice !== 'number') {
+        throw new Error(
+            `unexpected stackPrice ${item.stackPrice} for item ${JSON.stringify(
+                item.toJSON()
+            )}`
+        );
+    }
+
     return item.stackPrice / item.stackSize;
 };
 
@@ -25,9 +34,22 @@ const getIngredientsCost = (
 ): number => {
     return ingredients.reduce((acc, ingredient) => {
         const {
-            item: { stackPrice, stackSize },
+            item: { unitPrice, stackPrice, stackSize },
             quantity,
         } = ingredient;
+
+        if (stackSize === 1) {
+            const ingredientCost = unitPrice * quantity;
+            return acc + ingredientCost;
+        }
+
+        if (typeof stackPrice !== 'number') {
+            throw new Error(
+                `unexpected stackPrice ${stackPrice} for item ${JSON.stringify(
+                    ingredient.item.toJSON()
+                )}`
+            );
+        }
 
         const ingredientCost = (stackPrice / stackSize) * quantity;
         return acc + ingredientCost;
@@ -52,10 +74,18 @@ export const getUnitProfit = (input: CalcProfitInput): number => {
     return Math.round((revenue - crystalCost - ingredientsCost) / synthYield);
 };
 
-export const getStackProfit = (input: CalcProfitInput): number => {
+export const getStackProfit = (input: CalcProfitInput): number | null => {
     const { yield: synthYield, product, crystal, ingredients } = input;
 
-    if (product.stackSize === 1) return getUnitProfit(input);
+    if (product.stackSize === 1) return null;
+
+    if (typeof product.stackPrice !== 'number') {
+        throw new Error(
+            `unexpected stackPrice ${
+                product.stackPrice
+            } for item ${JSON.stringify(product.toJSON())}`
+        );
+    }
 
     const repeatsToGetToStack = product.stackSize / synthYield;
 
@@ -142,12 +172,7 @@ export const updateSynthProfitsFromSynth = async (
     };
 
     synth.unitProfit = getUnitProfit(calcProfitInput);
-
-    if (product.stackSize === 1) {
-        synth.stackProfit = synth.unitProfit;
-    } else {
-        synth.stackProfit = getStackProfit(calcProfitInput);
-    }
+    synth.stackProfit = getStackProfit(calcProfitInput);
 
     if (!synth.isNewRecord) {
         await synth.save({

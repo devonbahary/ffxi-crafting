@@ -11,8 +11,7 @@ module.exports = {
 
         await queryInterface.addColumn('synthesis', 'stack_profit', {
             type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
+            allowNull: true,
         });
 
         await queryInterface.addIndex('synthesis', ['unit_profit']);
