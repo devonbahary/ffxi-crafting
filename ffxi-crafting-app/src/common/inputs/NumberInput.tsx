@@ -24,7 +24,6 @@ export const NumberInput: FC<NumberInputProps> = (props) => {
             {...props}
             ref={textFieldRef}
             InputProps={{ endAdornment: null }}
-            sx={{ maxWidth: 96 }}
         />
     );
 };
