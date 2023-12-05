@@ -43,12 +43,13 @@ router.get('/', (req, res, next): void => {
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
 
-        const { crafts, productName } = req.query;
+        const { ids, crafts, productName } = req.query;
 
         const synthesis = await getSyntheses({
             limit,
             offset,
             searchParams: {
+                ids: getArray(ids),
                 crafts: getArray<Craft>(crafts),
                 productName:
                     typeof productName === 'string' ? productName : undefined,

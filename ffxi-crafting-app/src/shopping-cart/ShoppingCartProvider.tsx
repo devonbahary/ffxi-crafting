@@ -10,6 +10,7 @@ import {
 import { v4 as uuid } from 'uuid';
 import { Synthesis } from '../interfaces';
 import { NotificationsContext } from '../notifications/NotificationsProvider';
+import { useGetSyntheses } from '../hooks/use-synthesis';
 
 export interface ShoppingCartSynthesis {
     id: string;
@@ -20,12 +21,14 @@ export interface ShoppingCartSynthesis {
 
 export interface ShoppingCartInterface {
     addToCart: (synthesis: Omit<ShoppingCartSynthesis, 'id'>) => void;
-    removeFromCart: (id: string) => void;
     clearCart: () => void;
-    shoppingCartSyntheses: ShoppingCartSynthesis[];
-    updateQuantity: (id: string | number, quantity: number) => void;
     length: number;
+    loading: boolean;
+    refetchSyntheses: () => void;
+    removeFromCart: (id: string) => void;
+    shoppingCartSyntheses: ShoppingCartSynthesis[];
     totalProfit: number;
+    updateQuantity: (id: string | number, quantity: number) => void;
 }
 
 export const AUCTION_HOUSE_ITEM_LIMIT = 21;
@@ -65,6 +68,8 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
     >([]);
 
     const { notifyError, notifySuccess } = useContext(NotificationsContext);
+
+    const { loading, getSyntheses } = useGetSyntheses();
 
     const shoppingCartSynthesesLength = useMemo(
         () => calcShoppingCartSynthesesLength(shoppingCartSyntheses),
@@ -181,24 +186,52 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
         [notifyError, shoppingCartSyntheses, shoppingCartSynthesesLength]
     );
 
+    const refetchSyntheses = useCallback(async () => {
+        const synthesesIds = shoppingCartSyntheses.map(
+            (shoppingCartSynthesis) => shoppingCartSynthesis.synthesis.id
+        );
+
+        const syntheses = await getSyntheses({
+            ids: synthesesIds,
+        });
+
+        setShoppingCartSyntheses((prev) =>
+            prev.map((shoppingCartSynthesis) => {
+                const matchingSynthesis = syntheses.find(
+                    (synth) => synth.id === shoppingCartSynthesis.synthesis.id
+                );
+                return {
+                    ...shoppingCartSynthesis,
+                    synthesis: matchingSynthesis
+                        ? matchingSynthesis
+                        : shoppingCartSynthesis.synthesis,
+                };
+            })
+        );
+    }, [shoppingCartSyntheses, getSyntheses]);
+
     const value: ShoppingCartInterface = useMemo(
         () => ({
             addToCart,
+            clearCart,
+            length: shoppingCartSynthesesLength,
+            loading,
+            refetchSyntheses,
             removeFromCart,
             shoppingCartSyntheses,
             updateQuantity,
-            length: shoppingCartSynthesesLength,
             totalProfit,
-            clearCart,
         }),
         [
             addToCart,
+            clearCart,
+            loading,
+            refetchSyntheses,
             removeFromCart,
             shoppingCartSyntheses,
-            updateQuantity,
             shoppingCartSynthesesLength,
             totalProfit,
-            clearCart,
+            updateQuantity,
         ]
     );
 

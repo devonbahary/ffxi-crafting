@@ -1,6 +1,8 @@
+import { useCallback, useContext } from 'react';
 import { Item, Loading } from '../interfaces';
 import { useDelete, useGet, usePost, usePut } from './use-api';
 import { Category } from '../enums';
+import { ShoppingCartContext } from '../shopping-cart/ShoppingCartProvider';
 
 export type GetItemsSearchParams = {
     name?: string;
@@ -52,9 +54,20 @@ export const useUpdateItem = (): UseUpdateItem => {
         failureMessage: 'Failed to update item',
     });
 
+    const { refetchSyntheses } = useContext(ShoppingCartContext);
+
+    const updateItem = useCallback(
+        async (id: string | number, input: Item) => {
+            const item = await put(id, input);
+            refetchSyntheses(); // expect synthesis profits to update as a side effect of item update
+            return item;
+        },
+        [refetchSyntheses, put]
+    );
+
     return {
         loading,
-        updateItem: put,
+        updateItem,
     };
 };
 

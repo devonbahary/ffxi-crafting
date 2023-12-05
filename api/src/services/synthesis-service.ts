@@ -39,6 +39,7 @@ interface SynthesisInput {
 }
 
 interface GetSynthesisSearchParams {
+    ids?: string[];
     crafts: Craft[];
     productName?: string;
 }
@@ -82,9 +83,13 @@ export const getSyntheses = async ({
     offset?: number;
     searchParams: GetSynthesisSearchParams;
 }): Promise<Synthesis[]> => {
-    const { crafts, productName } = searchParams;
+    const { ids, crafts, productName } = searchParams;
 
     const where: WhereOptions = {};
+
+    if (Array.isArray(ids) && ids.length > 0) {
+        where.id = ids;
+    }
 
     if (crafts.length > 0) {
         where.craft = crafts;
