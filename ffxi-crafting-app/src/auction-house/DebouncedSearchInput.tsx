@@ -1,24 +1,24 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { useDebounce } from 'usehooks-ts';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
-import { debounce } from '@mui/material/utils';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
+import { DEBOUNCE_VALUE } from '../common/constants';
 
 type DebouncedSearchInputProps = {
     onChange: (value: string) => void;
 };
 
-const DEBOUNCE = 250;
-
 export const DebouncedSearchInput: FC<DebouncedSearchInputProps> = ({
     onChange,
 }) => {
     const [searchText, setSearchText] = useState('');
+    const debouncedSearchText = useDebounce<string>(searchText, DEBOUNCE_VALUE);
 
-    const setSearchTextDebounced = useCallback(debounce(onChange, DEBOUNCE), [
-        onChange,
-    ]);
+    useEffect(() => {
+        onChange(debouncedSearchText);
+    }, [debouncedSearchText, onChange]);
 
     return (
         <TextField
@@ -40,7 +40,6 @@ export const DebouncedSearchInput: FC<DebouncedSearchInputProps> = ({
             }}
             fullWidth
             onChange={({ target: { value } }) => {
-                setSearchTextDebounced(value);
                 setSearchText(value);
             }}
             value={searchText}

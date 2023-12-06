@@ -60,6 +60,14 @@ type SynthesisFormProps = {
     synthesis?: SynthesisI;
 };
 
+const NON_CRYSTAL_ITEM_SEARCH_PARAMS = {
+    excludeCategory: Category.Crystals,
+};
+
+const CRYSTAL_ITEM_SEARCH_PARAMS = {
+    categories: [Category.Crystals],
+};
+
 const CraftAndCraftLevelInputs: FC<CraftAndCraftLevelInputsProps> = ({
     onChange,
     value,
@@ -125,9 +133,7 @@ const SynthesisIngredientInputs: FC<SynthesisIngredientInputsProps> = ({
                             item,
                         });
                     }}
-                    getItemSearchParams={{
-                        excludeCategory: Category.Crystals,
-                    }}
+                    getItemSearchParams={NON_CRYSTAL_ITEM_SEARCH_PARAMS}
                     value={value.item}
                 />
             </Box>
@@ -295,9 +301,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                     <ItemSearchAutocomplete
                         label="Product"
                         onChange={setProductItem}
-                        getItemSearchParams={{
-                            excludeCategory: Category.Crystals,
-                        }}
+                        getItemSearchParams={NON_CRYSTAL_ITEM_SEARCH_PARAMS}
                         value={productItem}
                     />
                 </Box>
@@ -306,9 +310,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                 <ItemSearchAutocomplete
                     label="Crystal"
                     onChange={setCrystal}
-                    getItemSearchParams={{
-                        categories: [Category.Crystals],
-                    }}
+                    getItemSearchParams={CRYSTAL_ITEM_SEARCH_PARAMS}
                     value={crystal}
                 />
             )}

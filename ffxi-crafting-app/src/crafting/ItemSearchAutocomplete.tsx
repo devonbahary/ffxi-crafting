@@ -1,16 +1,11 @@
-import React, {
-    FC,
-    SyntheticEvent,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import React, { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useDebounce } from 'usehooks-ts';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
-import { debounce } from '@mui/material/utils';
 import { Item } from '../interfaces';
 import { GetItemsSearchParams, useGetItems } from '../hooks/use-items';
+import { DEBOUNCE_VALUE } from '../common/constants';
 
 type ItemSearchAutocompleteProps = {
     label: string;
@@ -30,27 +25,23 @@ export const ItemSearchAutocomplete: FC<ItemSearchAutocompleteProps> = ({
 }) => {
     const [items, setItems] = useState<Item[]>([]);
     const [searchText, setSearchText] = useState('');
+    const debouncedSearchText = useDebounce<string>(searchText, DEBOUNCE_VALUE);
 
     const { loading: loadingGetItems, getItems } = useGetItems();
-
-    const getItemsForSearchText = useCallback(
-        debounce(async (name: string) => {
-            const items = await getItems({
-                name,
-                ...getItemSearchParams,
-            });
-            setItems(items);
-        }, 250),
-        []
-    );
 
     const onInputChange = (e: SyntheticEvent, val: string) => {
         setSearchText(val);
     };
 
     useEffect(() => {
-        getItemsForSearchText(searchText);
-    }, [getItemsForSearchText, searchText]);
+        (async () => {
+            const items = await getItems({
+                name: debouncedSearchText,
+                ...getItemSearchParams,
+            });
+            setItems(items);
+        })();
+    }, [debouncedSearchText, getItems, getItemSearchParams]);
 
     return (
         <Autocomplete
