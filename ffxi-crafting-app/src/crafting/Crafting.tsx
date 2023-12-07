@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
 import StorefrontIcon from '@mui/icons-material/Storefront';
@@ -14,9 +14,9 @@ import { CRAFT_OPTIONS } from '../common/inputs/input-options';
 import { Craft } from '../enums';
 import { useDeleteSynthesis, useGetSyntheses } from '../hooks/use-synthesis';
 import { ViewTitle } from '../ViewTitle';
-import { Typography } from '@mui/material';
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
 import { DebouncedSearchInput } from '../auction-house/DebouncedSearchInput';
+import { GridLayout } from '../common/GridLayout';
 
 const SUBTITLE = (
     <>
@@ -111,19 +111,18 @@ export const Crafting = () => {
                     <CircularProgress />
                 </Backdrop>
             ) : (
-                <Grid container spacing={2}>
-                    {syntheses.map((synth) => (
-                        <Grid key={synth.id} item xs={4}>
-                            <SynthesisCard
-                                synthesis={synth}
-                                onDelete={() =>
-                                    setPendingDeleteSynthesis(synth)
-                                }
-                                includeCardActions
-                            />
-                        </Grid>
-                    ))}
-                </Grid>
+                <GridLayout
+                    iterable={syntheses}
+                    renderItem={(synthesis) => (
+                        <SynthesisCard
+                            synthesis={synthesis}
+                            onDelete={() =>
+                                setPendingDeleteSynthesis(synthesis)
+                            }
+                            includeCardActions
+                        />
+                    )}
+                />
             )}
             <DeleteConfirmationModal
                 onClose={handleCloseDeleteModal}

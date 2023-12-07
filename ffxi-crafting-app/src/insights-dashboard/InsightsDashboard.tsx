@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
@@ -12,8 +12,8 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useGetSynthesesByProfit } from '../hooks/use-synthesis';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from '../common/synthesis/SynthesisCard';
-import { Button } from '@mui/material';
 import { ViewTitle } from '../ViewTitle';
+import { GridLayout } from '../common/GridLayout';
 
 const SUBTITLE = (
     <>
@@ -106,6 +106,9 @@ export const InsightsDashboard = () => {
                     startIcon={<FilterNoneIcon />}
                     onClick={onByUnitProfitChange}
                     variant={byUnitProfit ? 'contained' : 'outlined'}
+                    sx={{
+                        whiteSpace: 'nowrap',
+                    }}
                 >
                     By Unit Profit
                 </Button>
@@ -113,6 +116,9 @@ export const InsightsDashboard = () => {
                     startIcon={<AutoAwesomeMotionIcon />}
                     onClick={onByStackProfitChange}
                     variant={byStackProfit ? 'contained' : 'outlined'}
+                    sx={{
+                        whiteSpace: 'nowrap',
+                    }}
                 >
                     By Stack Profit
                 </Button>
@@ -125,22 +131,21 @@ export const InsightsDashboard = () => {
                     <CircularProgress />
                 </Backdrop>
             ) : (
-                <Grid container spacing={2}>
-                    {syntheses.map((synth) => (
-                        <Grid key={synth.id} item xs={4}>
-                            <SynthesisCard
-                                synthesis={synth}
-                                highlightProfit={
-                                    byUnitProfit && byStackProfit
-                                        ? 'both'
-                                        : byUnitProfit
-                                        ? 'unit'
-                                        : 'stack'
-                                }
-                            />
-                        </Grid>
-                    ))}
-                </Grid>
+                <GridLayout
+                    iterable={syntheses}
+                    renderItem={(synthesis) => (
+                        <SynthesisCard
+                            synthesis={synthesis}
+                            highlightProfit={
+                                byUnitProfit && byStackProfit
+                                    ? 'both'
+                                    : byUnitProfit
+                                    ? 'unit'
+                                    : 'stack'
+                            }
+                        />
+                    )}
+                />
             )}
         </Box>
     );
