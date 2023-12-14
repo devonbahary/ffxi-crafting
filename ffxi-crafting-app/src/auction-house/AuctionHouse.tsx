@@ -1,4 +1,10 @@
-import { formatDistanceToNow } from 'date-fns';
+import {
+    Duration,
+    formatDistanceToNow,
+    isAfter,
+    isBefore,
+    sub,
+} from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     DataGrid,
@@ -34,6 +40,13 @@ import { CategoryFilters } from './CategoryFilters';
 import { Category, StackSize } from '../enums';
 import { ViewTitle } from '../ViewTitle';
 import { DebouncedSearchInput } from './DebouncedSearchInput';
+import { useTheme } from '@mui/material';
+
+enum StaleThreshold {
+    Fresh = 'Fresh',
+    Stale = 'Stale',
+    Outdated = 'Outdated',
+}
 
 const large: Pick<GridColDef, 'flex'> = { flex: 2 };
 const small: Pick<GridColDef, 'flex'> = { flex: 1 };
@@ -215,6 +228,18 @@ export const AuctionHouse = () => {
                 const date = new Date(value);
                 return `${formatDistanceToNow(date)} ago`;
             },
+            cellClassName: ({ row: { updatedAt } }) => {
+                const now = new Date();
+                const twentyFourHoursAgo = sub(now, { days: 1 });
+                const oneWeekAgo = sub(now, { weeks: 1 });
+                const cellValue = new Date(updatedAt);
+
+                if (isAfter(cellValue, twentyFourHoursAgo))
+                    return StaleThreshold.Fresh;
+                else if (isAfter(cellValue, oneWeekAgo))
+                    return StaleThreshold.Stale;
+                return StaleThreshold.Outdated;
+            },
         },
         {
             field: 'actions',
@@ -233,6 +258,8 @@ export const AuctionHouse = () => {
         return items.find((i) => i.id === pendingDeleteId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pendingDeleteId]);
+
+    const theme = useTheme();
 
     useEffect(() => {
         (async () => {
@@ -287,6 +314,17 @@ export const AuctionHouse = () => {
                         : true;
                 }}
                 autoHeight
+                sx={{
+                    [`& .MuiDataGrid-cell.${StaleThreshold.Fresh}`]: {
+                        color: theme.palette.success.main,
+                    },
+                    [`& .MuiDataGrid-cell.${StaleThreshold.Stale}`]: {
+                        color: theme.palette.warning.main,
+                    },
+                    [`& .MuiDataGrid-cell.${StaleThreshold.Outdated}`]: {
+                        color: theme.palette.error.main,
+                    },
+                }}
             />
             <DeleteConfirmationModal
                 pendingDeleteItem={pendingDeleteItem}
