@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -58,8 +59,8 @@ export const InsightsDashboard = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
     const { loading, getSynthesesByProfit } = useGetSynthesesByProfit();
 
-    const [byUnitProfit, setByUnitProfit] = useState(true);
-    const [byStackProfit, setByStackProfit] = useState(true);
+    const [byUnitProfit, setByUnitProfit] = useLocalStorage('InsightsDashboard.byUnitProfit', true);
+    const [byStackProfit, setByStackProfit] = useLocalStorage('InsightsBashboard.byStackProfit', true);
 
     const onByUnitProfitChange = () => {
         const updatedByUnitProfit = !byUnitProfit;
@@ -89,7 +90,7 @@ export const InsightsDashboard = () => {
                     byUnitProfit,
                 });
                 setSyntheses(syntheses);
-            } catch (err) {}
+            } catch (err) { }
         })();
     }, [byStackProfit, byUnitProfit, getSynthesesByProfit]);
 
@@ -140,8 +141,8 @@ export const InsightsDashboard = () => {
                                 byUnitProfit && byStackProfit
                                     ? 'both'
                                     : byUnitProfit
-                                    ? 'unit'
-                                    : 'stack'
+                                        ? 'unit'
+                                        : 'stack'
                             }
                         />
                     )}
