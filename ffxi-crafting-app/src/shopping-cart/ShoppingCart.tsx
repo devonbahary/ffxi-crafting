@@ -24,6 +24,7 @@ type IngredientQuantity = {
     quantity: number;
 };
 
+// iterate over syntheses to aggregate number of ingredient items needed
 const getIngredientList = (
     shoppingCartSyntheses: ShoppingCartSynthesis[]
 ): IngredientQuantity[] => {
@@ -54,7 +55,7 @@ const getIngredientList = (
 
             const synthRepeatsToGetToSynthQuantity = Math.ceil(
                 (synthQuantity / synthesis.yield) *
-                (asStack ? parseInt(synthesis.product.stackSize) : 1)
+                    (asStack ? parseInt(synthesis.product.stackSize) : 1)
             );
 
             return {
@@ -71,7 +72,7 @@ const getIngredientList = (
                             [item.id]:
                                 existingQuantity +
                                 synthRepeatsToGetToSynthQuantity *
-                                ingredientQuantity,
+                                    ingredientQuantity,
                         };
                     },
                     {} as Record<Item['id'], number>
@@ -81,10 +82,12 @@ const getIngredientList = (
         {} as Record<Item['id'], number>
     );
 
-    return Object.values(itemIdToItemMap).map((item: Item) => ({
-        item,
-        quantity: Math.ceil(itemIdToQuantityMap[item.id]),
-    }));
+    return Object.values(itemIdToItemMap)
+        .map((item: Item) => ({
+            item,
+            quantity: Math.ceil(itemIdToQuantityMap[item.id]),
+        }))
+        .sort((a, b) => (a.item.category > b.item.category ? 1 : -1));
 };
 
 const IngredientList: FC = () => {
@@ -109,7 +112,7 @@ const IngredientList: FC = () => {
                         {ingredientList.map(({ item, quantity }) => {
                             const inventoryQty =
                                 typeof inventoryIngredientQtyMap[item.id] ===
-                                    'number'
+                                'number'
                                     ? inventoryIngredientQtyMap[item.id]
                                     : 0;
                             const needToBuy = Math.max(
