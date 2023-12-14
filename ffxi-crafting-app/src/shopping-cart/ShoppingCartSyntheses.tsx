@@ -55,6 +55,7 @@ export const ShoppingCartSyntheses: FC = () => {
                                                     parseInt(e.target.value)
                                                 );
                                             }}
+                                            label="qty."
                                             value={quantity}
                                             condensed
                                         />

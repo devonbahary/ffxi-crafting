@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 
-type NumberInputProps = Pick<TextFieldProps, 'label' | 'value' | 'onChange'> & {
+type NumberInputProps = TextFieldProps & {
     condensed?: boolean;
 };
 

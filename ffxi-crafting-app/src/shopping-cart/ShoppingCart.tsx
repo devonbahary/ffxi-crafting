@@ -15,12 +15,9 @@ import { ItemAndQuantityTypography } from '../common/synthesis/ItemAndQuantityTy
 import { Item } from '../interfaces';
 import { ShoppingCartSyntheses } from './ShoppingCartSyntheses';
 import { ShoppingCartSummary } from './ShoppingCartSummary';
+import { NumberInput } from '../common/inputs/NumberInput';
 
 const SUBTITLE = <>This is the Shopping Cart page</>;
-
-type IngredientListProps = {
-    shoppingCartSyntheses: ShoppingCartSynthesis[];
-};
 
 type IngredientQuantity = {
     item: Item;
@@ -57,7 +54,7 @@ const getIngredientList = (
 
             const synthRepeatsToGetToSynthQuantity = Math.ceil(
                 (synthQuantity / synthesis.yield) *
-                    (asStack ? parseInt(synthesis.product.stackSize) : 1)
+                (asStack ? parseInt(synthesis.product.stackSize) : 1)
             );
 
             return {
@@ -74,7 +71,7 @@ const getIngredientList = (
                             [item.id]:
                                 existingQuantity +
                                 synthRepeatsToGetToSynthQuantity *
-                                    ingredientQuantity,
+                                ingredientQuantity,
                         };
                     },
                     {} as Record<Item['id'], number>
@@ -90,36 +87,83 @@ const getIngredientList = (
     }));
 };
 
-const IngredientList: FC<IngredientListProps> = ({ shoppingCartSyntheses }) => {
+const IngredientList: FC = () => {
+    const {
+        length,
+        shoppingCartSyntheses,
+        inventoryIngredientQtyMap,
+        setInventoryIngredientQty,
+    } = useContext(ShoppingCartContext);
+
     const ingredientList = useMemo(
         () => getIngredientList(shoppingCartSyntheses),
         [shoppingCartSyntheses]
     );
 
-    return (
+    return length ? (
         <>
             <Typography variant="overline">Ingredient List</Typography>
             <Card>
                 <CardContent>
                     <Stack divider={<Divider />} gap={2}>
-                        {ingredientList.map(({ item, quantity }) => (
-                            <Box key={item.id}>
-                                <ItemAndQuantityTypography
-                                    item={item}
-                                    quantity={quantity}
-                                />
-                            </Box>
-                        ))}
+                        {ingredientList.map(({ item, quantity }) => {
+                            const inventoryQty =
+                                typeof inventoryIngredientQtyMap[item.id] ===
+                                    'number'
+                                    ? inventoryIngredientQtyMap[item.id]
+                                    : 0;
+                            const needToBuy = Math.max(
+                                0,
+                                quantity - inventoryQty
+                            );
+
+                            return (
+                                <Box
+                                    key={item.id}
+                                    display="flex"
+                                    gap={2}
+                                    alignItems="center"
+                                    position="relative"
+                                >
+                                    <NumberInput
+                                        label="inventory"
+                                        onChange={(e) => {
+                                            const quantity = parseInt(
+                                                e.target.value
+                                            );
+                                            if (typeof quantity === 'number') {
+                                                setInventoryIngredientQty(
+                                                    item.id,
+                                                    quantity
+                                                );
+                                            }
+                                        }}
+                                        value={inventoryQty}
+                                    />
+                                    <ItemAndQuantityTypography
+                                        item={item}
+                                        quantity={quantity}
+                                    />
+                                    <Box position="absolute" right={2}>
+                                        <NumberInput
+                                            label="need to buy"
+                                            value={needToBuy}
+                                            inputProps={{
+                                                readOnly: true,
+                                            }}
+                                        />
+                                    </Box>
+                                </Box>
+                            );
+                        })}
                     </Stack>
                 </CardContent>
             </Card>
         </>
-    );
+    ) : null;
 };
 
 export const ShoppingCart = () => {
-    const { shoppingCartSyntheses, length } = useContext(ShoppingCartContext);
-
     return (
         <>
             <ViewTitle
@@ -141,9 +185,7 @@ export const ShoppingCart = () => {
             </Box>
             <Typography variant="overline">Syntheses</Typography>
             <ShoppingCartSyntheses />
-            {length ? (
-                <IngredientList shoppingCartSyntheses={shoppingCartSyntheses} />
-            ) : null}
+            <IngredientList />
         </>
     );
 };

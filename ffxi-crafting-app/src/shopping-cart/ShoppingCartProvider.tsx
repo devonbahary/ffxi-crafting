@@ -8,7 +8,7 @@ import {
     useState,
 } from 'react';
 import { v4 as uuid } from 'uuid';
-import { Synthesis } from '../interfaces';
+import { Item, Synthesis } from '../interfaces';
 import { NotificationsContext } from '../notifications/NotificationsProvider';
 import { useGetSyntheses } from '../hooks/use-synthesis';
 
@@ -29,6 +29,8 @@ export interface ShoppingCartInterface {
     shoppingCartSyntheses: ShoppingCartSynthesis[];
     totalProfit: number;
     updateQuantity: (id: string | number, quantity: number) => void;
+    inventoryIngredientQtyMap: Record<Item['id'], number>;
+    setInventoryIngredientQty: (id: Item['id'], quantity: number) => void;
 }
 
 export const ShoppingCartContext = createContext<ShoppingCartInterface>(
@@ -64,6 +66,10 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
     const [shoppingCartSyntheses, setShoppingCartSyntheses] = useState<
         ShoppingCartSynthesis[]
     >([]);
+
+    const [inventoryIngredientQtyMap, setInventoryIngredientQtyMap] = useState<
+        Record<Item['id'], number>
+    >({});
 
     const { notifyError, notifySuccess } = useContext(NotificationsContext);
 
@@ -182,6 +188,16 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
         );
     }, [shoppingCartSyntheses, getSyntheses]);
 
+    const setInventoryIngredientQty = useCallback(
+        (itemId: Item['id'], quantity: number) => {
+            setInventoryIngredientQtyMap((prev) => ({
+                ...prev,
+                [itemId]: quantity,
+            }));
+        },
+        []
+    );
+
     const value: ShoppingCartInterface = useMemo(
         () => ({
             addToCart,
@@ -193,6 +209,8 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
             shoppingCartSyntheses,
             updateQuantity,
             totalProfit,
+            inventoryIngredientQtyMap,
+            setInventoryIngredientQty,
         }),
         [
             addToCart,
@@ -204,6 +222,8 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
             shoppingCartSynthesesLength,
             totalProfit,
             updateQuantity,
+            inventoryIngredientQtyMap,
+            setInventoryIngredientQty,
         ]
     );
 
