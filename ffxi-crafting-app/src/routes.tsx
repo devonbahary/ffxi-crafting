@@ -8,7 +8,7 @@ import { InsightsDashboard } from './insights-dashboard/InsightsDashboard';
 import { AuctionHouse } from './auction-house/AuctionHouse';
 import { Crafting } from './crafting/Crafting';
 import { Synthesis } from './crafting/Synthesis';
-import { ShoppingCartPage } from './shopping-cart/ShoppingCartPage';
+import { ShoppingCart } from './shopping-cart/ShoppingCart';
 
 type Navigation = RouteObject &
     Required<Pick<RouteObject, 'path'>> & {
@@ -45,7 +45,7 @@ export const navigationItems: Navigation[] = [
     },
     {
         path: '/shopping-cart',
-        element: <ShoppingCartPage />,
+        element: <ShoppingCart />,
         navText: 'Shopping Cart',
         navIcon: <ShoppingCartIcon />,
     },

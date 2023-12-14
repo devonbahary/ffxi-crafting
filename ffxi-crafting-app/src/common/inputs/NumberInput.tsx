@@ -1,7 +1,9 @@
 import React, { FC, useEffect, useRef } from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 
-type NumberInputProps = Pick<TextFieldProps, 'label' | 'value' | 'onChange'>;
+type NumberInputProps = Pick<TextFieldProps, 'label' | 'value' | 'onChange'> & {
+    condensed?: boolean;
+};
 
 export const NumberInput: FC<NumberInputProps> = (props) => {
     const textFieldRef = useRef<HTMLInputElement>(null);
@@ -18,12 +20,17 @@ export const NumberInput: FC<NumberInputProps> = (props) => {
         };
     }, [textFieldRef]);
 
+    const { condensed, ...rest } = props;
+
     return (
         <TextField
             type="number"
-            {...props}
+            {...rest}
             ref={textFieldRef}
             InputProps={{ endAdornment: null }}
+            sx={{
+                maxWidth: condensed ? 72 : undefined,
+            }}
         />
     );
 };

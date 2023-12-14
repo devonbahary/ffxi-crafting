@@ -31,8 +31,6 @@ export interface ShoppingCartInterface {
     updateQuantity: (id: string | number, quantity: number) => void;
 }
 
-export const AUCTION_HOUSE_ITEM_LIMIT = 21;
-
 export const ShoppingCartContext = createContext<ShoppingCartInterface>(
     null as unknown as ShoppingCartInterface
 );
@@ -83,58 +81,44 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
 
     const addToCart = useCallback(
         (shoppingCartSynthesis: Omit<ShoppingCartSynthesis, 'id'>) => {
-            if (
-                shoppingCartSynthesesLength + shoppingCartSynthesis.quantity <=
-                AUCTION_HOUSE_ITEM_LIMIT
-            ) {
-                const matchingSynthesisAndStackability =
-                    shoppingCartSyntheses.find(({ synthesis, asStack }) => {
-                        return (
-                            synthesis.id ===
-                                shoppingCartSynthesis.synthesis.id &&
-                            asStack === shoppingCartSynthesis.asStack
-                        );
-                    });
-
-                if (matchingSynthesisAndStackability) {
-                    // increment quantity if synthesis already exists in shopping cart
-                    setShoppingCartSyntheses((prev) =>
-                        prev.map((s) =>
-                            s.id === matchingSynthesisAndStackability.id
-                                ? {
-                                      ...s,
-                                      quantity:
-                                          s.quantity +
-                                          shoppingCartSynthesis.quantity,
-                                  }
-                                : s
-                        )
+            const matchingSynthesisAndStackability = shoppingCartSyntheses.find(
+                ({ synthesis, asStack }) => {
+                    return (
+                        synthesis.id === shoppingCartSynthesis.synthesis.id &&
+                        asStack === shoppingCartSynthesis.asStack
                     );
-                } else {
-                    setShoppingCartSyntheses((prev) => [
-                        ...prev,
-                        {
-                            id: uuid(),
-                            ...shoppingCartSynthesis,
-                        },
-                    ]);
                 }
+            );
 
-                notifySuccess(
-                    `Added ${shoppingCartSynthesis.synthesis.product.name} to cart`
+            if (matchingSynthesisAndStackability) {
+                // increment quantity if synthesis already exists in shopping cart
+                setShoppingCartSyntheses((prev) =>
+                    prev.map((s) =>
+                        s.id === matchingSynthesisAndStackability.id
+                            ? {
+                                  ...s,
+                                  quantity:
+                                      s.quantity +
+                                      shoppingCartSynthesis.quantity,
+                              }
+                            : s
+                    )
                 );
             } else {
-                notifyError(
-                    `Cannot add ${shoppingCartSynthesis.synthesis.product.name} to cart: Auction House limit exceeded`
-                );
+                setShoppingCartSyntheses((prev) => [
+                    ...prev,
+                    {
+                        id: uuid(),
+                        ...shoppingCartSynthesis,
+                    },
+                ]);
             }
+
+            notifySuccess(
+                `Added ${shoppingCartSynthesis.synthesis.product.name} to cart`
+            );
         },
-        [
-            notifyError,
-            notifySuccess,
-            shoppingCartSynthesesLength,
-            shoppingCartSyntheses,
-        ]
+        [notifySuccess, shoppingCartSyntheses]
     );
 
     const removeFromCart = useCallback((id: string) => {
@@ -159,18 +143,6 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
                     return;
                 }
 
-                if (
-                    shoppingCartSynthesesLength -
-                        shoppingCartSynthesis.quantity +
-                        quantity >
-                    AUCTION_HOUSE_ITEM_LIMIT
-                ) {
-                    notifyError(
-                        `Cannot update quantity: Auction House limit exceeded`
-                    );
-                    return;
-                }
-
                 setShoppingCartSyntheses(
                     shoppingCartSyntheses.map((orig) =>
                         orig.id === id
@@ -183,7 +155,7 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
                 );
             }
         },
-        [notifyError, shoppingCartSyntheses, shoppingCartSynthesesLength]
+        [notifyError, shoppingCartSyntheses]
     );
 
     const refetchSyntheses = useCallback(async () => {
