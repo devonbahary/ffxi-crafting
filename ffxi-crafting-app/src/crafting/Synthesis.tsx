@@ -296,6 +296,7 @@ const SynthesisForm: FC<SynthesisFormProps> = ({ synthesis }) => {
                         }
                     }}
                     value={synthYield ?? ''}
+                    autoFocus
                 />
                 <Box width="100%">
                     <ItemSearchAutocomplete
