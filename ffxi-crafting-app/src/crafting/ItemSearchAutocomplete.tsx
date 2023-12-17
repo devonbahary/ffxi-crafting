@@ -35,9 +35,11 @@ export const ItemSearchAutocomplete: FC<ItemSearchAutocompleteProps> = ({
 
     useEffect(() => {
         (async () => {
-            const items = await getItems({
+            const { items } = await getItems({
                 name: debouncedSearchText,
                 ...getItemSearchParams,
+                limit: 25,
+                offset: 0,
             });
             setItems(items);
         })();

@@ -5,13 +5,18 @@ import {
     Router,
 } from 'express';
 import { validationResult } from 'express-validator';
-import { getArray, getLimitAndOffset, withErrorHandling } from './utilities';
+import {
+    getArray,
+    getLimitAndOffset,
+    getSort,
+    withErrorHandling,
+} from './utilities';
 import {
     createItemCategoryValidator,
     createItemNameValidator,
     createItemStackSizeValidator,
 } from '../validators';
-import { Op, type WhereOptions } from 'sequelize';
+import { type Attributes, Op, type WhereOptions } from 'sequelize';
 import { Item } from '../models';
 
 const createValidationRules = [
@@ -26,13 +31,25 @@ const updateValidationRules = [
     createItemStackSizeValidator(),
 ];
 
+const itemSortFields: Array<keyof Attributes<Item>> = [
+    'id',
+    'name',
+    'unitPrice',
+    'stackPrice',
+    'updatedAt',
+];
+
 const router = Router();
 
 router.get('/', (req, res, next): void => {
     // eslint-disable-next-line
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
+
         const { name, excludeCategory } = req.query;
+
+        const sort = getSort<Attributes<Item>>(req, itemSortFields);
+
         const categories = getArray(req.query.categories);
 
         const where: WhereOptions = {
@@ -58,13 +75,23 @@ router.get('/', (req, res, next): void => {
             };
         }
 
-        const items = await Item.findAll({
-            limit,
-            offset,
-            where,
-        });
+        const [items, count] = await Promise.all([
+            await Item.findAll({
+                limit,
+                offset,
+                where,
+                order:
+                    sort !== null ? [[sort.field, sort.direction]] : undefined,
+            }),
+            await Item.count({
+                where,
+            }),
+        ]);
 
-        res.json(items);
+        res.json({
+            items,
+            count,
+        });
     });
 });
 

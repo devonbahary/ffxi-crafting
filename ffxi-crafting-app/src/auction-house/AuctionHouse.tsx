@@ -1,19 +1,15 @@
-import {
-    Duration,
-    formatDistanceToNow,
-    isAfter,
-    isBefore,
-    sub,
-} from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
+import { formatDistanceToNow, isAfter, sub } from 'date-fns';
 import {
     DataGrid,
     DataGridProps,
     GridActionsCellItem,
     GridColDef,
+    GridPaginationModel,
     GridRowModes,
     GridRowModesModel,
     GridRowParams,
+    GridSortModel,
 } from '@mui/x-data-grid';
 import { randomId } from '@mui/x-data-grid-generator';
 import Button from '@mui/material/Button';
@@ -76,6 +72,17 @@ const SUBTITLE = (
 export const AuctionHouse = () => {
     const [items, setItems] = useState<Partial<Item>[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+    const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(
+        {
+            page: 0,
+            pageSize: 25,
+        }
+    );
+    const [rowCount, setRowCount] = useState(0);
+
+    const [sortModel, setSortModel] = useState<GridSortModel>([]);
+
     const [editMode, setEditMode] = useState<DataGridProps['editMode']>('cell');
     const [pendingDeleteId, setPendingDeleteId] = useState<
         string | number | null
@@ -184,6 +191,7 @@ export const AuctionHouse = () => {
             headerName: 'Category',
             type: 'singleSelect',
             valueOptions: CATEGORY_OPTIONS,
+            sortable: false,
             ...large,
             ...editable,
         },
@@ -192,6 +200,7 @@ export const AuctionHouse = () => {
             headerName: 'Stack Size',
             type: 'singleSelect',
             valueOptions: STACK_SIZE_OPTIONS,
+            sortable: false,
             ...small,
             ...editable,
         },
@@ -263,17 +272,27 @@ export const AuctionHouse = () => {
 
     useEffect(() => {
         (async () => {
+            const { page, pageSize } = paginationModel;
+
             try {
-                const items = await getItems({
+                const { items, count } = await getItems({
                     name: searchText,
                     categories: Array.from(categoryFilterSet),
+                    limit: pageSize,
+                    offset: page * pageSize,
+                    sort: sortModel.map(
+                        (m) => `${m.field}:${m.sort?.toUpperCase()}`
+                    ),
                 });
+
                 setItems(items);
+                setRowCount(count);
             } catch (err) {
                 setItems([]);
+                setRowCount(0);
             }
         })();
-    }, [getItems, categoryFilterSet, searchText]);
+    }, [getItems, categoryFilterSet, searchText, paginationModel, sortModel]);
 
     return (
         <>
@@ -298,13 +317,9 @@ export const AuctionHouse = () => {
                 Add Item
             </Button>
             <DataGrid
-                editMode={editMode}
-                rows={items}
+                autoHeight
                 columns={columns}
-                processRowUpdate={processRowUpdate}
-                rowModesModel={rowModesModel}
-                onRowModesModelChange={setRowModesModel}
-                loading={loadingGetItems || loadingCreateItem}
+                editMode={editMode}
                 isCellEditable={(params) => {
                     if (params.field === 'stackPrice') {
                         return params.row.stackSize !== parseInt(StackSize.One);
@@ -313,7 +328,19 @@ export const AuctionHouse = () => {
                         ? params.colDef.editable
                         : true;
                 }}
-                autoHeight
+                loading={loadingGetItems || loadingCreateItem}
+                onRowModesModelChange={setRowModesModel}
+                paginationMode="server"
+                paginationModel={paginationModel}
+                onPaginationModelChange={(paginationModel) =>
+                    setPaginationModel(paginationModel)
+                }
+                processRowUpdate={processRowUpdate}
+                rows={items}
+                rowCount={rowCount}
+                rowModesModel={rowModesModel}
+                sortModel={sortModel}
+                onSortModelChange={(sortModel) => setSortModel(sortModel)}
                 sx={{
                     [`& .MuiDataGrid-cell.${StaleThreshold.Fresh}`]: {
                         color: theme.palette.success.main,

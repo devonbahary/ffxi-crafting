@@ -8,10 +8,18 @@ export type GetItemsSearchParams = {
     name?: string;
     excludeCategory?: Category;
     categories?: Category[];
+    limit?: number;
+    offset?: number;
+    sort?: string[];
+};
+
+type GetItemsResponse = {
+    items: Item[];
+    count: number;
 };
 
 type UseGetItems = Loading & {
-    getItems: (params?: GetItemsSearchParams) => Promise<Item[]>;
+    getItems: (params?: GetItemsSearchParams) => Promise<GetItemsResponse>;
 };
 
 type UseCreateItem = Loading & {
@@ -29,7 +37,7 @@ type UseDeleteItem = Loading & {
 const ITEMS_URL = '/items';
 
 export const useGetItems = (): UseGetItems => {
-    const { loading, get } = useGet<Item[]>(ITEMS_URL, {
+    const { loading, get } = useGet<GetItemsResponse>(ITEMS_URL, {
         failureMessage: 'Failed to load items',
     });
 
