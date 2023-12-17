@@ -209,7 +209,7 @@ export const AuctionHouse = () => {
             headerName: 'Unit Price',
             ...small,
             ...editable,
-            valueGetter: ({ value }) => {
+            renderCell: ({ value }) => {
                 if (typeof value === 'number') {
                     return value.toLocaleString();
                 }
@@ -221,7 +221,7 @@ export const AuctionHouse = () => {
             headerName: 'Stack Price',
             ...small,
             ...editable,
-            valueGetter: ({ value }) => {
+            renderCell: ({ value }) => {
                 if (typeof value === 'number') {
                     return value.toLocaleString();
                 }
