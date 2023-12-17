@@ -59,8 +59,14 @@ export const InsightsDashboard = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
     const { loading, getSynthesesByProfit } = useGetSynthesesByProfit();
 
-    const [byUnitProfit, setByUnitProfit] = useLocalStorage('InsightsDashboard.byUnitProfit', true);
-    const [byStackProfit, setByStackProfit] = useLocalStorage('InsightsBashboard.byStackProfit', true);
+    const [byUnitProfit, setByUnitProfit] = useLocalStorage(
+        'InsightsDashboard.byUnitProfit',
+        true
+    );
+    const [byStackProfit, setByStackProfit] = useLocalStorage(
+        'InsightsBashboard.byStackProfit',
+        true
+    );
 
     const onByUnitProfitChange = () => {
         const updatedByUnitProfit = !byUnitProfit;
@@ -90,7 +96,7 @@ export const InsightsDashboard = () => {
                     byUnitProfit,
                 });
                 setSyntheses(syntheses);
-            } catch (err) { }
+            } catch (err) {}
         })();
     }, [byStackProfit, byUnitProfit, getSynthesesByProfit]);
 
@@ -141,8 +147,8 @@ export const InsightsDashboard = () => {
                                 byUnitProfit && byStackProfit
                                     ? 'both'
                                     : byUnitProfit
-                                        ? 'unit'
-                                        : 'stack'
+                                    ? 'unit'
+                                    : 'stack'
                             }
                         />
                     )}
