@@ -1,10 +1,11 @@
 import { FC } from 'react';
-import { Item, Synthesis, SynthesisIngredient } from '../../interfaces';
-import Typography, { TypographyProps } from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { ItemAndQuantityTypography } from './ItemAndQuantityTypography';
 import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography, { TypographyProps } from '@mui/material/Typography';
+import { getRepeatsToStack } from './utility';
+import { Item, Synthesis, SynthesisIngredient } from '../../interfaces';
+import { ProductAndIngredients } from './ProductAndIngredients';
 
 const GAIN_COLOR: TypographyProps['color'] = 'success.main';
 const LOSS_COLOR: TypographyProps['color'] = 'error.light';
@@ -32,11 +33,10 @@ export const SynthesisMonetaryBreakdown: FC<{
 }> = ({ synthesis, sellAsStack = false }) => {
     const { product, crystal } = synthesis;
 
-    const repeatsToGetToStack =
-        parseInt(synthesis.product.stackSize) / synthesis.yield;
+    const repeatsToStack = getRepeatsToStack(synthesis);
 
     const crystalCost = sellAsStack
-        ? repeatsToGetToStack * getStackUnitPrice(crystal)
+        ? repeatsToStack * getStackUnitPrice(crystal)
         : getStackUnitPrice(crystal) / synthesis.yield;
 
     const profit = sellAsStack ? synthesis.stackProfit : synthesis.unitProfit;
@@ -49,34 +49,11 @@ export const SynthesisMonetaryBreakdown: FC<{
             <Grid container paddingLeft={1}>
                 {/* Left-side column */}
                 <Grid item flex={2}>
-                    {/* Product */}
-                    <ItemAndQuantityTypography
-                        item={product}
-                        quantity={sellAsStack ? parseInt(product.stackSize) : 1}
+                    <ProductAndIngredients
+                        synthesis={synthesis}
+                        asStack={sellAsStack}
+                        expanded
                     />
-                    <Box paddingLeft={1}>
-                        {/* Crystal */}
-                        <ItemAndQuantityTypography
-                            item={crystal}
-                            quantity={sellAsStack ? repeatsToGetToStack : 1}
-                            secondary
-                        />
-                        {/* Ingredients */}
-                        {synthesis.ingredients.map((ingredient) => {
-                            const quantity = sellAsStack
-                                ? repeatsToGetToStack * ingredient.quantity
-                                : ingredient.quantity;
-
-                            return (
-                                <ItemAndQuantityTypography
-                                    key={ingredient.id}
-                                    item={ingredient.item}
-                                    quantity={quantity}
-                                    secondary
-                                />
-                            );
-                        })}
-                    </Box>
                 </Grid>
                 {/* Right-side column */}
                 <Grid item flex={1} textAlign="right">
@@ -93,7 +70,7 @@ export const SynthesisMonetaryBreakdown: FC<{
                         >
                             {getStackUnitPriceText(crystal)}
                             {sellAsStack
-                                ? ` x${repeatsToGetToStack}`
+                                ? ` x${repeatsToStack}`
                                 : synthesis.yield > 1
                                 ? ` / ${synthesis.yield}`
                                 : null}
@@ -106,7 +83,7 @@ export const SynthesisMonetaryBreakdown: FC<{
                     {/* Ingredients */}
                     {synthesis.ingredients.map((ingredient) => {
                         const quantityToGetToProductStack =
-                            repeatsToGetToStack * ingredient.quantity;
+                            repeatsToStack * ingredient.quantity;
                         const costToProductStack =
                             quantityToGetToProductStack *
                             getStackUnitPrice(ingredient.item);
