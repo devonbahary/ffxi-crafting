@@ -20,7 +20,7 @@ export const NumberInput: FC<NumberInputProps> = (props) => {
         };
     }, [textFieldRef]);
 
-    const { condensed, ...rest } = props;
+    const { condensed, sx = {}, ...rest } = props;
 
     return (
         <TextField
@@ -30,6 +30,7 @@ export const NumberInput: FC<NumberInputProps> = (props) => {
             InputProps={{ endAdornment: null }}
             sx={{
                 maxWidth: condensed ? 72 : undefined,
+                ...sx,
             }}
         />
     );
