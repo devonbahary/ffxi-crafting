@@ -147,23 +147,20 @@ router.put(
             const { name, category, unitPrice, stackPrice, stackSize } =
                 req.body;
 
-            await Item.update(
-                {
-                    id,
-                    name,
-                    category,
-                    unitPrice,
-                    stackPrice,
-                    stackSize,
-                },
-                {
-                    where: { id },
-                }
-            );
+            // ensure any update call, even one with no changes, updates the updatedAt
+            item.changed('updatedAt', true); // https://stackoverflow.com/questions/42519583/sequelize-updating-updatedat-manually
 
-            const updatedItem = await Item.findByPk(id);
+            await item.update({
+                id,
+                name,
+                category,
+                unitPrice,
+                stackPrice,
+                stackSize,
+                updatedAt: new Date(),
+            });
 
-            res.send(updatedItem);
+            res.send(item);
         });
     }
 );
