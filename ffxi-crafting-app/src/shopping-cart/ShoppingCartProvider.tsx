@@ -133,6 +133,7 @@ export const ShoppingCartProvider: FC<{ children?: ReactNode }> = ({
 
     const clearCart = useCallback(() => {
         setShoppingCartSyntheses([]);
+        setInventoryIngredientQtyMap({});
     }, []);
 
     const updateQuantity = useCallback(
