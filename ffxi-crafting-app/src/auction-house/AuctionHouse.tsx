@@ -71,6 +71,8 @@ const SUBTITLE = (
 
 export const AuctionHouse = () => {
     const [items, setItems] = useState<Partial<Item>[]>([]);
+    const [newItemId, setNewItemId] = useState<string | null>(null);
+
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(
@@ -83,7 +85,6 @@ export const AuctionHouse = () => {
 
     const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-    const [editMode, setEditMode] = useState<DataGridProps['editMode']>('cell');
     const [pendingDeleteId, setPendingDeleteId] = useState<
         string | number | null
     >(null);
@@ -108,6 +109,7 @@ export const AuctionHouse = () => {
             stackSize: '',
         };
 
+        setNewItemId(id);
         setItems((prevItems) => [newItem as Item, ...prevItems]);
 
         setRowModesModel((prevModel) => ({
@@ -117,8 +119,6 @@ export const AuctionHouse = () => {
                 fieldToFocus: 'name',
             },
         }));
-
-        setEditMode('row');
     };
 
     const processRowUpdate: DataGridProps['processRowUpdate'] = async (
@@ -146,6 +146,8 @@ export const AuctionHouse = () => {
                 })
             );
 
+            setNewItemId(null);
+
             return createdItem;
         } else {
             try {
@@ -162,7 +164,10 @@ export const AuctionHouse = () => {
             setItems((prevItems) =>
                 prevItems.filter((item) => item.id !== params.id)
             );
+
+            setNewItemId(null);
         }
+
         setPendingDeleteId(params.id);
     };
 
@@ -309,6 +314,7 @@ export const AuctionHouse = () => {
                 </Stack>
             </Box>
             <Button
+                disabled={Boolean(newItemId)}
                 startIcon={<AddIcon />}
                 onClick={handleAddItem}
                 variant="outlined"
@@ -319,7 +325,7 @@ export const AuctionHouse = () => {
             <DataGrid
                 autoHeight
                 columns={columns}
-                editMode={editMode}
+                editMode="row"
                 isCellEditable={(params) => {
                     if (params.field === 'stackPrice') {
                         return params.row.stackSize !== parseInt(StackSize.One);
