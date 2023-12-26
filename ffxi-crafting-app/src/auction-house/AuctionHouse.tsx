@@ -237,7 +237,7 @@ export const AuctionHouse = () => {
             field: 'updatedAt',
             headerName: 'Last Updated',
             ...large,
-            valueGetter: ({ value }) => {
+            renderCell: ({ value }) => {
                 if (!value) return '';
                 const date = new Date(value);
                 return `${formatDistanceToNow(date)} ago`;
