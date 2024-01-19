@@ -5,3 +5,7 @@ services:
         build:
             target: prod
         command: npm run serve
+    ffxi_crafting_app:
+        build:
+            target: prod
+        command: npx serve -s -p $APP_PORT build

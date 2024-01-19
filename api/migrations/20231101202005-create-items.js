@@ -21,14 +21,16 @@ module.exports = {
             unit_price: {
                 type: Sequelize.INTEGER,
                 defaultValue: 0,
+                allowNull: false,
             },
             stack_price: {
                 type: Sequelize.INTEGER,
-                defaultValue: 0,
+                allowNull: true,
             },
             stack_size: {
                 type: Sequelize.INTEGER,
                 defaultValue: 1,
+                allowNull: false,
             },
             created_at: {
                 allowNull: false,

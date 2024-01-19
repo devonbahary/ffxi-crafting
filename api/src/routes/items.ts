@@ -1,12 +1,23 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import {
+    type NextFunction,
+    type Request,
+    type Response,
+    Router,
+} from 'express';
 import { validationResult } from 'express-validator';
-import { ItemsRepository } from '../repositories/ItemsRepository';
-import { getLimitAndOffset, withErrorHandling } from './utilities';
+import {
+    getArray,
+    getLimitAndOffset,
+    getSort,
+    withErrorHandling,
+} from './utilities';
 import {
     createItemCategoryValidator,
     createItemNameValidator,
     createItemStackSizeValidator,
 } from '../validators';
+import { type Attributes, Op, type WhereOptions } from 'sequelize';
+import { Item } from '../models';
 
 const createValidationRules = [
     createItemNameValidator(),
@@ -20,28 +31,93 @@ const updateValidationRules = [
     createItemStackSizeValidator(),
 ];
 
+const itemSortFields: Array<keyof Attributes<Item>> = [
+    'id',
+    'name',
+    'unitPrice',
+    'stackPrice',
+    'updatedAt',
+];
+
 const router = Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/', (req, res, next): void => {
+    // eslint-disable-next-line
     withErrorHandling(next, async () => {
         const { limit, offset } = getLimitAndOffset(req);
-        const items = await ItemsRepository.findAll(limit, offset);
-        res.json(items);
+
+        const { name, excludeCategory } = req.query;
+
+        const sort = getSort<Attributes<Item>>(req, itemSortFields);
+
+        const categories = getArray(req.query.categories);
+
+        const where: WhereOptions = {
+            category: {
+                [Op.and]: [
+                    typeof excludeCategory === 'string'
+                        ? {
+                              [Op.not]: excludeCategory,
+                          }
+                        : undefined,
+                    categories.length > 0
+                        ? {
+                              [Op.in]: categories,
+                          }
+                        : undefined,
+                ].filter((x) => x),
+            },
+        };
+
+        if (typeof name === 'string') {
+            where.name = {
+                [Op.like]: `%${name}%`,
+            };
+        }
+
+        const [items, count] = await Promise.all([
+            await Item.findAll({
+                limit,
+                offset,
+                where,
+                order:
+                    sort !== null ? [[sort.field, sort.direction]] : undefined,
+            }),
+            await Item.count({
+                where,
+            }),
+        ]);
+
+        res.json({
+            items,
+            count,
+        });
     });
 });
 
 router.post(
     '/',
     createValidationRules,
-    async (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
+        // eslint-disable-next-line
         withErrorHandling(next, async () => {
-            const item = await ItemsRepository.createOne(req.body);
+            const { name, category, unitPrice, stackPrice, stackSize } =
+                req.body;
+
+            const item = await Item.create({
+                name,
+                category,
+                unitPrice,
+                stackPrice,
+                stackSize,
+            });
+
             res.send(item.toJSON());
         });
     }
@@ -50,7 +126,7 @@ router.post(
 router.put(
     '/:id',
     updateValidationRules,
-    async (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
@@ -59,34 +135,49 @@ router.put(
 
         const id = parseInt(req.params.id);
 
+        // eslint-disable-next-line
         withErrorHandling(next, async () => {
-            const item = await ItemsRepository.findById(id);
-            if (!item) {
+            const item = await Item.findByPk(id);
+
+            if (item === null) {
                 res.sendStatus(404);
                 return;
             }
 
-            const updatedItem = await ItemsRepository.updateOne({
+            const { name, category, unitPrice, stackPrice, stackSize } =
+                req.body;
+
+            // ensure any update call, even one with no changes, updates the updatedAt
+            item.changed('updatedAt', true); // https://stackoverflow.com/questions/42519583/sequelize-updating-updatedat-manually
+
+            await item.update({
                 id,
-                ...req.body,
+                name,
+                category,
+                unitPrice,
+                stackPrice,
+                stackSize,
+                updatedAt: new Date(),
             });
 
-            res.send(updatedItem);
+            res.send(item);
         });
     }
 );
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
     const { id } = req.params;
 
+    // eslint-disable-next-line
     withErrorHandling(next, async () => {
-        const item = await ItemsRepository.findById(id);
-        if (!item) {
+        const item = await Item.findByPk(id);
+
+        if (item === null) {
             res.sendStatus(404);
             return;
         }
 
-        await ItemsRepository.deleteOne(id);
+        await Item.destroy({ where: { id } });
 
         res.sendStatus(200);
     });

@@ -13,3 +13,5 @@ FROM base as prod
 ENV NODE_PATH=./dist
 
 RUN npm run build
+
+RUN npm install -g serve
