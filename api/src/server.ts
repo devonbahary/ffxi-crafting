@@ -3,6 +3,7 @@ import express, {
     type Request,
     type NextFunction,
 } from 'express';
+import path from 'path';
 import { config } from 'dotenv';
 import items from './routes/items';
 import synthesis from './routes/synthesis';
@@ -28,8 +29,16 @@ app.use((req, res, next) => {
     next();
 });
 
+const pathToClient = path.join(__dirname, '/../../ffxi-crafting-app/build');
+
+app.use(express.static(pathToClient));
+
 app.use('/items', items);
 app.use('/synthesis', synthesis);
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(pathToClient, 'index.html'));
+});
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).send({
