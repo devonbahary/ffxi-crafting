@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "format": "npx prettier --write .",
-        "install": "cd api && npm i && cd ../ffxi-crafting-app && npm i",
+        "install": "cd api && npm i --dev && cd ../ffxi-crafting-app && npm i --dev",
         "build": "cd api && npm run build && cd ../ffxi-crafting-app && npm run build",
         "start": "cd api && npm run serve",
         "lint": "npx eslint api/src/**/* --fix && npx eslint ffxi-crafting-app/src/**/* --fix"
