@@ -8,7 +8,8 @@ import {
 import { sequelize } from '../sequelize';
 
 const getRandomName = (): string => {
-    return new Date().getTime() + '';
+    // https://dev.to/oyetoket/fastest-way-to-generate-random-strings-in-javascript-2k5a
+    return Math.random().toString(20).substr(2, 6);
 };
 
 export const clearTables = async (): Promise<void> => {
@@ -29,15 +30,20 @@ export const clearTables = async (): Promise<void> => {
 export const createRandomItem = async (
     seed: Partial<Item> = {}
 ): Promise<Item> => {
-    return await Item.create({
-        name: getRandomName(),
-        category: Category.Alchemy,
-        stackSize: 12,
-        unitPrice: Math.round(Math.random() * 1000),
-        stackPrice:
-            seed.stackSize !== 1 ? Math.round(Math.random() * 10000) : null,
-        ...seed,
-    });
+    try {
+        return await Item.create({
+            name: getRandomName(),
+            category: Category.Alchemy,
+            stackSize: 12,
+            unitPrice: Math.round(Math.random() * 1000),
+            stackPrice:
+                seed.stackSize !== 1 ? Math.round(Math.random() * 10000) : null,
+            ...seed,
+        });
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
 };
 
 export const createSynthesisAndRelatedRecords = async (
