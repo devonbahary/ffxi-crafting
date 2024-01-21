@@ -3,8 +3,7 @@
 ## READMEs
 
 -   [API](/api/README.md)
--   [TS-API](/ts-api/README.md)
--   [React-App](/react-app/README.md)
+-   [React App](/ffxi-crafting-app/README.md)
 
 ## Docker
 
