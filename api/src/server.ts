@@ -36,6 +36,7 @@ app.use(express.static(pathToClient));
 app.use('/items', items);
 app.use('/synthesis', synthesis);
 
+// https://create-react-app.dev/docs/deployment/#serving-apps-with-client-side-routing
 app.get('/*', (req, res) => {
     res.sendFile(path.join(pathToClient, 'index.html'));
 });
