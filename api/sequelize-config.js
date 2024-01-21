@@ -29,5 +29,8 @@ module.exports = {
         database: MYSQL_TEST_DATABASE,
         port: MYSQL_TEST_PORT,
     },
-    production: config,
+    production: {
+        use_env_variable: 'CLEARDB_DATABASE_URL',
+        ...config,
+    },
 };
