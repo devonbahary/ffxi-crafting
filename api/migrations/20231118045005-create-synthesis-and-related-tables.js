@@ -123,25 +123,9 @@ module.exports = {
             },
             ...timestamps,
         });
-
-        await queryInterface.sequelize.query(
-            `
-            CREATE TRIGGER delete_synthesis_after_item_delete
-            BEFORE DELETE ON items
-            FOR EACH ROW
-            DELETE s FROM synthesis s
-            JOIN synthesis_ingredients si
-            ON s.id = si.synthesis_id
-            WHERE si.item_id = old.id
-            `
-        );
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.sequelize.query(
-            'DROP TRIGGER delete_synthesis_after_item_delete'
-        );
-
         await queryInterface.dropTable(SYNTHESIS_INGREDIENTS);
         await queryInterface.dropTable(SYNTHESIS_SUB_CRAFTS);
         await queryInterface.dropTable(SYNTHESIS);
