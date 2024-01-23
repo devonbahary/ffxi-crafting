@@ -28,7 +28,7 @@ type UseDelete = Loading & {
     delete: (id: number | string) => Promise<void>;
 };
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const toQueryParams = (params: {}): string => {
     const queryParams = Object.entries(params).reduce<string[]>(
