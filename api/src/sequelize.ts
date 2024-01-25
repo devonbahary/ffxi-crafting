@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize';
+import { type Options, Sequelize } from 'sequelize';
 import { config } from 'dotenv';
 
 config();
@@ -12,12 +12,13 @@ const {
     MYSQL_HOST,
     MYSQL_PORT,
     MYSQL_TEST_PORT,
+    CLEARDB_DATABASE_URL,
 } = process.env;
 
 const database = NODE_ENV === 'test' ? MYSQL_TEST_DATABASE : MYSQL_DATABASE;
 const port = NODE_ENV === 'test' ? MYSQL_TEST_PORT : MYSQL_PORT;
 
-export const sequelize = new Sequelize({
+const options: Options = {
     database,
     password: MYSQL_PASSWORD,
     username: MYSQL_USER,
@@ -25,7 +26,12 @@ export const sequelize = new Sequelize({
     dialect: 'mysql',
     port: port !== undefined ? parseInt(port) : undefined,
     logging: false,
-});
+};
+
+export const sequelize =
+    typeof CLEARDB_DATABASE_URL === 'string'
+        ? new Sequelize(CLEARDB_DATABASE_URL)
+        : new Sequelize(options);
 
 sequelize
     .authenticate()

@@ -4,14 +4,15 @@
     "description": "",
     "scripts": {
         "format": "npx prettier --write .",
+        "install": "cd api && npm i --dev && cd ../ffxi-crafting-app && npm i --dev",
+        "build": "cd api && npm run build && cd ../ffxi-crafting-app && npm run build",
+        "start": "cd api && npm run serve",
         "lint": "npx eslint api/src/**/* --fix && npx eslint ffxi-crafting-app/src/**/* --fix"
     },
     "author": "",
     "license": "ISC",
-    "dependencies": {
-        "prettier": "^3.0.3"
-    },
     "devDependencies": {
+        "prettier": "^3.0.3",
         "@typescript-eslint/eslint-plugin": "^6.11.0",
         "eslint": "^8.53.0",
         "eslint-config-prettier": "^9.0.0",

@@ -10,7 +10,7 @@ import {
     clearTables,
     createRandomItem,
     createSynthesisAndRelatedRecords,
-} from './utlitites';
+} from './utilities';
 
 const getSynthesisIngredientWithItem = async (
     id: number

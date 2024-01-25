@@ -6,7 +6,7 @@ import {
     SynthesisIngredient,
     SynthesisSubCraft,
 } from '../models';
-import { clearTables, createSynthesisAndRelatedRecords } from './utlitites';
+import { clearTables, createSynthesisAndRelatedRecords } from './utilities';
 
 const whereId = (id: number): { where: WhereOptions } => ({ where: { id } });
 
