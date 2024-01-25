@@ -1,25 +1,24 @@
 # ffxi-crafting
 
+This is a monorepo for the frontend ffxi-crafting application and its API.
+
 ## READMEs
 
--   [API](/api/README.md)
 -   [React App](/ffxi-crafting-app/README.md)
+-   [API](/api/README.md)
 
-## Docker
+## Development with Docker
 
-The `Makefile` offers 3 commands:
+Configure the `.env` in the monorepo root as well as in each project as specified in the READMEs.
+
+The `Makefile` offers 2 commands:
 
 -   `make compose-up`: creates and starts containers for development with watch files
--   `make compose-up-prod`: creates and starts containers for production
 -   `make compose-down`: stops and removes containers
 
-## Development
-
-`make compose-up` will get all the services running. While Docker volumes are configured in development to watch file changes, you'll have to rerun this command to update containers with changes to `package.json`.
+While Docker volumes are configured to watch for `/src` file changes in each project, you'll have to rerun this command to update containers if changes are made outside of `/src` (e.g., `package.json`, `.env`).
 
 ## Production (Heroku)
-
-Docker is not used in production.
 
 Check the `Procfile` to see the commands available to `heroku run ...`.
 
