@@ -6,37 +6,24 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
-import CarpenterIcon from '@mui/icons-material/Carpenter';
 import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import InsightsIcon from '@mui/icons-material/Insights';
-import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useGetSynthesesByProfit } from '../hooks/use-synthesis';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from '../common/synthesis/SynthesisCard';
 import { ViewTitle } from '../ViewTitle';
 import { GridLayout } from '../common/GridLayout';
+import { ProfitChipHelpText } from '../common/ProfitChipHelpText';
+
+export const DESCRIPTION =
+    'View crafted items ranked by profitability and see the profit breakdown.';
 
 const SUBTITLE = (
     <>
-        You've logged into Final Fantasy XI and you want to make money, but you
-        don't know which Syntheses to craft in order to maximize your time and
-        profits.
+        {DESCRIPTION}
         <br />
-        <ul>
-            <li>
-                Add Items and manage their prices at the{' '}
-                <StorefrontIcon fontSize="small" /> Auction House.
-            </li>
-            <li>
-                Construct Syntheses from those Items in{' '}
-                <CarpenterIcon fontSize="small" /> Crafting.
-            </li>
-            <li>
-                Visit this <InsightsIcon fontSize="small" /> Insights view to
-                get a ranked list of the most profitable Syntheses and make
-                crafting a no-brainer!{' '}
-            </li>
-        </ul>
+        <br />
+        <ProfitChipHelpText />
     </>
 );
 
@@ -45,26 +32,26 @@ const getByProfitFilterText = (
     byStackProfit: boolean
 ): string => {
     if (byUnitProfit && byStackProfit) {
-        return 'Rank Syntheses based on outright profitability, whether you need to spend time making a stack of an Item or not.';
+        return 'Rank by either unit or stack profit.';
     }
 
     if (byUnitProfit) {
-        return 'Rank Syntheses based only on individual Items to maximize time savings.';
+        return 'Rank only by unit profit.';
     }
 
-    return 'Rank Syntheses based only on their profitability as a stack.';
+    return 'Rank only by stack profit.';
 };
 
-export const InsightsDashboard = () => {
+export const Profits = () => {
     const [syntheses, setSyntheses] = useState<Synthesis[]>([]);
     const { loading, getSynthesesByProfit } = useGetSynthesesByProfit();
 
     const [byUnitProfit, setByUnitProfit] = useLocalStorage(
-        'InsightsDashboard.byUnitProfit',
+        'Profits.byUnitProfit',
         true
     );
     const [byStackProfit, setByStackProfit] = useLocalStorage(
-        'InsightsBashboard.byStackProfit',
+        'Profits.byStackProfit',
         true
     );
 
@@ -104,7 +91,7 @@ export const InsightsDashboard = () => {
         <Box>
             <ViewTitle
                 Icon={InsightsIcon}
-                title="Insights"
+                title="Profits"
                 subtitle={SUBTITLE}
             />
             <Typography variant="overline">Filters</Typography>

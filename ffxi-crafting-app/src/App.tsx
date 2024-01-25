@@ -9,7 +9,7 @@ import {
     Route,
     Routes,
 } from 'react-router-dom';
-import { navigationItems } from './routes';
+import { ROUTE_ITEMS } from './routes';
 import { Navigation } from './Navigation';
 import { Notifications } from './notifications/Notifications';
 import { NotificationsProvider } from './notifications/NotificationsProvider';
@@ -46,11 +46,11 @@ const App = () => (
                                 </Navigation>
                             }
                         >
-                            {navigationItems.map((navItem) => (
+                            {ROUTE_ITEMS.map(({ path, element }) => (
                                 <Route
-                                    key={navItem.path}
-                                    path={navItem.path}
-                                    element={navItem.element}
+                                    key={path}
+                                    path={path}
+                                    element={element}
                                 />
                             ))}
                             {/* redirect to "/" path if no route matched */}

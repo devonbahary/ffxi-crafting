@@ -86,7 +86,8 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
             sx={{
                 cursor: 'pointer',
                 userSelect: 'none',
-                ':hover': { boxShadow: 20 },
+                ':hover': { boxShadow: 20, transform: 'translate(0, -4px)' },
+                transition: '0.2s ease-out',
             }}
         >
             <CardContent>

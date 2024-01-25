@@ -9,10 +9,11 @@ import Paper from '@mui/material/Paper';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
-import { navigationItems } from './routes';
+import { NAVIGABLE_ROUTE_ITEMS } from './routes';
 import { ShoppingCartContext } from './shopping-cart/ShoppingCartProvider';
 import { ShoppingCartSummary } from './shopping-cart/ShoppingCartSummary';
 import { ShoppingCartSyntheses } from './shopping-cart/ShoppingCartSyntheses';
+import Stack from '@mui/material/Stack';
 
 type NavigationProps = {
     children: ReactNode;
@@ -55,29 +56,45 @@ export const Navigation: FC<NavigationProps> = ({ children }) => {
             <AppBar sx={{ height: APP_BAR_HEIGHT }}>
                 <Toolbar>
                     <Box display="flex" gap={2} alignItems="center">
-                        <Typography variant="h6">FFXI Crafting</Typography>
+                        <Button onClick={() => navigate('/')}>
+                            <Typography
+                                variant="h6"
+                                color="text.primary"
+                                sx={{ textTransform: 'none' }}
+                            >
+                                FFXI Crafting
+                            </Typography>
+                        </Button>
                         <Divider orientation="vertical" flexItem />
-                        {navigationItems.map(({ path, navText, navIcon }) => {
-                            if (!navText || !navIcon) return null;
+                        <Stack
+                            divider={
+                                <Divider orientation="vertical" flexItem />
+                            }
+                            direction="row"
+                            gap={1}
+                        >
+                            {NAVIGABLE_ROUTE_ITEMS.map((routeItem) => {
+                                const { path, navigable } = routeItem;
 
-                            const isNavigatedTo =
-                                location.pathname.includes(path);
+                                const isNavigatedTo =
+                                    location.pathname.includes(path);
 
-                            const color = isNavigatedTo
-                                ? theme.palette.primary.dark
-                                : 'inherit';
+                                const color = isNavigatedTo
+                                    ? theme.palette.primary.main
+                                    : 'inherit';
 
-                            return (
-                                <Button
-                                    key={path}
-                                    startIcon={navIcon}
-                                    onClick={() => navigate(path)}
-                                    sx={{ color }}
-                                >
-                                    {navText}
-                                </Button>
-                            );
-                        })}
+                                return (
+                                    <Button
+                                        key={path}
+                                        startIcon={navigable.icon}
+                                        onClick={() => navigate(path)}
+                                        sx={{ color }}
+                                    >
+                                        {navigable.name}
+                                    </Button>
+                                );
+                            })}
+                        </Stack>
                     </Box>
                 </Toolbar>
             </AppBar>
