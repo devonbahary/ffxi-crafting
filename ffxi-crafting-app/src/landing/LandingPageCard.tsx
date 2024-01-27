@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { NavigableRouteItem } from '../routes';
-import { useFadeIn } from '../hooks/use-fade-in';
+import { useFadeIn } from '../hooks/useFadeIn';
 import { useNavigate } from 'react-router';
 import { FADE_IN_TIMEOUT } from '../common/constants';
 

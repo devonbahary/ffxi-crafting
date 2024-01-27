@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import { Item } from '../interfaces';
-import { GetItemsSearchParams, useGetItems } from '../hooks/use-items';
+import { GetItemsSearchParams, useGetItems } from '../hooks/useItems';
 import { DEBOUNCE_VALUE } from '../common/constants';
 
 type ItemSearchAutocompleteProps = {

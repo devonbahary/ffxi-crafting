@@ -31,7 +31,7 @@ import {
     useDeleteItem,
     useGetItems,
     useUpdateItem,
-} from '../hooks/use-items';
+} from '../hooks/useItems';
 import { CategoryFilters } from './CategoryFilters';
 import { Category, StackSize } from '../enums';
 import { ViewTitle } from '../ViewTitle';

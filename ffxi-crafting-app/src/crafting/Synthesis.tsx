@@ -24,7 +24,7 @@ import {
     useCreateSynthesis,
     useGetSynthesis,
     useUpdateSynthesis,
-} from '../hooks/use-synthesis';
+} from '../hooks/useSynthesis';
 import { ItemSearchAutocomplete } from './ItemSearchAutocomplete';
 
 type Nullable<T> = T | null;

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
 import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import InsightsIcon from '@mui/icons-material/Insights';
-import { useGetSynthesesByProfit } from '../hooks/use-synthesis';
+import { useGetSynthesesByProfit } from '../hooks/useSynthesis';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from '../common/synthesis/SynthesisCard';
 import { ViewTitle } from '../ViewTitle';

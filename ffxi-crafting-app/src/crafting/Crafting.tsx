@@ -13,7 +13,7 @@ import { NavigateButton } from './NavigateButton';
 import { MultiChipSelect } from '../common/inputs/ChipSelect';
 import { CRAFT_OPTIONS } from '../common/inputs/input-options';
 import { Craft } from '../enums';
-import { useDeleteSynthesis, useGetSyntheses } from '../hooks/use-synthesis';
+import { useDeleteSynthesis, useGetSyntheses } from '../hooks/useSynthesis';
 import { ViewTitle } from '../ViewTitle';
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
 import { DebouncedSearchInput } from '../auction-house/DebouncedSearchInput';

@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { NAVIGABLE_ROUTE_ITEMS } from '../routes';
 import { LandingPageCard } from './LandingPageCard';
-import { useFadeIn } from '../hooks/use-fade-in';
+import { useFadeIn } from '../hooks/useFadeIn';
 import { FADE_IN_TIMEOUT } from '../common/constants';
 
 export const LandingPage = () => {
