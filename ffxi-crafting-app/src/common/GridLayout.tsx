@@ -13,7 +13,7 @@ export const GridLayout = <T extends { id: string | number }>({
     return (
         <Grid container spacing={2}>
             {iterable.map((element) => (
-                <Grid key={element.id} item sm={6} xl={4}>
+                <Grid key={element.id} item sm={12} lg={6}>
                     {renderItem(element)}
                 </Grid>
             ))}
