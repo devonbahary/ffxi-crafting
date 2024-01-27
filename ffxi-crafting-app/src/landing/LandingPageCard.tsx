@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Fade from '@mui/material/Fade';
@@ -11,6 +10,7 @@ import { NavigableRouteItem } from '../routes';
 import { useFadeIn } from '../hooks/useFadeIn';
 import { useNavigate } from 'react-router';
 import { FADE_IN_TIMEOUT } from '../common/constants';
+import { HoverableCard } from '../common/HoverableCard';
 
 type LandingPageCardProps = {
     routeItem: NavigableRouteItem;
@@ -30,19 +30,13 @@ export const LandingPageCard: FC<LandingPageCardProps> = ({ routeItem }) => {
     return (
         <Fade in={fadeIn} timeout={FADE_IN_TIMEOUT}>
             <Grid item key={path} xs={12} sm={6} md={6} lg={6} xl={3}>
-                <Card
+                <HoverableCard
                     ref={ref}
                     onClick={() => navigate(path)}
                     sx={{
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
-                        cursor: 'pointer',
-                        ':hover': {
-                            boxShadow: theme.shadows[20],
-                            transform: 'translate(0, -4px)',
-                        },
-                        transition: '0.2s ease-out',
                     }}
                 >
                     <CardMedia
@@ -67,7 +61,7 @@ export const LandingPageCard: FC<LandingPageCardProps> = ({ routeItem }) => {
                         </Box>
                         <Typography>{landingPageText}</Typography>
                     </CardContent>
-                </Card>
+                </HoverableCard>
             </Grid>
         </Fade>
     );

@@ -1,7 +1,6 @@
 import React, { FC, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
@@ -16,6 +15,7 @@ import { SynthesisMonetaryBreakdown } from './SynthesisMonetaryBreakdown';
 import { ItemAndQuantityTypography } from './ItemAndQuantityTypography';
 import { ProfitChips } from './ProfitChips';
 import { HighlightableIconButton } from '../HighlightableIconButton';
+import { HoverableCard } from '../HoverableCard';
 
 type SynthesisCardProps = {
     synthesis: Synthesis;
@@ -80,15 +80,9 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
         parseInt(synthesis.product.stackSize) !== parseInt(StackSize.One);
 
     return (
-        <Card
+        <HoverableCard
             variant="elevation"
             onClick={() => setExpanded(!expanded)}
-            sx={{
-                cursor: 'pointer',
-                userSelect: 'none',
-                ':hover': { boxShadow: 20, transform: 'translate(0, -4px)' },
-                transition: '0.2s ease-out',
-            }}
         >
             <CardContent>
                 <Box position="relative">
@@ -134,6 +128,6 @@ export const SynthesisCard: FC<SynthesisCardProps> = ({
                     </>
                 )}
             </Collapse>
-        </Card>
+        </HoverableCard>
     );
 };
