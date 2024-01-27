@@ -10,7 +10,7 @@ import {
 import { v4 as uuid } from 'uuid';
 import { Item, Synthesis } from '../interfaces';
 import { NotificationsContext } from '../notifications/NotificationsProvider';
-import { useGetSyntheses } from '../hooks/use-synthesis';
+import { useGetSyntheses } from '../hooks/useSynthesis';
 
 export interface ShoppingCartSynthesis {
     id: string;

@@ -2,6 +2,8 @@
 
 This is a monorepo for the frontend ffxi-crafting application and its API.
 
+![alt text](./LandingPage.png)
+
 ## READMEs
 
 -   [React App](/ffxi-crafting-app/README.md)

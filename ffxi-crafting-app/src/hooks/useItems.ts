@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { Item, Loading } from '../interfaces';
-import { useDelete, useGet, usePost, usePut } from './use-api';
+import { useDelete, useGet, usePost, usePut } from './useApi';
 import { Category } from '../enums';
 import { ShoppingCartContext } from '../shopping-cart/ShoppingCartProvider';
 

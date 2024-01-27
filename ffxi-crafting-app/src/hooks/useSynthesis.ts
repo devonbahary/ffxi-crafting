@@ -1,6 +1,6 @@
 import { Craft } from '../enums';
 import { Loading, Synthesis } from '../interfaces';
-import { useDelete, useGet, useGetId, usePost, usePut } from './use-api';
+import { useDelete, useGet, useGetId, usePost, usePut } from './useApi';
 
 const SYNTHESIS_URL = '/synthesis';
 

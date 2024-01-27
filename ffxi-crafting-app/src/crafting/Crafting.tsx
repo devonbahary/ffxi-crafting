@@ -5,38 +5,35 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
-import StorefrontIcon from '@mui/icons-material/Storefront';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { Synthesis } from '../interfaces';
 import { SynthesisCard } from '../common/synthesis/SynthesisCard';
 import { NavigateButton } from './NavigateButton';
 import { MultiChipSelect } from '../common/inputs/ChipSelect';
 import { CRAFT_OPTIONS } from '../common/inputs/input-options';
 import { Craft } from '../enums';
-import { useDeleteSynthesis, useGetSyntheses } from '../hooks/use-synthesis';
+import { useDeleteSynthesis, useGetSyntheses } from '../hooks/useSynthesis';
 import { ViewTitle } from '../ViewTitle';
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
 import { DebouncedSearchInput } from '../auction-house/DebouncedSearchInput';
 import { GridLayout } from '../common/GridLayout';
+import { ProfitChipHelpText } from '../common/ProfitChipHelpText';
+
+export const DESCRIPTION =
+    'Manage the available crafted items (called Syntheses) and their ingredients.';
 
 const SUBTITLE = (
     <>
-        Crafting is one of the most profitable ways to make money in FFXI.
-        Crafting revolves around Synthesis, where different Items are combined
-        to produce a potentially higher-value product Item.
+        {DESCRIPTION}
         <br />
-        <br />A Synthesis is composed of:
-        <ul>
-            <li>A crystal Item</li>
-            <li>A list of Item ingredients, with varying quantities</li>
-            <li>Some crafting skill level requirements</li>
-            <li>A product Item, sometimes yielding multiple</li>
-        </ul>
-        The profitability of each Synthesis is based on the yielded amount of
-        product Item, whether that Item sells better as a unit or a stack, and
-        on the prices of its constituent Items as updated in the{' '}
-        <StorefrontIcon fontSize="small" /> Auction House. As those Items are
-        updated, the unit and stack profitability of each Synthesis will be
-        automatically reflected.
+        <br />
+        Expand a Synthesis card to view its ingredients, profit breakdown, and
+        use <EditIcon fontSize="small" /> and <DeleteIcon fontSize="small" /> to
+        edit.
+        <br />
+        <br />
+        <ProfitChipHelpText />
     </>
 );
 

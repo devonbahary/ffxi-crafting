@@ -1,8 +1,9 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react';
+import { FC, useContext, useRef } from 'react';
+import { useHover } from 'usehooks-ts';
+import Box from '@mui/material/Box';
 import Chip, { ChipProps } from '@mui/material/Chip';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Synthesis } from '../../interfaces';
-import Box from '@mui/material/Box';
 import { ShoppingCartContext } from '../../shopping-cart/ShoppingCartProvider';
 import { StackSize } from '../../enums';
 
@@ -12,54 +13,50 @@ type ProfitChipProps = Required<Pick<ChipProps, 'onClick'>> &
         stackability: 'unit' | 'stack';
     };
 
+type StyledChipProps = Pick<
+    ChipProps,
+    'color' | 'disabled' | 'label' | 'onClick' | 'variant'
+>;
+
+export const StyledChip: FC<StyledChipProps> = ({
+    color = 'success',
+    label,
+    variant,
+    ...rest
+}) => {
+    const ref = useRef<HTMLDivElement | null>(null);
+    const isHover = useHover(ref);
+
+    return (
+        <Chip
+            ref={ref}
+            color={color}
+            label={isHover ? <ShoppingCartIcon /> : label}
+            variant={variant ? variant : isHover ? 'filled' : 'outlined'}
+            {...rest}
+            sx={{ width: 120, cursor: 'pointer' }}
+        />
+    );
+};
+
 const ProfitChip: FC<ProfitChipProps> = ({
     disabled,
     value,
     onClick,
     stackability,
 }) => {
-    const [hover, setHover] = useState(false);
-    const ref = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        const onMouseEnter = () => {
-            setHover(true);
-        };
-
-        const onMouseLeave = () => {
-            setHover(false);
-        };
-
-        if (ref.current) {
-            ref.current.addEventListener('mouseenter', onMouseEnter);
-
-            ref.current.addEventListener('mouseleave', onMouseLeave);
-        }
-
-        return () => {
-            if (ref.current) {
-                ref.current.removeEventListener('mouseenter', onMouseEnter);
-                ref.current.removeEventListener('mouseleave', onMouseLeave);
-            }
-        };
-    }, []);
-
     const label =
         (value >= 0 ? '+' : '') +
         value +
         (stackability === 'stack' ? ' stack' : ' unit');
 
     return (
-        <Chip
-            label={hover ? <ShoppingCartIcon /> : label}
+        <StyledChip
             color={value >= 0 ? 'success' : 'error'}
-            variant={disabled ? 'outlined' : hover ? 'filled' : 'outlined'}
             disabled={disabled}
+            label={label}
             onClick={onClick}
-            ref={(input) => {
-                ref.current = input;
-            }}
-            sx={{ width: 120 }}
+            variant={disabled ? 'outlined' : undefined}
         />
     );
 };

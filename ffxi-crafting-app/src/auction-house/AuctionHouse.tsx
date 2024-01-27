@@ -18,8 +18,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InsightsIcon from '@mui/icons-material/Insights';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import { useTheme } from '@mui/material/styles';
 import { Item } from '../interfaces';
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal';
 import {
@@ -31,12 +31,11 @@ import {
     useDeleteItem,
     useGetItems,
     useUpdateItem,
-} from '../hooks/use-items';
+} from '../hooks/useItems';
 import { CategoryFilters } from './CategoryFilters';
 import { Category, StackSize } from '../enums';
 import { ViewTitle } from '../ViewTitle';
 import { DebouncedSearchInput } from './DebouncedSearchInput';
-import { useTheme } from '@mui/material';
 
 enum StaleThreshold {
     Fresh = 'Fresh',
@@ -50,24 +49,8 @@ const editable: Pick<GridColDef, 'editable'> = { editable: true };
 
 const isNewRow = (row: any): boolean => typeof row.id === 'string';
 
-const SUBTITLE = (
-    <>
-        The <InsightsIcon fontSize="small" /> Insights view is only as accurate
-        as the prices of the Items here at the{' '}
-        <StorefrontIcon fontSize="small" /> Auction House, so the key labor of
-        this application is to update Item prices so that Synthesis profits are
-        a reflection of the most up-to-date economics. Maybe one day the
-        HorizonXI server will expose a public API to query Item prices and this
-        effort will become unnecessary. 😉
-        <br />
-        <br />
-        Stackability:
-        <br />
-        Items are sold at the in-game Auction House only as a single or as a
-        stack; that is the basis for Synthesis profitability being measured in
-        those two dimensions.
-    </>
-);
+export const DESCRIPTION =
+    'Update items and their prices and FFXI Crafting will automatically recalculate craft profitability.';
 
 export const AuctionHouse = () => {
     const [items, setItems] = useState<Partial<Item>[]>([]);
@@ -304,7 +287,7 @@ export const AuctionHouse = () => {
             <ViewTitle
                 Icon={StorefrontIcon}
                 title="Auction House"
-                subtitle={SUBTITLE}
+                subtitle={DESCRIPTION}
             />
             <Box marginBottom={2}>
                 <Typography variant="overline">Filters</Typography>

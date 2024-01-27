@@ -16,8 +16,19 @@ import { Item } from '../interfaces';
 import { ShoppingCartSyntheses } from './ShoppingCartSyntheses';
 import { ShoppingCartSummary } from './ShoppingCartSummary';
 import { NumberInput } from '../common/inputs/NumberInput';
+import { ProfitChipHelpText } from '../common/ProfitChipHelpText';
 
-const SUBTITLE = <>This is the Shopping Cart page</>;
+export const DESCRIPTION =
+    "Add what and how much you want to craft and get the entire list of ingredients you'll need to do it.";
+
+const SUBTITLE = (
+    <>
+        {DESCRIPTION}
+        <br />
+        <br />
+        <ProfitChipHelpText />
+    </>
+);
 
 type IngredientQuantity = {
     item: Item;
